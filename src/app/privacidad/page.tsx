@@ -6,8 +6,14 @@ export default function PrivacyPage() {
       title="Privacidad"
       legal
       sections={[
-        ["Datos personales", "Plantilla pendiente. La app evita enviar direcciones completas, secretos o datos de entrega digital a analitica."],
-        ["Cookies", "El consentimiento se incorporara solo si se activan herramientas que lo requieran."],
+        [
+          "Datos personales",
+          "Plantilla pendiente. La app evita enviar direcciones completas, secretos o datos de entrega digital a analítica.",
+        ],
+        [
+          "Cookies",
+          "El consentimiento se incorporará solo si se activan herramientas que lo requieran.",
+        ],
       ]}
     />
   );

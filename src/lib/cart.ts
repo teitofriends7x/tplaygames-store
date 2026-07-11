@@ -59,13 +59,17 @@ export function calculateCart({
     const product = products.find((entry) => entry.id === item.productId);
 
     if (!product || product.publicationStatus !== "published") {
-      warnings.push("Un producto del carrito ya no esta disponible.");
+      warnings.push("Un producto del carrito ya no está disponible.");
       continue;
     }
 
-    const variant = product.variants.find((entry) => entry.id === item.variantId);
+    const variant = product.variants.find(
+      (entry) => entry.id === item.variantId,
+    );
     if (item.variantId && (!variant || !variant.available)) {
-      warnings.push(`${product.name}: la variante seleccionada no esta disponible.`);
+      warnings.push(
+        `${product.name}: la variante seleccionada no está disponible.`,
+      );
       continue;
     }
 
@@ -145,9 +149,7 @@ export function calculateCart({
       couponDiscountCents: couponResult.discountCents,
       shippingCents,
       totalCents: clampCents(
-        afterProductDiscountCents -
-          couponResult.discountCents +
-          shippingCents,
+        afterProductDiscountCents - couponResult.discountCents + shippingCents,
       ),
     },
     coupon: couponResult.valid ? couponResult.coupon : undefined,

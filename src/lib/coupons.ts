@@ -37,7 +37,7 @@ export function validateCoupon(
   if (!coupon || !coupon.active) {
     return {
       valid: false,
-      reason: "El cupon no existe o no esta activo.",
+      reason: "El cupón no existe o no está activo.",
       discountCents: 0,
     };
   }
@@ -46,7 +46,7 @@ export function validateCoupon(
   if (new Date(coupon.startsAt).getTime() > now.getTime()) {
     return {
       valid: false,
-      reason: "El cupon todavia no esta disponible.",
+      reason: "El cupón todavía no está disponible.",
       discountCents: 0,
     };
   }
@@ -54,7 +54,7 @@ export function validateCoupon(
   if (coupon.endsAt && new Date(coupon.endsAt).getTime() < now.getTime()) {
     return {
       valid: false,
-      reason: "El cupon esta vencido.",
+      reason: "El cupón está vencido.",
       discountCents: 0,
     };
   }
@@ -62,7 +62,7 @@ export function validateCoupon(
   if (coupon.totalLimit && coupon.redemptions >= coupon.totalLimit) {
     return {
       valid: false,
-      reason: "El cupon alcanzo su limite de usos.",
+      reason: "El cupón alcanzó su límite de usos.",
       discountCents: 0,
     };
   }
@@ -70,7 +70,7 @@ export function validateCoupon(
   if (coupon.firstPurchaseOnly && context.isFirstPurchase === false) {
     return {
       valid: false,
-      reason: "El cupon aplica solo a la primera compra.",
+      reason: "El cupón aplica solo a la primera compra.",
       discountCents: 0,
     };
   }
@@ -78,7 +78,7 @@ export function validateCoupon(
   if (context.subtotalCents < coupon.minPurchaseCents) {
     return {
       valid: false,
-      reason: "El carrito no alcanza la compra minima del cupon.",
+      reason: "El carrito no alcanza la compra mínima del cupón.",
       discountCents: 0,
     };
   }
@@ -109,7 +109,7 @@ export function validateCoupon(
   if (eligibleSubtotal <= 0) {
     return {
       valid: false,
-      reason: "El cupon no aplica a los productos del carrito.",
+      reason: "El cupón no aplica a los productos del carrito.",
       discountCents: 0,
     };
   }

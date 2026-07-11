@@ -11,7 +11,7 @@ export default async function SearchPage({
   return (
     <CatalogView
       title={q ? `Resultados para "${q}"` : "Buscar"}
-      description="Resultados completos de busqueda."
+      description="Resultados completos de búsqueda."
       query={{ q }}
     />
   );

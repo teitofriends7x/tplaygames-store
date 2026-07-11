@@ -5,8 +5,14 @@ export default function ContactPage() {
     <InfoPage
       title="Contacto"
       sections={[
-        ["WhatsApp", "El numero debe configurarse con NEXT_PUBLIC_WHATSAPP_NUMBER o desde administracion."],
-        ["Correo", "Configurar EMAIL_FROM y RESEND_API_KEY para envios reales."],
+        [
+          "WhatsApp",
+          "El número debe configurarse con NEXT_PUBLIC_WHATSAPP_NUMBER o desde administración.",
+        ],
+        [
+          "Correo",
+          "Configurar EMAIL_FROM y RESEND_API_KEY para envíos reales.",
+        ],
       ]}
     />
   );

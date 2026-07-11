@@ -4,7 +4,7 @@ export default function ConsolasPage() {
   return (
     <CatalogView
       title="Consolas"
-      description="Consolas fisicas cargadas en T.PlayGames."
+      description="Consolas físicas cargadas en T.PlayGames."
       query={{ category: "Consolas" }}
     />
   );

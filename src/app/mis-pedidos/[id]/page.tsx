@@ -19,7 +19,8 @@ export default async function OrderDetailPage({
     <section className="mx-auto max-w-5xl px-4 py-10">
       <h1 className="text-3xl font-black text-white">{order.orderNumber}</h1>
       <p className="mt-2 text-[#A7ACB8]">
-        {STATUS_LABELS[order.status]} · {PAYMENT_STATUS_LABELS[order.paymentStatus]}
+        {STATUS_LABELS[order.status]} ·{" "}
+        {PAYMENT_STATUS_LABELS[order.paymentStatus]}
       </p>
       <div className="mt-6 rounded-lg border border-white/10 bg-[#111318] p-5">
         {order.items.map((item) => (
@@ -30,7 +31,9 @@ export default async function OrderDetailPage({
             <span className="text-white">
               {item.productName} x {item.quantity}
             </span>
-            <span className="font-black text-white">{formatARS(item.totalCents)}</span>
+            <span className="font-black text-white">
+              {formatARS(item.totalCents)}
+            </span>
           </div>
         ))}
         <div className="mt-4 flex justify-between text-xl font-black text-white">
@@ -43,7 +46,9 @@ export default async function OrderDetailPage({
         <ol className="mt-4 space-y-3">
           {order.statusHistory.map((event) => (
             <li key={event.id} className="text-sm text-[#A7ACB8]">
-              <strong className="text-white">{STATUS_LABELS[event.status]}</strong>{" "}
+              <strong className="text-white">
+                {STATUS_LABELS[event.status]}
+              </strong>{" "}
               {formatDateTimeAR(event.createdAt)}
             </li>
           ))}

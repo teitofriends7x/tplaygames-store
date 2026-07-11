@@ -5,9 +5,18 @@ export default function FAQPage() {
     <InfoPage
       title="Preguntas frecuentes"
       sections={[
-        ["¿Que vende T.PlayGames?", "Exclusivamente consolas, controles y juegos."],
-        ["¿Hay juegos digitales?", "Si. La primera version usa entrega manual protegida desde administracion."],
-        ["¿Los productos demo son reales?", "No. Son datos de desarrollo y deben eliminarse antes del lanzamiento."],
+        [
+          "¿Qué vende T.PlayGames?",
+          "Exclusivamente consolas, controles y juegos.",
+        ],
+        [
+          "¿Hay juegos digitales?",
+          "Sí. La primera versión usa entrega manual protegida desde administración.",
+        ],
+        [
+          "¿Los productos demo son reales?",
+          "No. Son datos de desarrollo y deben reemplazarse antes del lanzamiento.",
+        ],
       ]}
     />
   );

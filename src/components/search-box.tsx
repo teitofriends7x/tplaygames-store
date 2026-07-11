@@ -28,9 +28,12 @@ export function SearchBox() {
 
     const controller = new AbortController();
     const timer = window.setTimeout(async () => {
-      const response = await fetch(`/api/search?q=${encodeURIComponent(trimmed)}`, {
-        signal: controller.signal,
-      }).catch(() => undefined);
+      const response = await fetch(
+        `/api/search?q=${encodeURIComponent(trimmed)}`,
+        {
+          signal: controller.signal,
+        },
+      ).catch(() => undefined);
       if (!response?.ok) {
         return;
       }

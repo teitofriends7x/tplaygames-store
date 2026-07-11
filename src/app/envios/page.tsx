@@ -3,10 +3,16 @@ import { InfoPage } from "@/components/info-page";
 export default function ShippingPage() {
   return (
     <InfoPage
-      title="Envios"
+      title="Envíos"
       sections={[
-        ["Envio a domicilio", "Costo configurable por provincia o zona. La integracion con operadores logisticos queda desacoplada."],
-        ["Retiro", "Preparado como opcion configurable, inicialmente deshabilitada hasta definir punto real."],
+        [
+          "Envío a domicilio",
+          "Costo configurable por provincia o zona. La integración con operadores logísticos queda desacoplada.",
+        ],
+        [
+          "Retiro",
+          "Preparado como opción configurable, inicialmente deshabilitada hasta definir punto real.",
+        ],
       ]}
     />
   );

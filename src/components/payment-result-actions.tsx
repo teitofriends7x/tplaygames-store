@@ -2,7 +2,11 @@
 
 import { useState } from "react";
 
-export function PaymentResultActions({ orderNumber }: { orderNumber?: string }) {
+export function PaymentResultActions({
+  orderNumber,
+}: {
+  orderNumber?: string;
+}) {
   const [message, setMessage] = useState("");
 
   if (!orderNumber || process.env.NODE_ENV === "production") {
@@ -17,7 +21,9 @@ export function PaymentResultActions({ orderNumber }: { orderNumber?: string }) 
       },
       body: JSON.stringify({ orderNumber }),
     });
-    setMessage(response.ok ? "Pago aprobado en modo desarrollo." : "No se pudo simular.");
+    setMessage(
+      response.ok ? "Pago aprobado en modo desarrollo." : "No se pudo simular.",
+    );
   }
 
   return (
@@ -32,7 +38,9 @@ export function PaymentResultActions({ orderNumber }: { orderNumber?: string }) 
       >
         Simular pago aprobado
       </button>
-      {message ? <p className="mt-3 text-sm text-[#22C55E]">{message}</p> : null}
+      {message ? (
+        <p className="mt-3 text-sm text-[#22C55E]">{message}</p>
+      ) : null}
     </div>
   );
 }

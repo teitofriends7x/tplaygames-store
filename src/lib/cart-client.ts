@@ -7,8 +7,11 @@ import type { CartItemInput } from "@/lib/types";
 const CART_KEY = "tplaygames.cart.v1";
 const FAVORITES_KEY = "tplaygames.favorites.v1";
 const EMPTY_CART: CartItemInput[] = [];
+const EMPTY_FAVORITES: string[] = [];
 let lastCartRaw = "";
 let lastCartSnapshot: CartItemInput[] = EMPTY_CART;
+let lastFavoritesRaw = "";
+let lastFavoritesSnapshot: string[] = EMPTY_FAVORITES;
 
 export function readCart(): CartItemInput[] {
   if (typeof window === "undefined") {
@@ -78,11 +81,34 @@ export function readFavorites(): string[] {
   }
 
   try {
-    const parsed = JSON.parse(window.localStorage.getItem(FAVORITES_KEY) || "[]");
+    const parsed = JSON.parse(
+      window.localStorage.getItem(FAVORITES_KEY) || "[]",
+    );
     return Array.isArray(parsed) ? parsed : [];
   } catch {
     return [];
   }
+}
+
+function getFavoritesSnapshot(): string[] {
+  if (typeof window === "undefined") {
+    return EMPTY_FAVORITES;
+  }
+
+  const raw = window.localStorage.getItem(FAVORITES_KEY) || "[]";
+  if (raw === lastFavoritesRaw) {
+    return lastFavoritesSnapshot;
+  }
+
+  lastFavoritesRaw = raw;
+  try {
+    const parsed = JSON.parse(raw);
+    lastFavoritesSnapshot = Array.isArray(parsed) ? parsed : EMPTY_FAVORITES;
+  } catch {
+    lastFavoritesSnapshot = EMPTY_FAVORITES;
+  }
+
+  return lastFavoritesSnapshot;
 }
 
 export function toggleFavorite(productId: string): string[] {
@@ -113,5 +139,21 @@ export function useCartItems(): CartItemInput[] {
     },
     getCartSnapshot,
     () => EMPTY_CART,
+  );
+}
+
+export function useFavoriteProductIds(): string[] {
+  return useSyncExternalStore(
+    (callback) => {
+      window.addEventListener("tplaygames-favorites", callback);
+      window.addEventListener("storage", callback);
+
+      return () => {
+        window.removeEventListener("tplaygames-favorites", callback);
+        window.removeEventListener("storage", callback);
+      };
+    },
+    getFavoritesSnapshot,
+    () => EMPTY_FAVORITES,
   );
 }

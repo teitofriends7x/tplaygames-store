@@ -47,6 +47,30 @@ export function getStoreState(): StoreState {
     globalThis.__tplaygamesStore = createInitialState();
   }
 
+  const latestDemoProducts = new Map(
+    demoProducts.map((product) => [product.id, product]),
+  );
+  const currentDemoIds = new Set(demoProducts.map((product) => product.id));
+  const customProducts = globalThis.__tplaygamesStore.products.filter(
+    (product) => !currentDemoIds.has(product.id),
+  );
+  globalThis.__tplaygamesStore.products = [
+    ...structuredClone(demoProducts),
+    ...customProducts.filter((product) => !latestDemoProducts.has(product.id)),
+  ];
+  globalThis.__tplaygamesStore.settings = {
+    ...structuredClone(defaultStoreSettings),
+    ...globalThis.__tplaygamesStore.settings,
+    paymentMethods: {
+      ...defaultStoreSettings.paymentMethods,
+      ...globalThis.__tplaygamesStore.settings.paymentMethods,
+    },
+    provinceShippingCents: {
+      ...defaultStoreSettings.provinceShippingCents,
+      ...globalThis.__tplaygamesStore.settings.provinceShippingCents,
+    },
+  };
+
   return globalThis.__tplaygamesStore;
 }
 
@@ -138,7 +162,9 @@ export function attachPayment(orderId: string, payment: PaymentRecord): Order {
     throw new Error("Pedido no encontrado.");
   }
 
-  const existingIndex = order.payments.findIndex((item) => item.id === payment.id);
+  const existingIndex = order.payments.findIndex(
+    (item) => item.id === payment.id,
+  );
   const payments = [...order.payments];
   if (existingIndex >= 0) {
     payments[existingIndex] = payment;
@@ -146,7 +172,10 @@ export function attachPayment(orderId: string, payment: PaymentRecord): Order {
     payments.push(payment);
   }
 
-  const updatedOrder = applyPaymentStatus({ ...order, payments }, payment.status);
+  const updatedOrder = applyPaymentStatus(
+    { ...order, payments },
+    payment.status,
+  );
   replaceOrder(updatedOrder);
 
   return updatedOrder;

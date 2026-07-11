@@ -1,29 +1,49 @@
+import { PackageOpen } from "lucide-react";
+import type { Metadata } from "next";
 import Link from "next/link";
 
+import { EmptyState } from "@/components/empty-state";
 import { PAYMENT_STATUS_LABELS, STATUS_LABELS } from "@/lib/constants";
 import { formatARS, formatDateTimeAR } from "@/lib/money";
 import { listOrders } from "@/lib/store";
+
+export const metadata: Metadata = {
+  title: "Mis pedidos",
+  robots: {
+    index: false,
+    follow: false,
+  },
+};
 
 export default function OrdersPage() {
   const orders = listOrders();
 
   return (
-    <section className="mx-auto max-w-5xl px-4 py-10">
-      <h1 className="text-3xl font-black text-white">Mis pedidos</h1>
+    <section className="tpg-container py-10">
+      <p className="section-eyebrow">Seguimiento</p>
+      <h1 className="mt-2 text-3xl font-black text-white">Mis pedidos</h1>
       {!orders.length ? (
-        <p className="mt-4 text-[#A7ACB8]">
-          Todavia no hay pedidos en este entorno.
-        </p>
+        <div className="mt-8">
+          <EmptyState
+            icon={PackageOpen}
+            title="Todavía no hay pedidos"
+            body="Cuando completes una compra, vas a poder consultar estado, pago y entrega desde esta sección."
+            href="/catalogo"
+            action="Explorar catálogo"
+          />
+        </div>
       ) : (
         <div className="mt-6 space-y-3">
           {orders.map((order) => (
             <Link
               key={order.id}
               href={`/mis-pedidos/${order.id}`}
-              className="grid gap-3 rounded-lg border border-white/10 bg-[#111318] p-4 text-sm hover:border-[#1D6DFF] md:grid-cols-5"
+              className="tpg-card grid gap-3 p-4 text-sm hover:border-[#1D6DFF] md:grid-cols-5"
             >
               <span className="font-black text-white">{order.orderNumber}</span>
-              <span className="text-[#A7ACB8]">{STATUS_LABELS[order.status]}</span>
+              <span className="text-[#A7ACB8]">
+                {STATUS_LABELS[order.status]}
+              </span>
               <span className="text-[#A7ACB8]">
                 {PAYMENT_STATUS_LABELS[order.paymentStatus]}
               </span>

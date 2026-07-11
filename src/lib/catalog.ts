@@ -27,7 +27,9 @@ export type CatalogResult = {
 };
 
 export function getPublishedProducts(products = demoProducts): Product[] {
-  return products.filter((product) => product.publicationStatus === "published");
+  return products.filter(
+    (product) => product.publicationStatus === "published",
+  );
 }
 
 export function getProductPrice(product: Product): number {
@@ -176,7 +178,13 @@ export function searchSuggestions(query: string, products = demoProducts) {
 
   return getPublishedProducts(products)
     .filter((product) =>
-      [product.name, product.category, product.platform, product.brand, product.sku]
+      [
+        product.name,
+        product.category,
+        product.platform,
+        product.brand,
+        product.sku,
+      ]
         .filter(Boolean)
         .join(" ")
         .toLocaleLowerCase("es-AR")
