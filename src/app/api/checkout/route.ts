@@ -4,6 +4,8 @@ import { createPaymentPreference } from "@/lib/payments";
 import { getClientKey, checkRateLimit } from "@/lib/rate-limit";
 import { createOrder, getStoreState } from "@/lib/store";
 import { checkoutSchema } from "@/lib/validation";
+import { persistOrderToSupabase } from "@/lib/order-persistence";
+import { sendOrderConfirmationEmail } from "@/lib/email";
 
 export async function POST(request: Request) {
   const limit = checkRateLimit(`checkout:${getClientKey(request)}`, 12, 60_000);
@@ -26,15 +28,22 @@ export async function POST(request: Request) {
   try {
     const order = createOrder(parsed.data);
 
+    const persistResult = await persistOrderToSupabase(order);
+    const publicOrderNumber =
+      persistResult.publicOrderNumber ?? order.orderNumber;
+
+    sendOrderConfirmationEmail(order, publicOrderNumber).catch(() => {});
+
     if (parsed.data.paymentMethod === "transfer") {
       const settings = getStoreState().settings;
       return NextResponse.json({
         orderId: order.id,
-        orderNumber: order.orderNumber,
+        orderNumber: publicOrderNumber,
         paymentMethod: "transfer",
         totalCents: order.totals.totalCents,
         transferAccount: settings.transferAccount,
         transferExpiresAt: order.transferExpiresAt,
+        email: order.customer.email,
       });
     }
 
@@ -42,11 +51,12 @@ export async function POST(request: Request) {
 
     return NextResponse.json({
       orderId: order.id,
-      orderNumber: order.orderNumber,
+      orderNumber: publicOrderNumber,
       paymentUrl: preference.initPoint,
       preferenceId: preference.preferenceId,
       mode: preference.provider,
       paymentMethod: "mercadopago",
+      email: order.customer.email,
     });
   } catch (error) {
     return NextResponse.json(
