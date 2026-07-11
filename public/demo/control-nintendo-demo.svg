@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="720" viewBox="0 0 960 720" role="img" aria-label="Control Nintendo demo">
+  <rect width="960" height="720" fill="#111318"/>
+  <rect x="250" y="220" width="460" height="280" rx="120" fill="#1B1D23" stroke="#EF4444" stroke-width="18"/>
+  <circle cx="380" cy="350" r="42" fill="#070707"/>
+  <circle cx="600" cy="330" r="16" fill="#1D6DFF"/>
+  <circle cx="640" cy="370" r="16" fill="#22C55E"/>
+  <text x="480" y="620" fill="#FFFFFF" font-family="Arial" font-size="38" font-weight="700" text-anchor="middle">CONTROL DEMO</text>
+</svg>

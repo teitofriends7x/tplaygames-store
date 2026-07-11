@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="720" viewBox="0 0 960 720" role="img" aria-label="Consola Nintendo demo">
+  <rect width="960" height="720" fill="#111318"/>
+  <rect x="130" y="190" width="700" height="330" rx="40" fill="#1B1D23"/>
+  <rect x="220" y="230" width="520" height="250" rx="18" fill="#070707"/>
+  <rect x="150" y="210" width="80" height="290" rx="34" fill="#EF4444"/>
+  <rect x="730" y="210" width="80" height="290" rx="34" fill="#1D6DFF"/>
+  <text x="480" y="620" fill="#FFFFFF" font-family="Arial" font-size="38" font-weight="700" text-anchor="middle">DEMO NINTENDO</text>
+</svg>

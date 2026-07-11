@@ -1,0 +1,22 @@
+# Checklist de lanzamiento
+
+- [ ] Reemplazar o eliminar todos los productos demo.
+- [ ] Configurar Supabase real.
+- [ ] Verificar RLS con usuario cliente, operador y administrador.
+- [ ] Crear primer administrador con `claim_first_admin()`.
+- [ ] Configurar Mercado Pago sandbox.
+- [ ] Probar pago aprobado, pendiente, rechazado y duplicado.
+- [ ] Configurar webhook HTTPS.
+- [ ] Configurar WhatsApp real.
+- [ ] Configurar dominio/remitente de correo.
+- [ ] Revisar textos legales con profesional.
+- [ ] Definir politica real de envios, garantia, retiro y devoluciones.
+- [ ] Ejecutar `npm run lint`.
+- [ ] Ejecutar `npm run typecheck`.
+- [ ] Ejecutar `npm run test`.
+- [ ] Ejecutar `npm run test:e2e`.
+- [ ] Ejecutar `npm run build`.
+- [ ] Ejecutar `npm run audit`.
+- [ ] Revisar variables de Vercel.
+- [ ] Hacer prueba mobile real.
+- [ ] Autorizar explicitamente cobros reales.

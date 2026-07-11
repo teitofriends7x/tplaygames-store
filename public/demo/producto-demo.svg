@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="720" viewBox="0 0 960 720" role="img" aria-label="Producto demo">
+  <rect width="960" height="720" fill="#111318"/>
+  <rect x="210" y="145" width="540" height="430" rx="34" fill="#1B1D23" stroke="#1D6DFF" stroke-width="12"/>
+  <text x="480" y="350" fill="#FFFFFF" font-family="Arial" font-size="48" font-weight="700" text-anchor="middle">PRODUCTO</text>
+  <text x="480" y="410" fill="#A7ACB8" font-family="Arial" font-size="34" font-weight="700" text-anchor="middle">SIN IMAGEN REAL</text>
+</svg>

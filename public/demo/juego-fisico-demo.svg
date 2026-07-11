@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="720" viewBox="0 0 960 720" role="img" aria-label="Juego fisico demo">
+  <rect width="960" height="720" fill="#111318"/>
+  <rect x="315" y="105" width="330" height="500" rx="22" fill="#1B1D23" stroke="#1D6DFF" stroke-width="14"/>
+  <rect x="350" y="155" width="260" height="210" rx="18" fill="#070707"/>
+  <path d="M380 320l72-92 58 64 38-42 62 70" fill="none" stroke="#1D6DFF" stroke-width="18" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="480" y="455" fill="#FFFFFF" font-family="Arial" font-size="42" font-weight="700" text-anchor="middle">JUEGO</text>
+  <text x="480" y="510" fill="#A7ACB8" font-family="Arial" font-size="28" font-weight="700" text-anchor="middle">FISICO DEMO</text>
+</svg>
