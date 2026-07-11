@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="720" viewBox="0 0 960 720" role="img" aria-label="Imagen de producto pendiente">
+  <rect width="960" height="720" fill="#070707"/>
+  <rect x="72" y="72" width="816" height="576" rx="36" fill="#111318" stroke="#2A2E39" stroke-width="2"/>
+  <rect x="178" y="156" width="604" height="408" rx="28" fill="#1B1D23" stroke="#1D6DFF" stroke-width="10"/>
+  <path d="M288 454l120-138 92 106 64-74 118 106" fill="none" stroke="#8FB7FF" stroke-width="22" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="640" cy="272" r="42" fill="#22C55E"/>
+  <text x="480" y="622" fill="#FFFFFF" font-family="Arial, sans-serif" font-size="34" font-weight="700" text-anchor="middle">Imagen pendiente</text>
+</svg>

@@ -2,10 +2,13 @@
 
 ## Procedencia
 
-Todos los assets nuevos de fase 2 son SVG originales generados localmente para
-T.PlayGames con `scripts/generate-brand-assets.mjs`. No se usaron imágenes de
-tiendas competidoras, recursos con marca de agua ni fotografías oficiales
-inventadas.
+Los assets de marca y categorías son SVG originales generados localmente para
+T.PlayGames con `scripts/generate-brand-assets.mjs`.
+
+Los assets de productos de fase 3 fueron descargados desde páginas oficiales o
+endpoints oficiales de PlayStation, Xbox, Nintendo, Rockstar Games, Electronic
+Arts y Activision/Call of Duty mediante `scripts/download-real-product-assets.mjs`.
+Cada descarga está documentada en `docs/PRODUCT_ASSETS_SOURCES.md`.
 
 ## Ubicación
 
@@ -14,23 +17,26 @@ inventadas.
   - `public/brand/categories/consolas.svg`
   - `public/brand/categories/controles.svg`
   - `public/brand/categories/juegos.svg`
-- Productos demo:
-  - `public/brand/products/*-main.svg`
-  - `public/brand/products/*-angle.svg`
-  - `public/brand/products/*-detail.svg`
+- Productos reales:
+  - `public/products/consoles/*.webp`
+  - `public/products/controllers/*.webp`
+  - `public/products/games/*.webp`
 
-Cada producto demo tiene imagen principal y dos secundarias. Los datos viven en
-`src/lib/demo-data.ts` con `alt`, `blurDataUrl`, `width` y `height`.
+Cada producto seed tiene imagen principal y galería cuando existe material
+oficial razonable. Los datos viven en `src/lib/demo-data.ts` con `alt`,
+`blurDataUrl`, `width`, `height`, SEO y especificaciones.
 
 ## Licencia
 
-Assets originales del proyecto. Pueden reemplazarse por imágenes propias o con
-licencia comercial compatible. Documentar la procedencia de cada recurso real en
-este archivo antes de producción.
+Assets de marca: originales del proyecto.
+
+Assets de producto: oficiales de fabricante/publisher para catálogo local de
+desarrollo y preparación visual. Antes de producción se debe confirmar con el
+proveedor/distribuidor el permiso comercial definitivo para cada marca.
 
 ## Cómo reemplazar
 
-1. Subir la imagen real a `public/brand/products` o a Supabase Storage cuando
+1. Subir la imagen real a `public/products` o a Supabase Storage cuando
    esté conectado.
 2. Actualizar `images[]` y `mainImage` del producto.
 3. Mantener `alt` descriptivo, dimensiones y fallback.

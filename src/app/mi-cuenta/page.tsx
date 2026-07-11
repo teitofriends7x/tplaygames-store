@@ -42,8 +42,8 @@ export default function AccountPage() {
       </div>
       <div className="mt-8 rounded-2xl border border-[#1D6DFF]/25 bg-[#1D6DFF]/10 p-5 text-sm leading-6 text-[#C8D9FF]">
         <ShieldCheck className="mb-3 h-5 w-5" />
-        En desarrollo, el panel administrativo usa rol demo si Supabase no está
-        configurado. En producción requiere sesión real y RLS activo.
+        En desarrollo, el panel administrativo usa un rol de prueba si Supabase
+        no está configurado. En producción requiere sesión real y RLS activo.
       </div>
     </section>
   );

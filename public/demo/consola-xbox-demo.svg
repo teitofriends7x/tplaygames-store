@@ -1,8 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="960" height="720" viewBox="0 0 960 720" role="img" aria-label="Consola Xbox demo">
-  <rect width="960" height="720" fill="#111318"/>
-  <rect x="145" y="120" width="670" height="480" rx="34" fill="#1B1D23"/>
-  <rect x="350" y="180" width="260" height="360" rx="20" fill="#070707"/>
-  <circle cx="480" cy="245" r="48" fill="#22C55E"/>
-  <path d="M450 220l60 50M510 220l-60 50" stroke="#070707" stroke-width="16" stroke-linecap="round"/>
-  <text x="480" y="640" fill="#FFFFFF" font-family="Arial" font-size="38" font-weight="700" text-anchor="middle">DEMO XBOX</text>
-</svg>

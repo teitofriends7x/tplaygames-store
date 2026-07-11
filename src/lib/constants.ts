@@ -16,10 +16,15 @@ export const PRODUCT_PUBLICATION_STATUSES = [
 ] as const;
 export const ROLES = ["customer", "operator", "admin"] as const;
 
+export const PAYMENT_METHODS = ["mercadopago", "transfer"] as const;
+
 export const ORDER_STATUSES = [
   "draft",
   "pending_payment",
   "payment_review",
+  "transfer_receipt_received",
+  "transfer_under_review",
+  "transfer_expired",
   "paid",
   "preparing",
   "ready_for_pickup",
@@ -43,6 +48,9 @@ export const STATUS_LABELS: Record<(typeof ORDER_STATUSES)[number], string> = {
   draft: "Borrador",
   pending_payment: "Pendiente de pago",
   payment_review: "Pago en revision",
+  transfer_receipt_received: "Comprobante recibido",
+  transfer_under_review: "Transferencia en revisión",
+  transfer_expired: "Transferencia vencida",
   paid: "Pagado",
   preparing: "Preparando",
   ready_for_pickup: "Listo para retirar",
@@ -82,22 +90,30 @@ export const PRODUCT_CONDITION_LABELS: Record<
   refurbished: "Reacondicionado",
 };
 
+export const PAYMENT_METHOD_LABELS: Record<
+  (typeof PAYMENT_METHODS)[number],
+  string
+> = {
+  mercadopago: "Mercado Pago",
+  transfer: "Transferencia",
+};
+
 export const CATEGORY_ASSETS: Record<
   (typeof CATEGORIES)[number],
   { image: string; href: string; description: string }
 > = {
   Consolas: {
-    image: "/brand/categories/consolas.svg",
+    image: "/products/consoles/ps5-pro-angled.webp",
     href: "/consolas",
     description: "Equipos para jugar en casa con stock validado.",
   },
   Controles: {
-    image: "/brand/categories/controles.svg",
+    image: "/products/controllers/dualsense-white-angle.webp",
     href: "/controles",
     description: "Mandos y accesorios de control para cada plataforma.",
   },
   Juegos: {
-    image: "/brand/categories/juegos.svg",
+    image: "/products/games/grand-theft-auto-vi-hero.webp",
     href: "/juegos",
     description: "Juegos físicos y digitales con entrega clara.",
   },
@@ -106,4 +122,5 @@ export const CATEGORY_ASSETS: Record<
 export const DEFAULT_SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
 
-export const WHATSAPP_NUMBER = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "";
+export const WHATSAPP_NUMBER =
+  process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "34699463647";

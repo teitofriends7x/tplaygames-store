@@ -14,8 +14,8 @@ export default function FAQPage() {
           "Sí. La primera versión usa entrega manual protegida desde administración.",
         ],
         [
-          "¿Los productos demo son reales?",
-          "No. Son datos de desarrollo y deben reemplazarse antes del lanzamiento.",
+          "¿Los precios publicados son definitivos?",
+          "En desarrollo son valores de prueba para validar la experiencia. En producción se administran desde el panel.",
         ],
       ]}
     />

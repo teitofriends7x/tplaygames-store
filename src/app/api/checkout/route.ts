@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 
 import { createPaymentPreference } from "@/lib/payments";
 import { getClientKey, checkRateLimit } from "@/lib/rate-limit";
-import { createOrder } from "@/lib/store";
+import { createOrder, getStoreState } from "@/lib/store";
 import { checkoutSchema } from "@/lib/validation";
 
 export async function POST(request: Request) {
@@ -25,6 +25,19 @@ export async function POST(request: Request) {
 
   try {
     const order = createOrder(parsed.data);
+
+    if (parsed.data.paymentMethod === "transfer") {
+      const settings = getStoreState().settings;
+      return NextResponse.json({
+        orderId: order.id,
+        orderNumber: order.orderNumber,
+        paymentMethod: "transfer",
+        totalCents: order.totals.totalCents,
+        transferAccount: settings.transferAccount,
+        transferExpiresAt: order.transferExpiresAt,
+      });
+    }
+
     const preference = await createPaymentPreference(order);
 
     return NextResponse.json({
@@ -33,6 +46,7 @@ export async function POST(request: Request) {
       paymentUrl: preference.initPoint,
       preferenceId: preference.preferenceId,
       mode: preference.provider,
+      paymentMethod: "mercadopago",
     });
   } catch (error) {
     return NextResponse.json(

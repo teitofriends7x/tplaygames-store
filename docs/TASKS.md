@@ -22,7 +22,7 @@
 
 - [x] Crear migración Supabase con tablas esperadas.
 - [x] Crear políticas RLS.
-- [x] Crear seed demo eliminable.
+- [x] Crear seed local eliminable/reemplazable.
 - [x] Preparar Mercado Pago con modo desarrollo.
 - [x] Preparar email transaccional desacoplado.
 - [x] Preparar WhatsApp contextual.
@@ -48,7 +48,9 @@
 
 - [x] Assets originales T.PlayGames en `public/brand`.
 - [x] Imágenes diferenciadas para Consolas, Controles y Juegos.
-- [x] Imágenes principales y secundarias para los 9 productos demo.
+- [x] Reemplazar 9 productos genéricos por 27 productos reales verificados.
+- [x] Descargar 72 imágenes oficiales WebP en `public/products`.
+- [x] Documentar procedencia en `docs/PRODUCT_ASSETS_SOURCES.md`.
 - [x] Guía de reemplazo de imágenes documentada.
 - [x] Avisos de contenido legal pendiente conservados.
 

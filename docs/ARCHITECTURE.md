@@ -5,7 +5,9 @@
 - `src/app`: rutas App Router, paginas y route handlers.
 - `src/components`: componentes de UI, incluyendo interactividad cliente.
 - `src/lib`: dominio, validaciones, integraciones y adaptadores.
-- `public/brand`: assets originales de marca, categorías y productos demo.
+- `public/brand`: assets originales de marca, hero y categorías.
+- `public/products`: imágenes WebP de productos reales verificadas y
+  documentadas por procedencia.
 - `artifacts/ui-audit`: evidencia visual before/after generada por Playwright.
 - `supabase/migrations`: esquema SQL, indices, constraints y RLS.
 - `tests`: pruebas unitarias y E2E.
@@ -18,8 +20,8 @@ reutilizables (`tpg-container`, `tpg-card`, `btn`, `badge`, `form-control`,
 panel usa una composición más densa y operativa.
 
 Las imágenes se renderizan con `next/image` en tarjetas, galería, carrito,
-checkout e inventario. Los productos demo incluyen `blurDataUrl`, dimensiones y
-varias imágenes para evitar layout shift.
+checkout e inventario. El catálogo seed incluye `blurDataUrl`, dimensiones,
+alt text y varias imágenes por producto para evitar layout shift.
 
 ## Dominio
 
@@ -33,8 +35,9 @@ posteriores de productos no modifiquen compras anteriores.
 ## Persistencia
 
 La versión local usa un store en memoria para desarrollo sin credenciales.
-`getStoreState()` normaliza settings y productos demo para tolerar hot reload
-durante desarrollo. Supabase queda preparado como fuente real mediante:
+`getStoreState()` normaliza settings y catálogo seed para tolerar hot reload
+durante desarrollo y purga los IDs genéricos legacy de fase 1/2. Supabase queda
+preparado como fuente real mediante:
 
 - tablas normalizadas,
 - claves foraneas,

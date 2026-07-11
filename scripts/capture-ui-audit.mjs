@@ -14,7 +14,7 @@ const routes = [
   ["ofertas", "/ofertas"],
   ["busqueda-resultados", "/buscar?q=juego"],
   ["busqueda-sin-resultados", "/buscar?q=zzzzzz"],
-  ["producto", "/catalogo/juego-digital-demo"],
+  ["producto", "/catalogo/forza-horizon-5"],
   ["carrito-vacio", "/carrito", "empty-cart"],
   ["carrito-mixto", "/carrito", "mixed-cart"],
   ["checkout-fisico", "/checkout", "physical-cart"],
@@ -37,26 +37,26 @@ const carts = {
   "empty-cart": [],
   "digital-cart": [
     {
-      productId: "prod-game-digital-demo",
-      variantId: "var-game-digital-pc",
+      productId: "prod-game-forza-horizon-5",
+      variantId: "var-forza-horizon-5-xbox-digital",
       quantity: 1,
     },
   ],
   "physical-cart": [
     {
-      productId: "prod-console-playstation-demo",
-      variantId: "var-ps-demo-disc",
+      productId: "prod-console-ps5-slim-standard",
+      variantId: "var-ps5-slim-standard-1tb",
       quantity: 1,
     },
   ],
   "mixed-cart": [
     {
-      productId: "prod-game-digital-demo",
-      variantId: "var-game-digital-pc",
+      productId: "prod-game-forza-horizon-5",
+      variantId: "var-forza-horizon-5-xbox-digital",
       quantity: 1,
     },
     {
-      productId: "prod-game-physical-demo",
+      productId: "prod-game-god-of-war-ragnarok",
       quantity: 1,
     },
   ],
@@ -92,7 +92,7 @@ for (const [viewportName, viewport] of viewports) {
       },
       {
         cart: carts[state] || [],
-        favorites: ["prod-game-digital-demo"],
+        favorites: ["prod-game-forza-horizon-5"],
       },
     );
     await page.goto(`${baseUrl}${route}`, { waitUntil: "networkidle" });

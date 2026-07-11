@@ -150,8 +150,8 @@ export function ProductAdminForm() {
       <div className="md:col-span-2">
         <h2 className="font-black text-white">Nuevo producto</h2>
         <p className="mt-1 text-sm leading-6 text-[#A7ACB8]">
-          Guarda como borrador demo. La gestión completa de imágenes queda
-          preparada para Supabase Storage/URLs externas validadas.
+          Guarda como borrador de prueba. La gestión completa de imágenes queda
+          preparada para Supabase Storage o URLs externas validadas.
         </p>
       </div>
       <input name="name" placeholder="Nombre" required className="input" />

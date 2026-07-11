@@ -15,6 +15,8 @@
 - Páginas admin, cuenta, carrito, checkout y resultado de pago con `noindex`.
 - UI de producto/carrito/checkout comunica que precio, stock y cupón se
   revalidan en servidor.
+- Productos en preventa no permiten compra inmediata cuando no hay stock o fecha
+  de entrega habilitada.
 
 ## Primer administrador
 

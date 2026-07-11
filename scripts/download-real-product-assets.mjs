@@ -1,0 +1,812 @@
+import fs from "node:fs/promises";
+import path from "node:path";
+
+import sharp from "sharp";
+
+const downloadDate = "2026-07-11";
+
+const assets = [
+  {
+    product: "PlayStation 5 Slim Digital Edition",
+    file: "public/products/consoles/ps5-slim-digital-front.webp",
+    url: "https://media.direct.playstation.com/is/image/sierialto/2025-PS5-Digital-Hero-2-forward-facing?$Background_Small$",
+    sourcePage:
+      "https://direct.playstation.com/en-us/buy-consoles/playstation5-digital-edition-console-825-gb",
+    officialSource: "PlayStation Direct",
+    usage: "Imagen principal de producto",
+    note: "Asset oficial de producto. Uso local para catálogo seed; revisar derechos finales antes de producción.",
+  },
+  {
+    product: "PlayStation 5 Slim Digital Edition",
+    file: "public/products/consoles/ps5-slim-digital-box.webp",
+    url: "https://media.direct.playstation.com/is/image/sierialto/2025-PS5-Digital-hero-3-packaging-US?$Background_Small$",
+    sourcePage:
+      "https://direct.playstation.com/en-us/buy-consoles/playstation5-digital-edition-console-825-gb",
+    officialSource: "PlayStation Direct",
+    usage: "Caja del producto",
+    note: "Asset oficial de producto. Uso local para catálogo seed; revisar derechos finales antes de producción.",
+  },
+  {
+    product: "PlayStation 5 Slim Digital Edition",
+    file: "public/products/consoles/ps5-slim-digital-console-dualsense.webp",
+    url: "https://media.direct.playstation.com/is/image/sierialto/2025-PS5-Digital-Hero-1-console-dualsense?$Background_Small$",
+    sourcePage:
+      "https://direct.playstation.com/en-us/buy-consoles/playstation5-digital-edition-console-825-gb",
+    officialSource: "PlayStation Direct",
+    usage: "Vista de consola y control",
+    note: "Asset oficial de producto. Uso local para catálogo seed; revisar derechos finales antes de producción.",
+  },
+  {
+    product: "PlayStation 5 Slim Standard Edition con lectora",
+    file: "public/products/consoles/ps5-slim-standard-front.webp",
+    url: "https://media.direct.playstation.com/is/image/sierialto/2025-PS5-Disc-Hero-2-forward-facing?$Background_Small$",
+    sourcePage: "https://direct.playstation.com/en-us/hardware/ps5",
+    officialSource: "PlayStation Direct",
+    usage: "Imagen principal de producto",
+    note: "Asset oficial listado en la página de hardware PS5. Sony usa el nombre PS5 Console - 1TB.",
+  },
+  {
+    product: "PlayStation 5 Slim Standard Edition con lectora",
+    file: "public/products/consoles/ps5-slim-standard-box.webp",
+    url: "https://media.direct.playstation.com/is/image/sierialto/2025-PS5-Disc-Hero-3-packaging-US%20v2?$Background_Small$",
+    sourcePage: "https://direct.playstation.com/en-us/hardware/ps5",
+    officialSource: "PlayStation Direct",
+    usage: "Caja del producto",
+    note: "Asset oficial listado en la página de hardware PS5. Sony usa el nombre PS5 Console - 1TB.",
+  },
+  {
+    product: "PlayStation 5 Pro",
+    file: "public/products/consoles/ps5-pro-angled.webp",
+    url: "https://media.direct.playstation.com/is/image/sierialto/ps5-pro-Hero-1-angled?$Background_Small$",
+    sourcePage:
+      "https://direct.playstation.com/en-us/buy-consoles/playstation5-pro-console-2-tb",
+    officialSource: "PlayStation Direct",
+    usage: "Imagen principal de producto",
+    note: "Asset oficial de producto. La consola no incluye lectora integrada; disc drive se vende por separado.",
+  },
+  {
+    product: "PlayStation 5 Pro",
+    file: "public/products/consoles/ps5-pro-front.webp",
+    url: "https://media.direct.playstation.com/is/image/sierialto/ps5-pro-Hero-2-forward-facing?$Background_Small$",
+    sourcePage:
+      "https://direct.playstation.com/en-us/buy-consoles/playstation5-pro-console-2-tb",
+    officialSource: "PlayStation Direct",
+    usage: "Vista frontal",
+    note: "Asset oficial de producto.",
+  },
+  {
+    product: "PlayStation 5 Pro",
+    file: "public/products/consoles/ps5-pro-box.webp",
+    url: "https://media.direct.playstation.com/is/image/sierialto/PS5PRO-hero-Packshot-US-2025?$Background_Small$",
+    sourcePage:
+      "https://direct.playstation.com/en-us/buy-consoles/playstation5-pro-console-2-tb",
+    officialSource: "PlayStation Direct",
+    usage: "Caja del producto",
+    note: "Asset oficial de producto.",
+  },
+  {
+    product: "Xbox Series S 512 GB",
+    file: "public/products/consoles/xbox-series-s-512-front.webp",
+    url: "https://cms-assets.xboxservices.com/assets/bf/b0/bfb06f23-4c87-4c58-b4d9-ed25d3a739b9.png?n=389964_Hero-Gallery-0_A1_857x676.png",
+    sourcePage: "https://www.xbox.com/en-US/consoles/xbox-series-s",
+    officialSource: "Xbox",
+    usage: "Imagen principal de producto",
+    note: "Asset oficial servido por Xbox Services para Xbox Series S.",
+  },
+  {
+    product: "Xbox Series S 512 GB",
+    file: "public/products/consoles/xbox-series-s-512-angle.webp",
+    url: "https://cms-assets.xboxservices.com/assets/07/a9/07a93846-20c6-4ccd-9b0a-88718a99f894.png?n=389964_Hero-Gallery-0_A2_857x676.png",
+    sourcePage: "https://www.xbox.com/en-US/consoles/xbox-series-s",
+    officialSource: "Xbox",
+    usage: "Vista alternativa",
+    note: "Asset oficial servido por Xbox Services para Xbox Series S.",
+  },
+  {
+    product: "Xbox Series S 1 TB",
+    file: "public/products/consoles/xbox-series-s-1tb-front.webp",
+    url: "https://cms-assets.xboxservices.com/assets/92/29/9229d987-5159-4ff9-aa2d-17ae117234f1.png?n=389964_Hero-Gallery-0_C1_857x676.png",
+    sourcePage: "https://www.xbox.com/en-US/consoles/xbox-series-s",
+    officialSource: "Xbox",
+    usage: "Imagen principal de producto",
+    note: "Asset oficial de la galería Series S; la página oficial verifica variante Carbon Black 1TB.",
+  },
+  {
+    product: "Xbox Series S 1 TB",
+    file: "public/products/consoles/xbox-series-s-1tb-angle.webp",
+    url: "https://cms-assets.xboxservices.com/assets/1c/06/1c068c5f-1036-45b4-93cc-527a248255c8.png?n=389964_Hero-Gallery-0_C2_857x676.png",
+    sourcePage: "https://www.xbox.com/en-US/consoles/xbox-series-s",
+    officialSource: "Xbox",
+    usage: "Vista alternativa",
+    note: "Asset oficial de la galería Series S; la página oficial verifica variante Carbon Black 1TB.",
+  },
+  {
+    product: "Xbox Series X 1 TB",
+    file: "public/products/consoles/xbox-series-x-1tb-front.webp",
+    url: "https://cms-assets.xboxservices.com/assets/bc/40/bc40fdf3-85a6-4c36-af92-dca2d36fc7e5.png?n=642227_Hero-Gallery-0_A1_857x676.png",
+    sourcePage: "https://www.xbox.com/en-US/consoles/xbox-series-x",
+    officialSource: "Xbox",
+    usage: "Imagen principal de producto",
+    note: "Asset oficial servido por Xbox Services para Xbox Series X.",
+  },
+  {
+    product: "Xbox Series X 1 TB",
+    file: "public/products/consoles/xbox-series-x-1tb-angle.webp",
+    url: "https://cms-assets.xboxservices.com/assets/68/a0/68a0e50d-0d13-42b1-8498-e55cef8a9133.png?n=642227_Hero-Gallery-0_A2_857x676.png",
+    sourcePage: "https://www.xbox.com/en-US/consoles/xbox-series-x",
+    officialSource: "Xbox",
+    usage: "Vista alternativa",
+    note: "Asset oficial servido por Xbox Services para Xbox Series X.",
+  },
+  {
+    product: "Nintendo Switch OLED",
+    file: "public/products/consoles/nintendo-switch-oled-box.webp",
+    url: "https://assets.nintendo.com/image/upload/q_auto:best/f_auto/dpr_2.0/ncom/en_US/products/hardware/nintendo-switch-oled-model-white-set/115461-switch-oled-white-boxart-1200x675",
+    sourcePage:
+      "https://www.nintendo.com/us/store/products/nintendo-switch-oled-model-115461-3/",
+    officialSource: "Nintendo",
+    usage: "Imagen principal de producto",
+    note: "Asset oficial del producto Nintendo Switch - OLED Model White set.",
+  },
+  {
+    product: "Nintendo Switch OLED",
+    file: "public/products/consoles/nintendo-switch-oled-screen.webp",
+    url: "https://assets.nintendo.com/image/upload/f_auto/q_auto/dpr_1.5/ncom/en_US/hardware/switch/switch-hw-pmp/oled/01-screen",
+    sourcePage: "https://www.nintendo.com/us/gaming-systems/switch/oled-model/",
+    officialSource: "Nintendo",
+    usage: "Detalle de pantalla OLED",
+    note: "Asset oficial de la página de características de Nintendo Switch OLED.",
+  },
+  {
+    product: "Nintendo Switch OLED",
+    file: "public/products/consoles/nintendo-switch-oled-stand.webp",
+    url: "https://assets.nintendo.com/image/upload/f_auto/q_auto/dpr_1.5/ncom/en_US/hardware/switch/switch-hw-pmp/oled/02-stand",
+    sourcePage: "https://www.nintendo.com/us/gaming-systems/switch/oled-model/",
+    officialSource: "Nintendo",
+    usage: "Detalle de soporte",
+    note: "Asset oficial de la página de características de Nintendo Switch OLED.",
+  },
+  {
+    product: "Nintendo Switch Lite",
+    file: "public/products/consoles/nintendo-switch-lite-box.webp",
+    url: "https://assets.nintendo.com/image/upload/q_auto:best/f_auto/dpr_2.0/ncom/en_US/products/hardware/nintendo-switch-lite-yellow/110678-nintendo-switch-lite-yellow-package-1200x675",
+    sourcePage:
+      "https://www.nintendo.com/us/store/products/nintendo-switch-lite-110672-3/",
+    officialSource: "Nintendo",
+    usage: "Imagen principal de producto",
+    note: "Asset oficial de Nintendo Switch Lite Yellow.",
+  },
+  {
+    product: "Nintendo Switch Lite",
+    file: "public/products/consoles/nintendo-switch-lite-handheld.webp",
+    url: "https://assets.nintendo.com/image/upload/f_auto/q_auto/c_fill,w_1000/dpr_2.0/ncom/en_US/switch/lite/dedicated-to-handheld",
+    sourcePage: "https://www.nintendo.com/us/gaming-systems/switch/lite/",
+    officialSource: "Nintendo",
+    usage: "Imagen de uso handheld",
+    note: "Asset oficial de la página de Nintendo Switch Lite.",
+  },
+  {
+    product: "Nintendo Switch Lite",
+    file: "public/products/consoles/nintendo-switch-lite-gallery.webp",
+    url: "https://assets.nintendo.com/image/upload/ar_16:9,b_auto:border,c_lpad/b_white/f_auto/q_auto/dpr_1.5/ncom/en_US/switch/lifestyle/lite/lite_gallery_01",
+    sourcePage: "https://www.nintendo.com/us/gaming-systems/switch/lite/",
+    officialSource: "Nintendo",
+    usage: "Imagen lifestyle",
+    note: "Asset oficial de la galería de Nintendo Switch Lite.",
+  },
+  {
+    product: "Nintendo Switch 2",
+    file: "public/products/consoles/nintendo-switch-2-box.webp",
+    url: "https://assets.nintendo.com/image/upload/q_auto:best/f_auto/dpr_2.0/ncom/My%20Nintendo%20Store/EN-US/Nintendo%20Switch%202/Hardware/123669-nintendo-switch-2-package-front-2000x2000",
+    sourcePage:
+      "https://www.nintendo.com/us/store/products/nintendo-switch-2-system-123669/",
+    officialSource: "Nintendo",
+    usage: "Imagen principal de producto",
+    note: "Asset oficial del sistema Nintendo Switch 2.",
+  },
+  {
+    product: "Nintendo Switch 2",
+    file: "public/products/consoles/nintendo-switch-2-dock.webp",
+    url: "https://assets.nintendo.com/image/upload/q_auto:best/f_auto/dpr_2.0/ncom/My%20Nintendo%20Store/EN-US/Nintendo%20Switch%202/Hardware/123669-nintendo-switch-2-dock-joy-con-grip-2000x2000",
+    sourcePage:
+      "https://www.nintendo.com/us/store/products/nintendo-switch-2-system-123669/",
+    officialSource: "Nintendo",
+    usage: "Dock y accesorios incluidos",
+    note: "Asset oficial del sistema Nintendo Switch 2.",
+  },
+  {
+    product: "Nintendo Switch 2",
+    file: "public/products/consoles/nintendo-switch-2-handheld.webp",
+    url: "https://assets.nintendo.com/image/upload/q_auto:best/f_auto/dpr_2.0/ncom/My%20Nintendo%20Store/EN-US/Nintendo%20Switch%202/Hardware/123669-nintendo-switch-2-handheld-1200x675",
+    sourcePage:
+      "https://www.nintendo.com/us/store/products/nintendo-switch-2-system-123669/",
+    officialSource: "Nintendo",
+    usage: "Modo portatil",
+    note: "Asset oficial del sistema Nintendo Switch 2.",
+  },
+  {
+    product: "DualSense Wireless Controller Blanco",
+    file: "public/products/controllers/dualsense-white-front.webp",
+    url: "https://media.direct.playstation.com/is/image/sierialto/2025-dualsense-ps5-controller-white-accessory-front-hero-1?$Background_Small$",
+    sourcePage:
+      "https://direct.playstation.com/en-us/buy-accessories/dualsense-wireless-controller-white-for-ps5-pc-mac-mobile",
+    officialSource: "PlayStation Direct",
+    usage: "Imagen principal de producto",
+    note: "Asset oficial del color White.",
+  },
+  {
+    product: "DualSense Wireless Controller Blanco",
+    file: "public/products/controllers/dualsense-white-angle.webp",
+    url: "https://media.direct.playstation.com/is/image/sierialto/2025-dualsense-ps5-controller-white-accessory-top-left-hero-2?$Background_Small$",
+    sourcePage:
+      "https://direct.playstation.com/en-us/buy-accessories/dualsense-wireless-controller-white-for-ps5-pc-mac-mobile",
+    officialSource: "PlayStation Direct",
+    usage: "Vista alternativa",
+    note: "Asset oficial del color White.",
+  },
+  {
+    product: "DualSense Wireless Controller Blanco",
+    file: "public/products/controllers/dualsense-white-box.webp",
+    url: "https://media.direct.playstation.com/is/image/sierialto/2025-US-dualsense-ps5-controller-accessory-packaging?$Background_Small$",
+    sourcePage:
+      "https://direct.playstation.com/en-us/buy-accessories/dualsense-wireless-controller-white-for-ps5-pc-mac-mobile",
+    officialSource: "PlayStation Direct",
+    usage: "Caja del producto",
+    note: "Asset oficial del producto.",
+  },
+  {
+    product: "DualSense Wireless Controller Midnight Black",
+    file: "public/products/controllers/dualsense-midnight-black-front.webp",
+    url: "https://media.direct.playstation.com/is/image/sierialto/2025-dualsense-ps5-controller-midnight-black-accessory-front?$Background_Small$",
+    sourcePage:
+      "https://direct.playstation.com/en-us/buy-accessories/dualsense-wireless-controller-midnight-black-for-ps5-pc-mac-mobile",
+    officialSource: "PlayStation Direct",
+    usage: "Imagen principal de producto",
+    note: "Asset oficial del color Midnight Black.",
+  },
+  {
+    product: "DualSense Wireless Controller Midnight Black",
+    file: "public/products/controllers/dualsense-midnight-black-angle.webp",
+    url: "https://media.direct.playstation.com/is/image/sierialto/2025-dualsense-ps5-controller-midnight-black-accessory-top-left?$Background_Small$",
+    sourcePage:
+      "https://direct.playstation.com/en-us/buy-accessories/dualsense-wireless-controller-midnight-black-for-ps5-pc-mac-mobile",
+    officialSource: "PlayStation Direct",
+    usage: "Vista alternativa",
+    note: "Asset oficial del color Midnight Black.",
+  },
+  {
+    product: "DualSense Wireless Controller Cosmic Red",
+    file: "public/products/controllers/dualsense-cosmic-red-front.webp",
+    url: "https://media.direct.playstation.com/is/image/sierialto/2025-dualsense-ps5-controller-cosmic-red-accessory-front?$Background_Small$",
+    sourcePage:
+      "https://direct.playstation.com/en-us/buy-accessories/dualsense-wireless-controller-cosmic-red-for-ps5-pc-mac-mobile",
+    officialSource: "PlayStation Direct",
+    usage: "Imagen principal de producto",
+    note: "Asset oficial del color Cosmic Red.",
+  },
+  {
+    product: "DualSense Wireless Controller Cosmic Red",
+    file: "public/products/controllers/dualsense-cosmic-red-angle.webp",
+    url: "https://media.direct.playstation.com/is/image/sierialto/2025-dualsense-ps5-controller-cosmic-red-accessory-top-left-hero-2?$Background_Small$",
+    sourcePage:
+      "https://direct.playstation.com/en-us/buy-accessories/dualsense-wireless-controller-cosmic-red-for-ps5-pc-mac-mobile",
+    officialSource: "PlayStation Direct",
+    usage: "Vista alternativa",
+    note: "Asset oficial del color Cosmic Red.",
+  },
+  {
+    product: "DualSense Edge Wireless Controller",
+    file: "public/products/controllers/dualsense-edge-front.webp",
+    url: "https://media.direct.playstation.com/is/image/sierialto/dualsense-edge-ps5-controller-front?$Background_Small$",
+    sourcePage:
+      "https://direct.playstation.com/en-us/buy-accessories/dualsense-edge-wireless-controller",
+    officialSource: "PlayStation Direct",
+    usage: "Imagen principal de producto",
+    note: "Asset oficial de DualSense Edge.",
+  },
+  {
+    product: "DualSense Edge Wireless Controller",
+    file: "public/products/controllers/dualsense-edge-back.webp",
+    url: "https://media.direct.playstation.com/is/image/sierialto/dualsense-edge-ps5-controller-back?$Background_Small$",
+    sourcePage:
+      "https://direct.playstation.com/en-us/buy-accessories/dualsense-edge-wireless-controller",
+    officialSource: "PlayStation Direct",
+    usage: "Vista trasera",
+    note: "Asset oficial de DualSense Edge.",
+  },
+  {
+    product: "DualSense Edge Wireless Controller",
+    file: "public/products/controllers/dualsense-edge-case.webp",
+    url: "https://media.direct.playstation.com/is/image/sierialto/dualsense-edge-ps5-controller-with-open-case?$Background_Small$",
+    sourcePage:
+      "https://direct.playstation.com/en-us/buy-accessories/dualsense-edge-wireless-controller",
+    officialSource: "PlayStation Direct",
+    usage: "Estuche y accesorios",
+    note: "Asset oficial de DualSense Edge.",
+  },
+  {
+    product: "Xbox Wireless Controller Carbon Black",
+    file: "public/products/controllers/xbox-wireless-carbon-black-front.webp",
+    url: "https://cms-assets.xboxservices.com/assets/62/96/62965c6a-429c-47b1-b901-ff69a6081d43.jpg?n=Xbox-Wireless-Controller_Image-Hero-768_Black_1920x831_03.jpg",
+    sourcePage:
+      "https://www.xbox.com/en-US/accessories/controllers/xbox-wireless-controller",
+    officialSource: "Xbox",
+    usage: "Imagen principal de producto",
+    note: "Asset oficial del Xbox Wireless Controller Carbon Black.",
+  },
+  {
+    product: "Xbox Wireless Controller Carbon Black",
+    file: "public/products/controllers/xbox-wireless-carbon-black-angle.webp",
+    url: "https://cms-assets.xboxservices.com/assets/e4/5e/e45e8536-107a-4e66-abec-6fffa29e35ff.jpg?n=Xbox-Wireless-Controller_Image-Hero-0_Black_1083x609_04.jpg",
+    sourcePage:
+      "https://www.xbox.com/en-US/accessories/controllers/xbox-wireless-controller",
+    officialSource: "Xbox",
+    usage: "Vista alternativa",
+    note: "Asset oficial del Xbox Wireless Controller Carbon Black.",
+  },
+  {
+    product: "Xbox Wireless Controller Robot White",
+    file: "public/products/controllers/xbox-wireless-robot-white-front.webp",
+    url: "https://assets.xboxservices.com/assets/d3/b8/d3b82872-cea1-4f26-81c8-c8da49a27362.jpg?n=Xbox-Wireless-Controller_Image-Hero-1084_White_1920x831_01.jpg",
+    sourcePage:
+      "https://www.xbox.com/en-US/accessories/controllers/xbox-wireless-controller",
+    officialSource: "Xbox",
+    usage: "Imagen principal de producto",
+    note: "Asset oficial del Xbox Wireless Controller Robot White.",
+  },
+  {
+    product: "Xbox Wireless Controller Robot White",
+    file: "public/products/controllers/xbox-wireless-robot-white-angle.webp",
+    url: "https://assets.xboxservices.com/assets/ce/aa/ceaa3869-20b3-44eb-bcf7-1823a2c986c9.jpg?n=Xbox-Wireless-Controller_Image-Hero-0_White_1083x609_01.jpg",
+    sourcePage:
+      "https://www.xbox.com/en-US/accessories/controllers/xbox-wireless-controller",
+    officialSource: "Xbox",
+    usage: "Vista alternativa",
+    note: "Asset oficial del Xbox Wireless Controller Robot White.",
+  },
+  {
+    product: "Nintendo Switch Pro Controller",
+    file: "public/products/controllers/nintendo-switch-pro-controller-box.webp",
+    url: "https://assets.nintendo.com/image/upload/q_auto:best/f_auto/dpr_2.0/ncom/en_US/products/accessories/nintendo-switch/controllers/pro-controllers/nintendo-switch-pro-controller/104888-nintendo-switch-pro-controller-black-package-1200x675",
+    sourcePage: "https://www.nintendo.com/us/store/products/pro-controller/",
+    officialSource: "Nintendo",
+    usage: "Imagen principal de producto",
+    note: "Asset oficial del Nintendo Switch Pro Controller.",
+  },
+  {
+    product: "Nintendo Switch Pro Controller",
+    file: "public/products/controllers/nintendo-switch-pro-controller-angle.webp",
+    url: "https://assets.nintendo.com/image/upload/q_auto:best/f_auto/dpr_2.0/ncom/en_US/products/accessories/nintendo-switch/controllers/pro-controllers/nintendo-switch-pro-controller/104888-nintendo-switch-pro-controller-black-angle-1200x675",
+    sourcePage: "https://www.nintendo.com/us/store/products/pro-controller/",
+    officialSource: "Nintendo",
+    usage: "Vista alternativa",
+    note: "Asset oficial del Nintendo Switch Pro Controller.",
+  },
+  {
+    product: "Nintendo Switch Pro Controller",
+    file: "public/products/controllers/nintendo-switch-pro-controller-back.webp",
+    url: "https://assets.nintendo.com/image/upload/q_auto:best/f_auto/dpr_2.0/ncom/en_US/products/accessories/nintendo-switch/controllers/pro-controllers/nintendo-switch-pro-controller/104888-nintendo-switch-pro-controller-black-back-1200x675",
+    sourcePage: "https://www.nintendo.com/us/store/products/pro-controller/",
+    officialSource: "Nintendo",
+    usage: "Vista trasera",
+    note: "Asset oficial del Nintendo Switch Pro Controller.",
+  },
+  {
+    product: "Joy-Con Neon Red / Neon Blue",
+    file: "public/products/controllers/joy-con-neon-blue-left.webp",
+    url: "https://assets.nintendo.com/image/upload/f_auto/q_auto/dpr_1.5/ncom/icons/JoyCon-Straps-Switch/new/joycon_neon_blue_left_front",
+    sourcePage:
+      "https://www.nintendo.com/us/gaming-systems/switch/choose-your-joy-con-color/",
+    officialSource: "Nintendo",
+    usage: "Joy-Con izquierdo Neon Blue",
+    note: "Asset oficial del visor de colores Joy-Con de Nintendo.",
+  },
+  {
+    product: "Joy-Con Neon Red / Neon Blue",
+    file: "public/products/controllers/joy-con-neon-red-right.webp",
+    url: "https://assets.nintendo.com/image/upload/f_auto/q_auto/dpr_1.5/ncom/icons/JoyCon-Straps-Switch/new/joycon_neon_red_right_front",
+    sourcePage:
+      "https://www.nintendo.com/us/gaming-systems/switch/choose-your-joy-con-color/",
+    officialSource: "Nintendo",
+    usage: "Joy-Con derecho Neon Red",
+    note: "Asset oficial del visor de colores Joy-Con de Nintendo.",
+  },
+  {
+    product: "Grand Theft Auto VI",
+    file: "public/products/games/grand-theft-auto-vi-key-art.webp",
+    url: "https://media-rockstargames-com.akamaized.net/tina-uploads/posts/5171972o3ak5oa/837b1fbc8f96dfa70c1aad939546cdbd85a32527.jpg",
+    sourcePage:
+      "https://www.rockstargames.com/newswire/article/5171972o3ak5oa/pre-order-grand-theft-auto-vi-on-june-25",
+    officialSource: "Rockstar Games",
+    usage: "Key art oficial",
+    note: "Asset oficial de Newswire. Producto configurado como preventa por fecha oficial 19/11/2026.",
+  },
+  {
+    product: "Grand Theft Auto VI",
+    file: "public/products/games/grand-theft-auto-vi-hero.webp",
+    url: "https://cms-assets.xboxservices.com/assets/0d/59/0d59c81b-b4a9-4256-8f54-d7da377cd99a.jpg?n=GTA-VI_GLP-Page-Hero-1084_1920x1080_01.jpg",
+    sourcePage: "https://www.xbox.com/en-US/games/grand-theft-auto-vi",
+    officialSource: "Xbox",
+    usage: "Hero oficial",
+    note: "Asset oficial de Xbox para Grand Theft Auto VI.",
+  },
+  {
+    product: "Grand Theft Auto VI",
+    file: "public/products/games/grand-theft-auto-vi-gallery-01.webp",
+    url: "https://cms-assets.xboxservices.com/assets/06/5c/065c5688-4401-43da-9d75-d64c505cc408.jpg?n=GTA-VI_Gallery-01_1350x759_01.jpg",
+    sourcePage: "https://www.xbox.com/en-US/games/grand-theft-auto-vi",
+    officialSource: "Xbox",
+    usage: "Galeria oficial",
+    note: "Asset oficial de Xbox para Grand Theft Auto VI.",
+  },
+  {
+    product: "EA Sports FC 26",
+    file: "public/products/games/ea-sports-fc-26-cover.webp",
+    url: "https://image.api.playstation.com/vulcan/ap/rnd/202606/0422/53801cdd686d9fd46adb483851ac50753851ab6d4e6e1db1.png",
+    sourcePage: "https://www.playstation.com/en-us/games/ea-sports-fc/",
+    officialSource: "PlayStation",
+    usage: "Imagen principal de producto",
+    note: "Asset oficial de la página PlayStation de EA SPORTS FC 26.",
+  },
+  {
+    product: "EA Sports FC 26",
+    file: "public/products/games/ea-sports-fc-26-key-art.webp",
+    url: "https://drop-assets.ea.com/images/3eEHjjY2wGQ5tSWAaF37cL/b03bdcaa03bdba60d2b1b52d91bedbbe/fc26-twg-featured-image-16x9.jpg?im=AspectCrop=(16,9),xPosition=0.5,yPosition=0.5",
+    sourcePage: "https://www.ea.com/en/games/ea-sports-fc/fc-26",
+    officialSource: "Electronic Arts",
+    usage: "Key art oficial",
+    note: "Asset oficial servido por EA para EA SPORTS FC 26.",
+  },
+  {
+    product: "EA Sports FC 26",
+    file: "public/products/games/ea-sports-fc-26-icons.webp",
+    url: "https://drop-assets.ea.com/images/1JiCB5GyMlqnExa4O4OSCo/8b347a4cac5b67e9a601837de71da68c/fc26-twg-featured-image-1x1.jpg?im=Resize=(840)&q=85",
+    sourcePage: "https://www.ea.com/en/games/ea-sports-fc/fc-26",
+    officialSource: "Electronic Arts",
+    usage: "Arte secundario oficial",
+    note: "Asset oficial servido por EA para EA SPORTS FC 26.",
+  },
+  {
+    product: "Marvel's Spider-Man 2",
+    file: "public/products/games/marvels-spider-man-2-cover.webp",
+    url: "https://image.api.playstation.com/vulcan/ap/rnd/202306/1219/1c7b75d8ed9271516546560d219ad0b22ee0a263b4537bd8.png",
+    sourcePage: "https://www.playstation.com/en-us/games/marvels-spider-man-2/",
+    officialSource: "PlayStation",
+    usage: "Imagen principal de producto",
+    note: "Asset oficial de PlayStation.",
+  },
+  {
+    product: "Marvel's Spider-Man 2",
+    file: "public/products/games/marvels-spider-man-2-screenshot-01.webp",
+    url: "https://gmedia.playstation.com/is/image/SIEPDC/spider-man-2-screenshot-miles-enhanced-venom-en-25may23.jpg?$1600px$",
+    sourcePage: "https://www.playstation.com/en-us/games/marvels-spider-man-2/",
+    officialSource: "PlayStation",
+    usage: "Captura oficial",
+    note: "Asset oficial de PlayStation.",
+  },
+  {
+    product: "Marvel's Spider-Man 2",
+    file: "public/products/games/marvels-spider-man-2-screenshot-02.webp",
+    url: "https://image.api.playstation.com/vulcan/ap/rnd/202306/1518/e8f4913ffca62086892053502ae2d7f4b7b05b9c9b2580b1.jpg",
+    sourcePage: "https://www.playstation.com/en-us/games/marvels-spider-man-2/",
+    officialSource: "PlayStation",
+    usage: "Captura oficial",
+    note: "Asset oficial de PlayStation.",
+  },
+  {
+    product: "God of War Ragnarok",
+    file: "public/products/games/god-of-war-ragnarok-cover.webp",
+    url: "https://image.api.playstation.com/vulcan/ap/rnd/202503/2016/b69c06fb108299866057126b0d3a0530bdf96a39d2ce1cb9.png",
+    sourcePage: "https://www.playstation.com/en-us/games/god-of-war-ragnarok/",
+    officialSource: "PlayStation",
+    usage: "Imagen principal de producto",
+    note: "Asset oficial de PlayStation.",
+  },
+  {
+    product: "God of War Ragnarok",
+    file: "public/products/games/god-of-war-ragnarok-screenshot-01.webp",
+    url: "https://image.api.playstation.com/vulcan/ap/rnd/202503/2016/4cbe94949e50045d68afa0da784cf37249f5cbaa3e027cea.jpg",
+    sourcePage: "https://www.playstation.com/en-us/games/god-of-war-ragnarok/",
+    officialSource: "PlayStation",
+    usage: "Captura oficial",
+    note: "Asset oficial de PlayStation.",
+  },
+  {
+    product: "God of War Ragnarok",
+    file: "public/products/games/god-of-war-ragnarok-screenshot-02.webp",
+    url: "https://image.api.playstation.com/vulcan/ap/rnd/202503/2016/dc09860a1d7b6f7dddc33a33d7a854f154ec8567a1794b22.jpg",
+    sourcePage: "https://www.playstation.com/en-us/games/god-of-war-ragnarok/",
+    officialSource: "PlayStation",
+    usage: "Captura oficial",
+    note: "Asset oficial de PlayStation.",
+  },
+  {
+    product: "Astro Bot",
+    file: "public/products/games/astro-bot-cover.webp",
+    url: "https://image.api.playstation.com/vulcan/ap/rnd/202406/0500/8f15268257b878597757fcc5f2c9545840867bc71fc863b1.png",
+    sourcePage: "https://www.playstation.com/en-us/games/astro-bot/",
+    officialSource: "PlayStation",
+    usage: "Imagen principal de producto",
+    note: "Asset oficial de PlayStation.",
+  },
+  {
+    product: "Astro Bot",
+    file: "public/products/games/astro-bot-key-art.webp",
+    url: "https://image.api.playstation.com/vulcan/ap/rnd/202406/0500/ae5bd5dc2ab0e6a4f8c1d2510cc50bb642f20980fd53f676.png",
+    sourcePage: "https://www.playstation.com/en-us/games/astro-bot/",
+    officialSource: "PlayStation",
+    usage: "Key art oficial",
+    note: "Asset oficial de PlayStation.",
+  },
+  {
+    product: "Astro Bot",
+    file: "public/products/games/astro-bot-screenshot-01.webp",
+    url: "https://image.api.playstation.com/vulcan/ap/rnd/202406/0500/80ecf657918558eeef8da3ee4cef326e4517d34e6c69d950.jpg",
+    sourcePage: "https://www.playstation.com/en-us/games/astro-bot/",
+    officialSource: "PlayStation",
+    usage: "Captura oficial",
+    note: "Asset oficial de PlayStation.",
+  },
+  {
+    product: "Call of Duty: Black Ops 7",
+    file: "public/products/games/call-of-duty-black-ops-7-key-art.webp",
+    url: "https://imgs.callofduty.com/content/dam/atvi/callofduty/cod-touchui/blackops7/meta/Chimera_KA_16x9_BR.webp",
+    sourcePage: "https://www.callofduty.com/blackops7",
+    officialSource: "Activision / Call of Duty",
+    usage: "Key art oficial",
+    note: "Asset oficial de la pagina Call of Duty Black Ops 7.",
+  },
+  {
+    product: "Call of Duty: Black Ops 7",
+    file: "public/products/games/call-of-duty-black-ops-7-hero.webp",
+    url: "https://cms-assets.xboxservices.com/assets/09/16/09163dd8-f3f2-4a34-890e-12d275fb92c1.jpg?n=730026216_GLP-Page-Hero-1084_1920x1080_01.jpg",
+    sourcePage: "https://www.xbox.com/en-US/games/call-of-duty-black-ops-7",
+    officialSource: "Xbox",
+    usage: "Hero oficial",
+    note: "Asset oficial de Xbox para Black Ops 7.",
+  },
+  {
+    product: "Call of Duty: Black Ops 7",
+    file: "public/products/games/call-of-duty-black-ops-7-gallery-01.webp",
+    url: "https://cms-assets.xboxservices.com/assets/f6/de/f6dea1b3-ef84-44ab-b532-afb8c8cff0f5.jpg?n=730026216_Gallery_1350x759_01.jpg",
+    sourcePage: "https://www.xbox.com/en-US/games/call-of-duty-black-ops-7",
+    officialSource: "Xbox",
+    usage: "Galeria oficial",
+    note: "Asset oficial de Xbox para Black Ops 7.",
+  },
+  {
+    product: "Forza Horizon 5",
+    file: "public/products/games/forza-horizon-5-hero.webp",
+    url: "https://cms-assets.xboxservices.com/assets/5b/cd/5bcd0d94-db08-4110-9204-7dc0d94e2a74.jpg?n=Forza-Horizon-5_GLP-Cinemagraph-1084_1920x1080_04.jpg",
+    sourcePage: "https://www.xbox.com/en-US/games/forza-horizon-5",
+    officialSource: "Xbox",
+    usage: "Imagen principal de producto",
+    note: "Asset oficial de Xbox para Forza Horizon 5.",
+  },
+  {
+    product: "Forza Horizon 5",
+    file: "public/products/games/forza-horizon-5-gallery-01.webp",
+    url: "https://assets.xboxservices.com/assets/6c/85/6c853605-92c7-43e9-bf31-fcf8f82c6da7.jpg?n=681554_Gallery_1350x759_19.jpg",
+    sourcePage: "https://www.xbox.com/en-US/games/forza-horizon-5",
+    officialSource: "Xbox",
+    usage: "Galeria oficial",
+    note: "Asset oficial de Xbox para Forza Horizon 5.",
+  },
+  {
+    product: "Forza Horizon 5",
+    file: "public/products/games/forza-horizon-5-gallery-02.webp",
+    url: "https://assets.xboxservices.com/assets/1a/dd/1addb65f-5bdd-43e8-9f37-18ff26147451.jpg?n=681554_Gallery_1350x759_21.jpg",
+    sourcePage: "https://www.xbox.com/en-US/games/forza-horizon-5",
+    officialSource: "Xbox",
+    usage: "Galeria oficial",
+    note: "Asset oficial de Xbox para Forza Horizon 5.",
+  },
+  {
+    product: "Mario Kart 8 Deluxe",
+    file: "public/products/games/mario-kart-8-deluxe-cover.webp",
+    url: "https://assets.nintendo.com/image/upload/q_auto:best/f_auto/dpr_2.0/store/software/switch/70010000000153/de697f487a36d802dd9a5ff0341f717c8486221f2f1219b675af37aca63bc453",
+    sourcePage:
+      "https://www.nintendo.com/us/store/products/mario-kart-8-deluxe-switch/",
+    officialSource: "Nintendo",
+    usage: "Imagen principal de producto",
+    note: "Asset oficial del Nintendo Store.",
+  },
+  {
+    product: "Mario Kart 8 Deluxe",
+    file: "public/products/games/mario-kart-8-deluxe-screenshot-01.webp",
+    url: "https://assets.nintendo.com/image/upload/q_auto:best/f_auto/dpr_2.0/store/software/switch/70010000000153/9ec93e1db18cd171de66747be8261ce59ed8687d3f2c2a40c4ffe1c517a62ec1",
+    sourcePage:
+      "https://www.nintendo.com/us/store/products/mario-kart-8-deluxe-switch/",
+    officialSource: "Nintendo",
+    usage: "Captura oficial",
+    note: "Asset oficial del Nintendo Store.",
+  },
+  {
+    product: "Mario Kart 8 Deluxe",
+    file: "public/products/games/mario-kart-8-deluxe-screenshot-02.webp",
+    url: "https://assets.nintendo.com/image/upload/q_auto:best/f_auto/dpr_2.0/store/software/switch/70010000000153/1915a76069b777b87a6c6935720faacb936c24e5cfe477998bb6d0fe0c958515",
+    sourcePage:
+      "https://www.nintendo.com/us/store/products/mario-kart-8-deluxe-switch/",
+    officialSource: "Nintendo",
+    usage: "Captura oficial",
+    note: "Asset oficial del Nintendo Store.",
+  },
+  {
+    product: "The Legend of Zelda: Tears of the Kingdom",
+    file: "public/products/games/zelda-tears-of-the-kingdom-cover.webp",
+    url: "https://assets.nintendo.com/image/upload/q_auto:best/f_auto/dpr_2.0/store/software/switch/70010000063714/fb30eab428df3fc993b41c76e20f72e4d76d49734d17d31996b5ab61c414b117",
+    sourcePage:
+      "https://www.nintendo.com/us/store/products/the-legend-of-zelda-tears-of-the-kingdom-switch/",
+    officialSource: "Nintendo",
+    usage: "Imagen principal de producto",
+    note: "Asset oficial del Nintendo Store.",
+  },
+  {
+    product: "The Legend of Zelda: Tears of the Kingdom",
+    file: "public/products/games/zelda-tears-of-the-kingdom-screenshot-01.webp",
+    url: "https://assets.nintendo.com/image/upload/q_auto:best/f_auto/dpr_2.0/store/software/switch/70010000063714/ca80e4d9f7ddc2971daea8d9b9144c42dbdf2245c3546f41b94a740067bd42a0",
+    sourcePage:
+      "https://www.nintendo.com/us/store/products/the-legend-of-zelda-tears-of-the-kingdom-switch/",
+    officialSource: "Nintendo",
+    usage: "Captura oficial",
+    note: "Asset oficial del Nintendo Store.",
+  },
+  {
+    product: "The Legend of Zelda: Tears of the Kingdom",
+    file: "public/products/games/zelda-tears-of-the-kingdom-screenshot-02.webp",
+    url: "https://assets.nintendo.com/image/upload/q_auto:best/f_auto/dpr_2.0/store/software/switch/70010000063714/05b3d8e8c74beaa43a7714c275a7ad06018ed069bd6bd3f923442b9ac16fdc49",
+    sourcePage:
+      "https://www.nintendo.com/us/store/products/the-legend-of-zelda-tears-of-the-kingdom-switch/",
+    officialSource: "Nintendo",
+    usage: "Captura oficial",
+    note: "Asset oficial del Nintendo Store.",
+  },
+  {
+    product: "Super Mario Bros. Wonder",
+    file: "public/products/games/super-mario-bros-wonder-cover.webp",
+    url: "https://assets.nintendo.com/image/upload/q_auto:best/f_auto/dpr_2.0/store/software/switch/70010000068688/87e8aa5f1fdc950b88eae7d7c62ed185c8a6373c845090bbdb2e2cf039b38da1",
+    sourcePage:
+      "https://www.nintendo.com/us/store/products/super-mario-bros-wonder-switch/",
+    officialSource: "Nintendo",
+    usage: "Imagen principal de producto",
+    note: "Asset oficial del Nintendo Store.",
+  },
+  {
+    product: "Super Mario Bros. Wonder",
+    file: "public/products/games/super-mario-bros-wonder-screenshot-01.webp",
+    url: "https://assets.nintendo.com/image/upload/q_auto:best/f_auto/dpr_2.0/store/software/switch/70010000068688/7f1845a5e8d8ec895ad188a6b0f46b59036a363db1b2d9b79d23b913b0b9ab8a",
+    sourcePage:
+      "https://www.nintendo.com/us/store/products/super-mario-bros-wonder-switch/",
+    officialSource: "Nintendo",
+    usage: "Captura oficial",
+    note: "Asset oficial del Nintendo Store.",
+  },
+  {
+    product: "Super Mario Bros. Wonder",
+    file: "public/products/games/super-mario-bros-wonder-screenshot-02.webp",
+    url: "https://assets.nintendo.com/image/upload/q_auto:best/f_auto/dpr_2.0/store/software/switch/70010000068688/e3024df668cdead60e62865924652c811323b0e7c46f51567fe80907f2637cc4",
+    sourcePage:
+      "https://www.nintendo.com/us/store/products/super-mario-bros-wonder-switch/",
+    officialSource: "Nintendo",
+    usage: "Captura oficial",
+    note: "Asset oficial del Nintendo Store.",
+  },
+];
+
+const outputRoot = process.cwd();
+
+async function download(url) {
+  const response = await fetch(url, {
+    headers: {
+      "user-agent":
+        "Mozilla/5.0 (Macintosh; Intel Mac OS X) TPlayGamesAssetAudit/1.0",
+      accept:
+        "image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8",
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error(`HTTP ${response.status} al descargar ${url}`);
+  }
+
+  const contentType = response.headers.get("content-type") ?? "";
+  if (!contentType.startsWith("image/")) {
+    throw new Error(`Tipo no esperado (${contentType}) para ${url}`);
+  }
+
+  return Buffer.from(await response.arrayBuffer());
+}
+
+function cleanNote(text) {
+  return text.replace(/\|/g, "\\|");
+}
+
+async function writeSourcesDoc(rows) {
+  const lines = [
+    "# Fuentes de assets de productos",
+    "",
+    `Fecha de descarga: ${downloadDate}`,
+    "",
+    "Todos los recursos listados fueron descargados desde páginas oficiales o endpoints de assets servidos por el fabricante/publisher. El uso previsto es catálogo local de desarrollo y preparación visual; antes de producción se debe confirmar con el proveedor/distribuidor el permiso comercial definitivo para cada marca cuando corresponda.",
+    "",
+    "| Producto | Archivo local | URL de origen | Fuente oficial | Fecha | Tipo de uso | Observacion |",
+    "| --- | --- | --- | --- | --- | --- | --- |",
+  ];
+
+  for (const row of rows) {
+    lines.push(
+      `| ${cleanNote(row.product)} | \`${row.file}\` | ${row.url} | ${cleanNote(
+        row.officialSource,
+      )} | ${downloadDate} | ${cleanNote(row.usage)} | ${cleanNote(
+        row.note,
+      )} |`,
+    );
+  }
+
+  lines.push(
+    "",
+    "## Paginas oficiales consultadas",
+    "",
+    ...[
+      ...new Map(
+        rows.map((row) => [row.sourcePage, row.officialSource]),
+      ).entries(),
+    ].map(([url, source]) => `- ${source}: ${url}`),
+    "",
+  );
+
+  await fs.writeFile(
+    path.join(outputRoot, "docs/PRODUCT_ASSETS_SOURCES.md"),
+    lines.join("\n"),
+  );
+}
+
+async function main() {
+  const processed = [];
+
+  for (const asset of assets) {
+    const target = path.join(outputRoot, asset.file);
+    await fs.mkdir(path.dirname(target), { recursive: true });
+
+    const input = await download(asset.url);
+    const image = sharp(input, { failOn: "none" }).rotate();
+    const metadata = await image.metadata();
+    await image
+      .resize({
+        width: 1600,
+        height: 1600,
+        fit: "inside",
+        withoutEnlargement: true,
+      })
+      .webp({ quality: 84, effort: 4 })
+      .toFile(target);
+
+    const outputMetadata = await sharp(target).metadata();
+    processed.push({
+      ...asset,
+      originalWidth: metadata.width,
+      originalHeight: metadata.height,
+      width: outputMetadata.width,
+      height: outputMetadata.height,
+    });
+
+    console.log(
+      `${asset.file} (${outputMetadata.width}x${outputMetadata.height})`,
+    );
+  }
+
+  await writeSourcesDoc(processed);
+  await fs.writeFile(
+    path.join(outputRoot, "artifacts/real-catalog-review/assets-manifest.json"),
+    JSON.stringify(processed, null, 2),
+  );
+
+  console.log(
+    `\nListo: ${processed.length} assets descargados y documentados.`,
+  );
+}
+
+main().catch((error) => {
+  console.error(error);
+  process.exit(1);
+});

@@ -1,7 +1,7 @@
 insert into public.banners (title, body, cta_label, href, active)
 values (
   'Juga mas. Paga menos.',
-  'Banner demo de T.PlayGames. Reemplazar desde administracion antes de lanzar.',
+  'Catalogo gamer seed con productos reales verificados. Reemplazar condiciones comerciales antes de vender.',
   'Ver catalogo',
   '/catalogo',
   true
@@ -29,5 +29,41 @@ insert into public.coupons (
   true
 ) on conflict (code) do nothing;
 
--- Los productos demo se cargan desde la app local para no confundirlos con
--- publicaciones reales. Si se desean en Supabase, insertarlos marcando demo=true.
+-- Catalogo local fase 3:
+-- Los productos seed se cargan desde src/lib/demo-data.ts para desarrollo sin
+-- credenciales. Reemplazan los 9 productos genericos anteriores por nombres
+-- reales, slugs/SKUs unicos e imagenes oficiales documentadas en
+-- docs/PRODUCT_ASSETS_SOURCES.md.
+--
+-- Precios, stock, garantias y condiciones de entrega son valores temporales de
+-- prueba. Si se importan a Supabase antes de produccion, mantener demo=true
+-- hasta que un responsable comercial confirme precios y disponibilidad reales.
+--
+-- Productos seed actuales:
+-- playstation-5-slim-digital-edition
+-- playstation-5-slim-standard-edition-lectora
+-- playstation-5-pro
+-- xbox-series-s-512-gb
+-- xbox-series-s-1-tb
+-- xbox-series-x-1-tb
+-- nintendo-switch-oled
+-- nintendo-switch-lite
+-- nintendo-switch-2
+-- dualsense-wireless-controller-blanco
+-- dualsense-wireless-controller-midnight-black
+-- dualsense-wireless-controller-cosmic-red
+-- dualsense-edge-wireless-controller
+-- xbox-wireless-controller-carbon-black
+-- xbox-wireless-controller-robot-white
+-- nintendo-switch-pro-controller
+-- joy-con-neon-red-neon-blue
+-- grand-theft-auto-vi
+-- ea-sports-fc-26
+-- marvels-spider-man-2
+-- god-of-war-ragnarok
+-- astro-bot
+-- call-of-duty-black-ops-7
+-- forza-horizon-5
+-- mario-kart-8-deluxe
+-- the-legend-of-zelda-tears-of-the-kingdom
+-- super-mario-bros-wonder

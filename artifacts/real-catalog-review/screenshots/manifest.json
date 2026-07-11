@@ -1,0 +1,450 @@
+{
+  "baseUrl": "http://localhost:3000",
+  "capturedAt": "2026-07-11T04:26:01.239Z",
+  "routes": [
+    {
+      "viewport": "desktop",
+      "route": "/",
+      "status": 200,
+      "file": "desktop-home.png"
+    },
+    {
+      "viewport": "desktop",
+      "route": "/catalogo",
+      "status": 200,
+      "file": "desktop-catalogo.png"
+    },
+    {
+      "viewport": "desktop",
+      "route": "/consolas",
+      "status": 200,
+      "file": "desktop-consolas.png"
+    },
+    {
+      "viewport": "desktop",
+      "route": "/controles",
+      "status": 200,
+      "file": "desktop-controles.png"
+    },
+    {
+      "viewport": "desktop",
+      "route": "/juegos",
+      "status": 200,
+      "file": "desktop-juegos.png"
+    },
+    {
+      "viewport": "desktop",
+      "route": "/ofertas",
+      "status": 200,
+      "file": "desktop-ofertas.png"
+    },
+    {
+      "viewport": "desktop",
+      "route": "/buscar?q=playstation",
+      "status": 200,
+      "file": "desktop-buscar-playstation.png"
+    },
+    {
+      "viewport": "desktop",
+      "route": "/buscar?q=dualsense",
+      "status": 200,
+      "file": "desktop-buscar-dualsense.png"
+    },
+    {
+      "viewport": "desktop",
+      "route": "/buscar?q=zzzzzz",
+      "status": 200,
+      "file": "desktop-buscar-sin-resultados.png"
+    },
+    {
+      "viewport": "desktop",
+      "route": "/carrito",
+      "status": 200,
+      "file": "desktop-carrito-mixto.png"
+    },
+    {
+      "viewport": "desktop",
+      "route": "/catalogo/playstation-5-slim-digital-edition",
+      "status": 200,
+      "file": "desktop-producto-playstation-5-slim-digital-edition.png"
+    },
+    {
+      "viewport": "desktop",
+      "route": "/catalogo/playstation-5-slim-standard-edition-lectora",
+      "status": 200,
+      "file": "desktop-producto-playstation-5-slim-standard-edition-lectora.png"
+    },
+    {
+      "viewport": "desktop",
+      "route": "/catalogo/playstation-5-pro",
+      "status": 200,
+      "file": "desktop-producto-playstation-5-pro.png"
+    },
+    {
+      "viewport": "desktop",
+      "route": "/catalogo/xbox-series-s-512-gb",
+      "status": 200,
+      "file": "desktop-producto-xbox-series-s-512-gb.png"
+    },
+    {
+      "viewport": "desktop",
+      "route": "/catalogo/xbox-series-s-1-tb",
+      "status": 200,
+      "file": "desktop-producto-xbox-series-s-1-tb.png"
+    },
+    {
+      "viewport": "desktop",
+      "route": "/catalogo/xbox-series-x-1-tb",
+      "status": 200,
+      "file": "desktop-producto-xbox-series-x-1-tb.png"
+    },
+    {
+      "viewport": "desktop",
+      "route": "/catalogo/nintendo-switch-oled",
+      "status": 200,
+      "file": "desktop-producto-nintendo-switch-oled.png"
+    },
+    {
+      "viewport": "desktop",
+      "route": "/catalogo/nintendo-switch-lite",
+      "status": 200,
+      "file": "desktop-producto-nintendo-switch-lite.png"
+    },
+    {
+      "viewport": "desktop",
+      "route": "/catalogo/nintendo-switch-2",
+      "status": 200,
+      "file": "desktop-producto-nintendo-switch-2.png"
+    },
+    {
+      "viewport": "desktop",
+      "route": "/catalogo/dualsense-wireless-controller-blanco",
+      "status": 200,
+      "file": "desktop-producto-dualsense-wireless-controller-blanco.png"
+    },
+    {
+      "viewport": "desktop",
+      "route": "/catalogo/dualsense-wireless-controller-midnight-black",
+      "status": 200,
+      "file": "desktop-producto-dualsense-wireless-controller-midnight-black.png"
+    },
+    {
+      "viewport": "desktop",
+      "route": "/catalogo/dualsense-wireless-controller-cosmic-red",
+      "status": 200,
+      "file": "desktop-producto-dualsense-wireless-controller-cosmic-red.png"
+    },
+    {
+      "viewport": "desktop",
+      "route": "/catalogo/dualsense-edge-wireless-controller",
+      "status": 200,
+      "file": "desktop-producto-dualsense-edge-wireless-controller.png"
+    },
+    {
+      "viewport": "desktop",
+      "route": "/catalogo/xbox-wireless-controller-carbon-black",
+      "status": 200,
+      "file": "desktop-producto-xbox-wireless-controller-carbon-black.png"
+    },
+    {
+      "viewport": "desktop",
+      "route": "/catalogo/xbox-wireless-controller-robot-white",
+      "status": 200,
+      "file": "desktop-producto-xbox-wireless-controller-robot-white.png"
+    },
+    {
+      "viewport": "desktop",
+      "route": "/catalogo/nintendo-switch-pro-controller",
+      "status": 200,
+      "file": "desktop-producto-nintendo-switch-pro-controller.png"
+    },
+    {
+      "viewport": "desktop",
+      "route": "/catalogo/joy-con-neon-red-neon-blue",
+      "status": 200,
+      "file": "desktop-producto-joy-con-neon-red-neon-blue.png"
+    },
+    {
+      "viewport": "desktop",
+      "route": "/catalogo/grand-theft-auto-vi",
+      "status": 200,
+      "file": "desktop-producto-grand-theft-auto-vi.png"
+    },
+    {
+      "viewport": "desktop",
+      "route": "/catalogo/ea-sports-fc-26",
+      "status": 200,
+      "file": "desktop-producto-ea-sports-fc-26.png"
+    },
+    {
+      "viewport": "desktop",
+      "route": "/catalogo/marvels-spider-man-2",
+      "status": 200,
+      "file": "desktop-producto-marvels-spider-man-2.png"
+    },
+    {
+      "viewport": "desktop",
+      "route": "/catalogo/god-of-war-ragnarok",
+      "status": 200,
+      "file": "desktop-producto-god-of-war-ragnarok.png"
+    },
+    {
+      "viewport": "desktop",
+      "route": "/catalogo/astro-bot",
+      "status": 200,
+      "file": "desktop-producto-astro-bot.png"
+    },
+    {
+      "viewport": "desktop",
+      "route": "/catalogo/call-of-duty-black-ops-7",
+      "status": 200,
+      "file": "desktop-producto-call-of-duty-black-ops-7.png"
+    },
+    {
+      "viewport": "desktop",
+      "route": "/catalogo/forza-horizon-5",
+      "status": 200,
+      "file": "desktop-producto-forza-horizon-5.png"
+    },
+    {
+      "viewport": "desktop",
+      "route": "/catalogo/mario-kart-8-deluxe",
+      "status": 200,
+      "file": "desktop-producto-mario-kart-8-deluxe.png"
+    },
+    {
+      "viewport": "desktop",
+      "route": "/catalogo/the-legend-of-zelda-tears-of-the-kingdom",
+      "status": 200,
+      "file": "desktop-producto-the-legend-of-zelda-tears-of-the-kingdom.png"
+    },
+    {
+      "viewport": "desktop",
+      "route": "/catalogo/super-mario-bros-wonder",
+      "status": 200,
+      "file": "desktop-producto-super-mario-bros-wonder.png"
+    },
+    {
+      "viewport": "mobile",
+      "route": "/",
+      "status": 200,
+      "file": "mobile-home.png"
+    },
+    {
+      "viewport": "mobile",
+      "route": "/catalogo",
+      "status": 200,
+      "file": "mobile-catalogo.png"
+    },
+    {
+      "viewport": "mobile",
+      "route": "/consolas",
+      "status": 200,
+      "file": "mobile-consolas.png"
+    },
+    {
+      "viewport": "mobile",
+      "route": "/controles",
+      "status": 200,
+      "file": "mobile-controles.png"
+    },
+    {
+      "viewport": "mobile",
+      "route": "/juegos",
+      "status": 200,
+      "file": "mobile-juegos.png"
+    },
+    {
+      "viewport": "mobile",
+      "route": "/ofertas",
+      "status": 200,
+      "file": "mobile-ofertas.png"
+    },
+    {
+      "viewport": "mobile",
+      "route": "/buscar?q=playstation",
+      "status": 200,
+      "file": "mobile-buscar-playstation.png"
+    },
+    {
+      "viewport": "mobile",
+      "route": "/buscar?q=dualsense",
+      "status": 200,
+      "file": "mobile-buscar-dualsense.png"
+    },
+    {
+      "viewport": "mobile",
+      "route": "/buscar?q=zzzzzz",
+      "status": 200,
+      "file": "mobile-buscar-sin-resultados.png"
+    },
+    {
+      "viewport": "mobile",
+      "route": "/carrito",
+      "status": 200,
+      "file": "mobile-carrito-mixto.png"
+    },
+    {
+      "viewport": "mobile",
+      "route": "/catalogo/playstation-5-slim-digital-edition",
+      "status": 200,
+      "file": "mobile-producto-playstation-5-slim-digital-edition.png"
+    },
+    {
+      "viewport": "mobile",
+      "route": "/catalogo/playstation-5-slim-standard-edition-lectora",
+      "status": 200,
+      "file": "mobile-producto-playstation-5-slim-standard-edition-lectora.png"
+    },
+    {
+      "viewport": "mobile",
+      "route": "/catalogo/playstation-5-pro",
+      "status": 200,
+      "file": "mobile-producto-playstation-5-pro.png"
+    },
+    {
+      "viewport": "mobile",
+      "route": "/catalogo/xbox-series-s-512-gb",
+      "status": 200,
+      "file": "mobile-producto-xbox-series-s-512-gb.png"
+    },
+    {
+      "viewport": "mobile",
+      "route": "/catalogo/xbox-series-s-1-tb",
+      "status": 200,
+      "file": "mobile-producto-xbox-series-s-1-tb.png"
+    },
+    {
+      "viewport": "mobile",
+      "route": "/catalogo/xbox-series-x-1-tb",
+      "status": 200,
+      "file": "mobile-producto-xbox-series-x-1-tb.png"
+    },
+    {
+      "viewport": "mobile",
+      "route": "/catalogo/nintendo-switch-oled",
+      "status": 200,
+      "file": "mobile-producto-nintendo-switch-oled.png"
+    },
+    {
+      "viewport": "mobile",
+      "route": "/catalogo/nintendo-switch-lite",
+      "status": 200,
+      "file": "mobile-producto-nintendo-switch-lite.png"
+    },
+    {
+      "viewport": "mobile",
+      "route": "/catalogo/nintendo-switch-2",
+      "status": 200,
+      "file": "mobile-producto-nintendo-switch-2.png"
+    },
+    {
+      "viewport": "mobile",
+      "route": "/catalogo/dualsense-wireless-controller-blanco",
+      "status": 200,
+      "file": "mobile-producto-dualsense-wireless-controller-blanco.png"
+    },
+    {
+      "viewport": "mobile",
+      "route": "/catalogo/dualsense-wireless-controller-midnight-black",
+      "status": 200,
+      "file": "mobile-producto-dualsense-wireless-controller-midnight-black.png"
+    },
+    {
+      "viewport": "mobile",
+      "route": "/catalogo/dualsense-wireless-controller-cosmic-red",
+      "status": 200,
+      "file": "mobile-producto-dualsense-wireless-controller-cosmic-red.png"
+    },
+    {
+      "viewport": "mobile",
+      "route": "/catalogo/dualsense-edge-wireless-controller",
+      "status": 200,
+      "file": "mobile-producto-dualsense-edge-wireless-controller.png"
+    },
+    {
+      "viewport": "mobile",
+      "route": "/catalogo/xbox-wireless-controller-carbon-black",
+      "status": 200,
+      "file": "mobile-producto-xbox-wireless-controller-carbon-black.png"
+    },
+    {
+      "viewport": "mobile",
+      "route": "/catalogo/xbox-wireless-controller-robot-white",
+      "status": 200,
+      "file": "mobile-producto-xbox-wireless-controller-robot-white.png"
+    },
+    {
+      "viewport": "mobile",
+      "route": "/catalogo/nintendo-switch-pro-controller",
+      "status": 200,
+      "file": "mobile-producto-nintendo-switch-pro-controller.png"
+    },
+    {
+      "viewport": "mobile",
+      "route": "/catalogo/joy-con-neon-red-neon-blue",
+      "status": 200,
+      "file": "mobile-producto-joy-con-neon-red-neon-blue.png"
+    },
+    {
+      "viewport": "mobile",
+      "route": "/catalogo/grand-theft-auto-vi",
+      "status": 200,
+      "file": "mobile-producto-grand-theft-auto-vi.png"
+    },
+    {
+      "viewport": "mobile",
+      "route": "/catalogo/ea-sports-fc-26",
+      "status": 200,
+      "file": "mobile-producto-ea-sports-fc-26.png"
+    },
+    {
+      "viewport": "mobile",
+      "route": "/catalogo/marvels-spider-man-2",
+      "status": 200,
+      "file": "mobile-producto-marvels-spider-man-2.png"
+    },
+    {
+      "viewport": "mobile",
+      "route": "/catalogo/god-of-war-ragnarok",
+      "status": 200,
+      "file": "mobile-producto-god-of-war-ragnarok.png"
+    },
+    {
+      "viewport": "mobile",
+      "route": "/catalogo/astro-bot",
+      "status": 200,
+      "file": "mobile-producto-astro-bot.png"
+    },
+    {
+      "viewport": "mobile",
+      "route": "/catalogo/call-of-duty-black-ops-7",
+      "status": 200,
+      "file": "mobile-producto-call-of-duty-black-ops-7.png"
+    },
+    {
+      "viewport": "mobile",
+      "route": "/catalogo/forza-horizon-5",
+      "status": 200,
+      "file": "mobile-producto-forza-horizon-5.png"
+    },
+    {
+      "viewport": "mobile",
+      "route": "/catalogo/mario-kart-8-deluxe",
+      "status": 200,
+      "file": "mobile-producto-mario-kart-8-deluxe.png"
+    },
+    {
+      "viewport": "mobile",
+      "route": "/catalogo/the-legend-of-zelda-tears-of-the-kingdom",
+      "status": 200,
+      "file": "mobile-producto-the-legend-of-zelda-tears-of-the-kingdom.png"
+    },
+    {
+      "viewport": "mobile",
+      "route": "/catalogo/super-mario-bros-wonder",
+      "status": 200,
+      "file": "mobile-producto-super-mario-bros-wonder.png"
+    }
+  ]
+}

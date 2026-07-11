@@ -1,8 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="960" height="720" viewBox="0 0 960 720" role="img" aria-label="Juego preventa demo">
-  <rect width="960" height="720" fill="#111318"/>
-  <rect x="310" y="105" width="340" height="500" rx="24" fill="#1B1D23" stroke="#F59E0B" stroke-width="14"/>
-  <circle cx="480" cy="300" r="95" fill="#070707"/>
-  <path d="M480 235v75l50 40" stroke="#F59E0B" stroke-width="24" stroke-linecap="round" stroke-linejoin="round"/>
-  <text x="480" y="500" fill="#FFFFFF" font-family="Arial" font-size="38" font-weight="700" text-anchor="middle">PREVENTA</text>
-  <text x="480" y="548" fill="#A7ACB8" font-family="Arial" font-size="28" font-weight="700" text-anchor="middle">DEMO</text>
-</svg>

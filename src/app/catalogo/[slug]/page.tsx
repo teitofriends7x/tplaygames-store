@@ -19,6 +19,9 @@ import {
   filterCatalog,
   findProductBySlug,
   getProductPrice,
+  getTransferPrice,
+  getTransferSavingsCents,
+  hasTransferDiscount,
 } from "@/lib/catalog";
 import {
   PRODUCT_CONDITION_LABELS,
@@ -84,9 +87,11 @@ export default async function ProductPage({
       priceCurrency: "ARS",
       price: getProductPrice(product) / 100,
       availability:
-        product.stock > 0
-          ? "https://schema.org/InStock"
-          : "https://schema.org/OutOfStock",
+        product.availabilityStatus === "preorder"
+          ? "https://schema.org/PreOrder"
+          : product.stock > 0
+            ? "https://schema.org/InStock"
+            : "https://schema.org/OutOfStock",
     },
   };
   const breadcrumbsSchema = {
@@ -121,13 +126,14 @@ export default async function ProductPage({
   const discountPercent = product.promoPriceCents
     ? Math.round(100 - (product.promoPriceCents / product.priceCents) * 100)
     : 0;
-  const transferPrice =
-    settings.paymentMethods.transfer && settings.transferDiscountPercent
-      ? Math.round(
-          getProductPrice(product) *
-            (1 - settings.transferDiscountPercent / 100),
-        )
-      : undefined;
+  const showTransfer =
+    settings.paymentMethods.transfer && hasTransferDiscount(product);
+  const transferPriceValue = showTransfer
+    ? getTransferPrice(product)
+    : undefined;
+  const transferSavings = showTransfer
+    ? getTransferSavingsCents(product)
+    : 0;
   const activeInstallments = settings.installments?.filter(
     (item) => item.active,
   );
@@ -182,8 +188,8 @@ export default async function ProductPage({
             <span className="badge badge-muted">
               {PRODUCT_CONDITION_LABELS[product.condition]}
             </span>
-            {product.demo ? (
-              <span className="badge badge-green">Demo</span>
+            {product.availabilityStatus === "preorder" ? (
+              <span className="badge badge-blue">Preventa</span>
             ) : null}
           </div>
           <h1 className="mt-4 text-4xl font-black leading-tight text-white md:text-5xl">
@@ -193,23 +199,41 @@ export default async function ProductPage({
             {product.shortDescription}
           </p>
           <div className="mt-6 rounded-2xl border border-white/10 bg-white/[0.03] p-5">
-            {product.promoPriceCents ? (
+            {showTransfer ? (
               <div className="mb-2 flex items-center gap-3">
                 <p className="text-sm text-[#A7ACB8] line-through">
                   {formatARS(product.priceCents)}
                 </p>
                 <span className="badge badge-green">
-                  {discountPercent}% OFF
+                  {discountPercent}% OFF transferencia
                 </span>
               </div>
             ) : null}
             <p className="text-4xl font-black text-white">
               {formatARS(getProductPrice(product))}
             </p>
-            {transferPrice ? (
-              <p className="mt-2 text-sm font-semibold text-[#86EFAC]">
-                {formatARS(transferPrice)} por transferencia configurada
-              </p>
+            {transferPriceValue ? (
+              <>
+                <p className="mt-2 text-lg font-black text-[#86EFAC]">
+                  {formatARS(transferPriceValue)} por transferencia
+                </p>
+                {transferSavings > 0 ? (
+                  <p className="mt-1 text-sm text-[#A7ACB8]">
+                    Ahorrás {formatARS(transferSavings)} pagando por
+                    transferencia
+                  </p>
+                ) : null}
+                <details className="mt-3">
+                  <summary className="cursor-pointer text-xs font-semibold text-[#6EA2FF]">
+                    ¿Cómo funciona?
+                  </summary>
+                  <p className="mt-2 text-xs leading-5 text-[#A7ACB8]">
+                    Seleccionás transferencia al finalizar la compra. Te
+                    mostramos los datos de pago y el pedido queda pendiente
+                    hasta que confirmemos la acreditación.
+                  </p>
+                </details>
+              </>
             ) : null}
             {activeInstallments?.length ? (
               <p className="mt-2 text-sm text-[#A7ACB8]">
@@ -302,11 +326,17 @@ export default async function ProductPage({
               label="Última actualización"
               value={formatDateTimeAR(product.updatedAt)}
             />
+            {product.releaseDateLabel ? (
+              <Spec label="Lanzamiento" value={product.releaseDateLabel} />
+            ) : null}
+            {product.specifications?.map((item) => (
+              <Spec key={item.label} label={item.label} value={item.value} />
+            ))}
           </dl>
           <div className="mt-6 rounded-xl border border-[#1D6DFF]/25 bg-[#1D6DFF]/10 p-4 text-sm leading-6 text-[#C8D9FF]">
-            Este producto demo está pensado para validar navegación, compra y
-            administración. Reemplazá imágenes y textos desde el panel antes de
-            publicar datos comerciales definitivos.
+            Los precios y el stock de este entorno son de prueba y se revalidan
+            en servidor al crear el pedido. Las condiciones comerciales finales
+            se editan desde administración antes de operar en producción.
           </div>
         </aside>
       </section>

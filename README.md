@@ -22,7 +22,9 @@ npm run dev
 
 Abrir `http://localhost:3000`.
 
-Sin credenciales externas, la app usa modo desarrollo con datos demo claramente marcados. No usar esos datos como publicaciones reales.
+Sin credenciales externas, la app usa modo desarrollo con catálogo seed, precios
+temporales y roles de prueba. No usar esos valores como publicaciones
+comerciales finales.
 
 ## Verificación
 
@@ -62,8 +64,22 @@ La segunda fase consolidó una identidad visual premium para T.PlayGames:
 - carrito/checkout/admin pulidos para desktop y mobile;
 - capturas before/after en `artifacts/ui-audit`.
 
-Los productos demo siguen marcados como demo y deben reemplazarse antes del
-lanzamiento.
+## Fase 3 catálogo real
+
+La tercera fase reemplazó los productos genéricos por un catálogo reconocible de
+consolas, controles y juegos:
+
+- 27 productos reales verificados en sitios oficiales de PlayStation, Xbox,
+  Nintendo, Rockstar, EA y Activision/Call of Duty;
+- 72 imágenes WebP en `public/products/{consoles,controllers,games}`;
+- fuentes y observaciones de uso en `docs/PRODUCT_ASSETS_SOURCES.md`;
+- seed local actualizado en `src/lib/demo-data.ts` con slugs/SKUs únicos,
+  galerías, alt text, SEO y especificaciones verificables;
+- Grand Theft Auto VI queda como preventa con fecha oficial
+  `19 de noviembre de 2026`.
+
+Los precios, stock, garantías y condiciones de entrega son valores de desarrollo
+reemplazables desde administración antes de vender.
 
 ## Supabase
 
@@ -118,6 +134,9 @@ Para producción:
 - `docs/ADMIN_OPERATIONS.md`
 - `docs/UI_SYSTEM.md`
 - `docs/CONTENT_GUIDE.md`
+- `docs/IMAGE_ASSETS.md`
+- `docs/PRODUCT_ASSETS_SOURCES.md`
+- `docs/UI_AUDIT.md`
 - `docs/IMAGE_ASSETS.md`
 - `docs/UI_AUDIT.md`
 - `docs/LAUNCH_CHECKLIST.md`

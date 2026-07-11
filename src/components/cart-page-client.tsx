@@ -28,6 +28,21 @@ export function CartPageClient({ products }: { products: Product[] }) {
     [coupon, items, products, province],
   );
 
+  const transferCart = useMemo(
+    () =>
+      calculateCart({
+        items,
+        couponCode: coupon,
+        province,
+        products,
+        paymentMethod: "transfer",
+      }),
+    [coupon, items, products, province],
+  );
+
+  const transferSavings =
+    cart.totals.totalCents - transferCart.totals.totalCents;
+
   function updateItem(
     productId: string,
     variantId: string | undefined,
@@ -99,12 +114,13 @@ export function CartPageClient({ products }: { products: Product[] }) {
                   src={line.product.mainImage}
                   alt={line.product.images[0]?.alt ?? line.product.name}
                   fill
+                  unoptimized
                   sizes="128px"
                   placeholder={
                     line.product.images[0]?.blurDataUrl ? "blur" : "empty"
                   }
                   blurDataURL={line.product.images[0]?.blurDataUrl}
-                  className="object-cover"
+                  className="object-contain p-2"
                 />
               </Link>
               <div className="min-w-0">
@@ -236,6 +252,20 @@ export function CartPageClient({ products }: { products: Product[] }) {
         <div className="mt-4 border-t border-white/10 pt-4">
           <SummaryRow label="Total" value={cart.totals.totalCents} strong />
         </div>
+        {transferSavings > 0 ? (
+          <div className="mt-3 rounded-xl border border-[#22C55E]/25 bg-[#22C55E]/10 p-3 text-sm text-[#C7F8D9]">
+            <p className="font-bold">
+              Podés ahorrar {formatARS(transferSavings)} pagando por
+              transferencia.
+            </p>
+            <p className="mt-1 text-xs text-[#A7ACB8]">
+              Total estimado por transferencia:{" "}
+              <span className="font-bold text-[#86EFAC]">
+                {formatARS(transferCart.totals.totalCents)}
+              </span>
+            </p>
+          </div>
+        ) : null}
         {cart.warnings.length ? (
           <ul className="mt-4 space-y-2 text-sm text-[#F59E0B]">
             {cart.warnings.map((warning) => (

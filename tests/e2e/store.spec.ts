@@ -6,9 +6,7 @@ test("flujo e2e mixto: catalogo, carrito, checkout, pago dev y entrega digital",
   await page.goto("/catalogo");
   await expect(page.getByRole("heading", { name: "Catálogo" })).toBeVisible();
 
-  await page
-    .getByRole("link", { name: /^Juego digital de ejemplo \(demo\)$/ })
-    .click();
+  await page.getByRole("link", { name: /^Forza Horizon 5$/ }).click();
   await page.getByRole("button", { name: "Comprar" }).click();
   await expect
     .poll(async () =>
@@ -19,7 +17,7 @@ test("flujo e2e mixto: catalogo, carrito, checkout, pago dev y entrega digital",
     )
     .toBe(1);
 
-  await page.goto("/catalogo/juego-fisico-demo");
+  await page.goto("/catalogo/god-of-war-ragnarok");
   await page.getByRole("button", { name: "Comprar" }).click();
   await expect
     .poll(async () =>

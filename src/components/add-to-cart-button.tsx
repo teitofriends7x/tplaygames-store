@@ -16,12 +16,14 @@ export function AddToCartButton({
   quantity = 1,
   compact = false,
   disabled = false,
+  disabledLabel = "Sin stock",
 }: {
   productId: string;
   variantId?: string;
   quantity?: number;
   compact?: boolean;
   disabled?: boolean;
+  disabledLabel?: string;
 }) {
   const [added, setAdded] = useState(false);
 
@@ -41,7 +43,7 @@ export function AddToCartButton({
     >
       <ShoppingCart className="h-4 w-4" />
       {disabled
-        ? "Sin stock"
+        ? disabledLabel
         : added
           ? "Agregado"
           : compact

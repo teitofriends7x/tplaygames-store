@@ -33,13 +33,44 @@ export function getPublishedProducts(products = demoProducts): Product[] {
 }
 
 export function getProductPrice(product: Product): number {
+  return product.priceCents;
+}
+
+export function getTransferPrice(product: Product): number {
+  if (!product.transferEnabled) {
+    return product.priceCents;
+  }
   return product.promoPriceCents ?? product.priceCents;
+}
+
+export function hasTransferDiscount(product: Product): boolean {
+  return (
+    product.transferEnabled &&
+    product.promoPriceCents !== undefined &&
+    product.promoPriceCents < product.priceCents
+  );
+}
+
+export function getTransferSavingsCents(product: Product): number {
+  if (!hasTransferDiscount(product) || !product.promoPriceCents) {
+    return 0;
+  }
+  return product.priceCents - product.promoPriceCents;
 }
 
 export function getVariantPrice(product: Product, variantId?: string): number {
   const variant = product.variants.find((item) => item.id === variantId);
 
   return variant?.priceCents ?? getProductPrice(product);
+}
+
+export function getVariantTransferPrice(
+  product: Product,
+  variantId?: string,
+): number {
+  const variant = product.variants.find((item) => item.id === variantId);
+
+  return variant?.priceCents ?? getTransferPrice(product);
 }
 
 export function getProductStock(product: Product, variantId?: string): number {

@@ -70,12 +70,12 @@ export default function Home() {
             <div className="tpg-card overflow-hidden p-3 shadow-[0_32px_90px_rgba(29,109,255,0.18)]">
               <div className="relative aspect-[4/3] overflow-hidden rounded-xl bg-[#111318]">
                 <Image
-                  src="/brand/hero-tplaygames.svg"
-                  alt="Composición original de T.PlayGames con consola y control"
+                  src="/products/consoles/ps5-slim-digital-console-dualsense.webp"
+                  alt="PlayStation 5 Slim con control DualSense"
                   fill
                   priority
                   sizes="(max-width: 1024px) 100vw, 560px"
-                  className="object-cover"
+                  className="object-contain p-6"
                 />
               </div>
               {promoProduct ? (
@@ -179,8 +179,8 @@ export default function Home() {
             <div className="mt-6 grid gap-5 md:grid-cols-3">
               {[
                 [
-                  "¿Los productos demo son reales?",
-                  "No. Están marcados para desarrollo y deben reemplazarse antes de vender.",
+                  "¿Los precios son finales?",
+                  "En este entorno son valores de prueba. En producción se cargan desde administración antes de vender.",
                 ],
                 [
                   "¿Cómo se entregan juegos digitales?",
@@ -248,7 +248,7 @@ function CategoryCard({ category }: { category: (typeof CATEGORIES)[number] }) {
           alt={`Categoría ${category}`}
           fill
           sizes="(max-width: 768px) 100vw, 33vw"
-          className="object-cover transition duration-300 group-hover:scale-[1.03]"
+          className="object-contain p-8 transition duration-300 group-hover:scale-[1.03]"
         />
       </div>
       <div className="p-5">

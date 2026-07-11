@@ -3,10 +3,8 @@ import { join } from "node:path";
 
 const root = process.cwd();
 const brandDir = join(root, "public", "brand");
-const productDir = join(brandDir, "products");
 const categoryDir = join(brandDir, "categories");
 
-mkdirSync(productDir, { recursive: true });
 mkdirSync(categoryDir, { recursive: true });
 
 const palette = {
@@ -49,99 +47,6 @@ function svg(content, { label = "T.PlayGames asset", w = 1200, h = 900 } = {}) {
   </g>
   ${content}
 </svg>`;
-}
-
-function consoleArt(accent, label, variant = "front") {
-  const side = variant === "angle" ? "rotate(-7 620 446)" : "";
-  const details =
-    variant === "detail"
-      ? `<circle cx="746" cy="278" r="18" fill="${accent}"/><rect x="712" y="328" width="92" height="9" rx="5" fill="${palette.muted}" opacity=".55"/><rect x="712" y="354" width="118" height="9" rx="5" fill="${palette.muted}" opacity=".38"/>`
-      : `<circle cx="750" cy="286" r="14" fill="${accent}"/><rect x="724" y="340" width="76" height="8" rx="4" fill="${palette.muted}" opacity=".5"/>`;
-
-  return svg(
-    `<g filter="url(#softShadow)" transform="${side}">
-      <rect x="220" y="170" width="620" height="506" rx="54" fill="url(#glass)" stroke="${palette.line}" stroke-width="3"/>
-      <rect x="336" y="232" width="290" height="354" rx="38" fill="#F5F7FB"/>
-      <rect x="646" y="242" width="86" height="330" rx="28" fill="#050608"/>
-      ${details}
-      <rect x="280" y="632" width="520" height="54" rx="18" fill="#050608" opacity=".5"/>
-      <text x="540" y="667" fill="${palette.white}" font-family="Inter,Arial" font-size="28" font-weight="800" text-anchor="middle">${label}</text>
-    </g>`,
-    { label },
-  );
-}
-
-function towerArt(accent, label, variant = "front") {
-  const extra =
-    variant === "detail"
-      ? `<path d="M510 244 l118 118 M628 244 l-118 118" stroke="${accent}" stroke-width="28" stroke-linecap="round"/>`
-      : `<circle cx="570" cy="282" r="58" fill="${accent}"/><path d="M532 244 l76 76 M608 244 l-76 76" stroke="#050608" stroke-width="20" stroke-linecap="round"/>`;
-
-  return svg(
-    `<g filter="url(#softShadow)">
-      <rect x="390" y="130" width="360" height="640" rx="48" fill="url(#glass)" stroke="${palette.line}" stroke-width="3"/>
-      <rect x="478" y="210" width="184" height="424" rx="28" fill="#050608"/>
-      ${extra}
-      <rect x="432" y="668" width="276" height="54" rx="18" fill="#050608" opacity=".55"/>
-      <text x="570" y="703" fill="${palette.white}" font-family="Inter,Arial" font-size="28" font-weight="800" text-anchor="middle">${label}</text>
-    </g>`,
-    { label },
-  );
-}
-
-function handheldArt(left, right, label, variant = "front") {
-  const tilt = variant === "angle" ? "rotate(4 600 440)" : "";
-  return svg(
-    `<g filter="url(#softShadow)" transform="${tilt}">
-      <rect x="178" y="244" width="844" height="412" rx="64" fill="url(#glass)" stroke="${palette.line}" stroke-width="3"/>
-      <rect x="306" y="292" width="590" height="292" rx="26" fill="#050608"/>
-      <rect x="198" y="272" width="118" height="360" rx="48" fill="${left}"/>
-      <rect x="884" y="272" width="118" height="360" rx="48" fill="${right}"/>
-      <circle cx="254" cy="390" r="24" fill="#050608" opacity=".72"/>
-      <circle cx="946" cy="420" r="18" fill="#050608" opacity=".72"/>
-      <circle cx="946" cy="360" r="18" fill="#050608" opacity=".72"/>
-      <text x="600" y="714" fill="${palette.white}" font-family="Inter,Arial" font-size="32" font-weight="800" text-anchor="middle">${label}</text>
-    </g>`,
-    { label },
-  );
-}
-
-function controllerArt(accent, label, variant = "front") {
-  const extra =
-    variant === "detail"
-      ? `<rect x="306" y="318" width="106" height="18" rx="9" fill="#050608"/><rect x="350" y="274" width="18" height="106" rx="9" fill="#050608"/>`
-      : `<circle cx="386" cy="344" r="34" fill="#050608"/><circle cx="744" cy="340" r="15" fill="${palette.blue2}"/><circle cx="792" cy="386" r="15" fill="${palette.green}"/><circle cx="698" cy="386" r="15" fill="${palette.red}"/>`;
-
-  return svg(
-    `<g filter="url(#softShadow)">
-      <path d="M300 342c74-128 526-128 600 0 72 126 116 292 48 336-58 38-134-32-192-112H444c-58 80-134 150-192 112-68-44-24-210 48-336z" fill="#F5F7FB"/>
-      <path d="M300 342c74-128 526-128 600 0" fill="none" stroke="${accent}" stroke-width="18" stroke-linecap="round" opacity=".72"/>
-      ${extra}
-      <rect x="480" y="406" width="240" height="26" rx="13" fill="#050608" opacity=".18"/>
-      <text x="600" y="742" fill="${palette.white}" font-family="Inter,Arial" font-size="32" font-weight="800" text-anchor="middle">${label}</text>
-    </g>`,
-    { label },
-  );
-}
-
-function gameArt(accent, label, variant = "case") {
-  const digital = variant === "digital";
-  const preorder = variant === "preorder";
-  return svg(
-    `<g filter="url(#softShadow)">
-      <rect x="${digital ? 250 : 386}" y="${digital ? 184 : 116}" width="${digital ? 700 : 430}" height="${digital ? 430 : 660}" rx="${digital ? 46 : 34}" fill="url(#glass)" stroke="${accent}" stroke-width="14"/>
-      ${
-        preorder
-          ? `<circle cx="600" cy="392" r="112" fill="#050608"/><path d="M600 304v104l78 56" stroke="${accent}" stroke-width="28" stroke-linecap="round" stroke-linejoin="round"/>`
-          : digital
-            ? `<rect x="350" y="274" width="500" height="250" rx="34" fill="#050608"/><path d="M600 316v146M540 408l60 60 60-60" fill="none" stroke="${palette.green}" stroke-width="34" stroke-linecap="round" stroke-linejoin="round"/>`
-            : `<rect x="440" y="178" width="322" height="262" rx="24" fill="#050608"/><path d="M472 386l90-112 68 80 50-56 82 88" fill="none" stroke="${accent}" stroke-width="22" stroke-linecap="round" stroke-linejoin="round"/>`
-      }
-      <text x="600" y="${digital ? 642 : 604}" fill="${palette.white}" font-family="Inter,Arial" font-size="42" font-weight="900" text-anchor="middle">${label}</text>
-      <text x="600" y="${digital ? 690 : 656}" fill="${palette.muted}" font-family="Inter,Arial" font-size="24" font-weight="700" text-anchor="middle">T.PLAYGAMES DEMO</text>
-    </g>`,
-    { label },
-  );
 }
 
 function categoryArt(kind) {
@@ -198,69 +103,6 @@ function heroArt() {
     </g>`,
     { label: "Hero T.PlayGames" },
   );
-}
-
-const products = [
-  [
-    "consola-playstation-demo",
-    () => consoleArt(palette.blue, "PLAYSTATION DEMO"),
-    () => consoleArt(palette.blue2, "VISTA LATERAL", "angle"),
-    () => consoleArt(palette.blue, "DETALLE DEMO", "detail"),
-  ],
-  [
-    "consola-xbox-demo",
-    () => towerArt(palette.green, "XBOX DEMO"),
-    () => towerArt(palette.green, "VISTA LATERAL", "angle"),
-    () => towerArt(palette.green, "DETALLE DEMO", "detail"),
-  ],
-  [
-    "consola-nintendo-demo",
-    () => handheldArt(palette.red, palette.blue, "NINTENDO DEMO"),
-    () => handheldArt(palette.red, palette.blue, "MODO PORTATIL", "angle"),
-    () => handheldArt(palette.red, palette.blue, "DETALLE DEMO", "detail"),
-  ],
-  [
-    "control-playstation-demo",
-    () => controllerArt(palette.blue, "CONTROL PS DEMO"),
-    () => controllerArt(palette.blue2, "VISTA ANGULAR", "angle"),
-    () => controllerArt(palette.blue, "DETALLE DEMO", "detail"),
-  ],
-  [
-    "control-xbox-demo",
-    () => controllerArt(palette.green, "CONTROL XBOX DEMO"),
-    () => controllerArt(palette.green, "VISTA ANGULAR", "angle"),
-    () => controllerArt(palette.green, "DETALLE DEMO", "detail"),
-  ],
-  [
-    "control-nintendo-demo",
-    () => controllerArt(palette.red, "CONTROL NINTENDO DEMO"),
-    () => controllerArt(palette.blue, "VISTA ANGULAR", "angle"),
-    () => controllerArt(palette.red, "DETALLE DEMO", "detail"),
-  ],
-  [
-    "juego-fisico-demo",
-    () => gameArt(palette.blue, "JUEGO FISICO"),
-    () => gameArt(palette.blue2, "ARTE DEMO", "case"),
-    () => gameArt(palette.green, "CAJA DEMO", "case"),
-  ],
-  [
-    "juego-digital-demo",
-    () => gameArt(palette.green, "JUEGO DIGITAL", "digital"),
-    () => gameArt(palette.blue, "DESCARGA DEMO", "digital"),
-    () => gameArt(palette.green, "ENTREGA MANUAL", "digital"),
-  ],
-  [
-    "juego-preventa-demo",
-    () => gameArt(palette.amber, "PREVENTA", "preorder"),
-    () => gameArt(palette.amber, "RESERVA DEMO", "preorder"),
-    () => gameArt(palette.blue, "PROXIMAMENTE", "preorder"),
-  ],
-];
-
-for (const [slug, main, alt1, alt2] of products) {
-  writeFileSync(join(productDir, `${slug}-main.svg`), main());
-  writeFileSync(join(productDir, `${slug}-angle.svg`), alt1());
-  writeFileSync(join(productDir, `${slug}-detail.svg`), alt2());
 }
 
 writeFileSync(join(brandDir, "hero-tplaygames.svg"), heroArt());

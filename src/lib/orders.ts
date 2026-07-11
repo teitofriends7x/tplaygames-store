@@ -10,6 +10,7 @@ import type {
   Order,
   OrderItemSnapshot,
   OrderStatus,
+  PaymentMethod,
   PaymentStatus,
   Product,
   Role,
@@ -23,6 +24,7 @@ export type CreateOrderInput = {
   province?: string;
   notes?: string;
   couponCode?: string;
+  paymentMethod?: PaymentMethod;
   termsAccepted: boolean;
   userId?: string;
   products: Product[];
@@ -34,12 +36,20 @@ export function createOrderFromCart(input: CreateOrderInput): Order {
     throw new Error("Debe aceptar los terminos y condiciones.");
   }
 
+  const paymentMethod: PaymentMethod = input.paymentMethod ?? "mercadopago";
+  const isTransfer = paymentMethod === "transfer";
+
+  if (isTransfer && !input.settings.paymentMethods.transfer) {
+    throw new Error("El método de pago por transferencia no está habilitado.");
+  }
+
   const cart = calculateCart({
     items: input.items,
     couponCode: input.couponCode,
     province: input.province ?? input.address?.province,
     products: input.products,
     settings: input.settings,
+    paymentMethod,
   });
 
   if (!cart.lines.length) {
@@ -75,6 +85,11 @@ export function createOrderFromCart(input: CreateOrderInput): Order {
     totalCents: line.lineTotalCents,
   }));
 
+  const expirationHours = input.settings.transferExpirationHours ?? 24;
+  const transferExpiresAt = isTransfer
+    ? new Date(Date.now() + expirationHours * 60 * 60 * 1000).toISOString()
+    : undefined;
+
   return {
     id: orderId,
     orderNumber: buildOrderNumber(createdAt),
@@ -82,6 +97,8 @@ export function createOrderFromCart(input: CreateOrderInput): Order {
     customer: input.customer,
     address: input.address,
     deliveryMethod,
+    paymentMethod,
+    transferExpiresAt,
     notes: input.notes,
     items,
     totals: cart.totals,
@@ -96,7 +113,9 @@ export function createOrderFromCart(input: CreateOrderInput): Order {
         createdAt,
         actorId: input.userId,
         actorRole: input.userId ? "customer" : undefined,
-        internalComment: "Pedido creado desde checkout.",
+        internalComment: isTransfer
+          ? `Pedido creado desde checkout. Pago por transferencia. Vence: ${transferExpiresAt}.`
+          : "Pedido creado desde checkout.",
       },
     ],
     createdAt,

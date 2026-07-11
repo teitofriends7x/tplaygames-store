@@ -1,6 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="960" height="720" viewBox="0 0 960 720" role="img" aria-label="Juego digital demo">
-  <rect width="960" height="720" fill="#111318"/>
-  <rect x="220" y="160" width="520" height="360" rx="30" fill="#070707" stroke="#1D6DFF" stroke-width="14"/>
-  <path d="M480 235v150M420 325l60 60 60-60" fill="none" stroke="#22C55E" stroke-width="28" stroke-linecap="round" stroke-linejoin="round"/>
-  <text x="480" y="610" fill="#FFFFFF" font-family="Arial" font-size="38" font-weight="700" text-anchor="middle">DIGITAL DEMO</text>
-</svg>

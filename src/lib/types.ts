@@ -1,6 +1,7 @@
 import type {
   CATEGORIES,
   ORDER_STATUSES,
+  PAYMENT_METHODS,
   PAYMENT_STATUSES,
   PLATFORMS,
   PRODUCT_CONDITIONS,
@@ -14,9 +15,12 @@ export type PlatformName = (typeof PLATFORMS)[number];
 export type ProductType = (typeof PRODUCT_TYPES)[number];
 export type ProductCondition = (typeof PRODUCT_CONDITIONS)[number];
 export type PublicationStatus = (typeof PRODUCT_PUBLICATION_STATUSES)[number];
+export type ProductAvailabilityStatus =
+  "available" | "preorder" | "out_of_stock";
 export type Role = (typeof ROLES)[number];
 export type OrderStatus = (typeof ORDER_STATUSES)[number];
 export type PaymentStatus = (typeof PAYMENT_STATUSES)[number];
+export type PaymentMethod = (typeof PAYMENT_METHODS)[number];
 
 export type ProductImage = {
   id: string;
@@ -46,6 +50,11 @@ export type ProductVariant = {
   available: boolean;
 };
 
+export type ProductSpecification = {
+  label: string;
+  value: string;
+};
+
 export type Product = {
   id: string;
   slug: string;
@@ -69,13 +78,18 @@ export type Product = {
   features: string[];
   warranty: string;
   deliveryTerms: string;
+  availabilityStatus?: ProductAvailabilityStatus;
+  releaseDate?: string;
+  releaseDateLabel?: string;
   publicationStatus: PublicationStatus;
   featured: boolean;
   offer: boolean;
+  transferEnabled: boolean;
   createdAt: string;
   updatedAt: string;
   seoTitle: string;
   seoDescription: string;
+  specifications?: ProductSpecification[];
   variants: ProductVariant[];
   demo: boolean;
 };
@@ -214,6 +228,8 @@ export type Order = {
   customer: CustomerSnapshot;
   address?: AddressSnapshot;
   deliveryMethod: DeliveryMethod;
+  paymentMethod?: PaymentMethod;
+  transferExpiresAt?: string;
   notes?: string;
   items: OrderItemSnapshot[];
   totals: CartTotals;
@@ -237,6 +253,12 @@ export type Banner = {
   active: boolean;
 };
 
+export type TransferAccount = {
+  alias: string;
+  cvu: string;
+  accountHolder: string;
+};
+
 export type StoreSettings = {
   pickupEnabled: boolean;
   pickupLabel?: string;
@@ -249,6 +271,8 @@ export type StoreSettings = {
     mercadoPago: boolean;
     transfer: boolean;
   };
+  transferAccount?: TransferAccount;
+  transferExpirationHours: number;
   transferDiscountPercent?: number;
   installments?: {
     label: string;

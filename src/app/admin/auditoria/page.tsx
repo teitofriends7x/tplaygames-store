@@ -16,7 +16,7 @@ export default function AdminAuditPage() {
           <EmptyState
             icon={ScrollText}
             title="No hay eventos administrativos todavía"
-            body="Las acciones de productos, pedidos y entregas se registran en este entorno demo cuando se ejecutan."
+            body="Las acciones de productos, pedidos y entregas se registran en este entorno de prueba cuando se ejecutan."
           />
         </div>
       ) : (

@@ -25,7 +25,7 @@ export default function AdminInventoryPage() {
       </div>
       <div className="mt-6 grid gap-4 md:grid-cols-3">
         <Metric
-          label="Productos publicados/demo"
+          label="Productos seed/publicados"
           value={String(products.length)}
         />
         <Metric
@@ -69,8 +69,9 @@ export default function AdminInventoryPage() {
                           src={product.mainImage}
                           alt={product.images[0]?.alt ?? product.name}
                           fill
+                          unoptimized
                           sizes="48px"
-                          className="object-cover"
+                          className="object-contain p-1"
                         />
                       </div>
                       <div>

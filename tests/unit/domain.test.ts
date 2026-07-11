@@ -23,10 +23,13 @@ import {
   resetDemoStore,
 } from "@/lib/store";
 
-const physicalItem = { productId: "prod-game-physical-demo", quantity: 2 };
+const physicalItem = {
+  productId: "prod-game-god-of-war-ragnarok",
+  quantity: 2,
+};
 const digitalItem = {
-  productId: "prod-game-digital-demo",
-  variantId: "var-game-digital-pc",
+  productId: "prod-game-forza-horizon-5",
+  variantId: "var-forza-horizon-5-xbox-digital",
   quantity: 1,
 };
 
@@ -45,8 +48,21 @@ describe("carrito y precios", () => {
       settings: defaultStoreSettings,
     });
 
-    expect(cart.lines[0]?.unitPriceCents).toBe(6_400_000);
-    expect(cart.totals.productDiscountCents).toBe(1_600_000);
+    expect(cart.lines[0]?.unitPriceCents).toBe(6_900_000);
+    expect(cart.totals.productDiscountCents).toBe(0);
+    expect(cart.totals.totalCents).toBeGreaterThan(0);
+  });
+
+  it("aplica precio por transferencia cuando se selecciona ese metodo", () => {
+    const cart = calculateCart({
+      items: [physicalItem],
+      products: demoProducts,
+      settings: defaultStoreSettings,
+      paymentMethod: "transfer",
+    });
+
+    expect(cart.lines[0]?.unitPriceCents).toBe(6_200_000);
+    expect(cart.totals.productDiscountCents).toBe(1_400_000);
     expect(cart.totals.totalCents).toBeGreaterThan(0);
   });
 
@@ -79,12 +95,12 @@ describe("carrito y precios", () => {
 
   it("ajusta cantidades al stock disponible", () => {
     const cart = calculateCart({
-      items: [{ productId: "prod-game-physical-demo", quantity: 999 }],
+      items: [{ productId: "prod-game-god-of-war-ragnarok", quantity: 999 }],
       products: demoProducts,
       settings: defaultStoreSettings,
     });
 
-    expect(cart.lines[0]?.quantity).toBe(20);
+    expect(cart.lines[0]?.quantity).toBe(16);
     expect(cart.warnings.some((warning) => warning.includes("stock"))).toBe(
       true,
     );
@@ -109,7 +125,7 @@ describe("pedidos", () => {
 
     expect(order.deliveryMethod).toBe("mixed");
     expect(order.items).toHaveLength(2);
-    expect(order.items[0]?.productName).toContain("demo");
+    expect(order.items[0]?.productName).toBe("God of War Ragnarok");
   });
 
   it("impide checkout fisico sin domicilio", () => {

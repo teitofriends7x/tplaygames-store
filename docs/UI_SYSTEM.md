@@ -25,7 +25,7 @@ Los tokens base viven en `src/app/globals.css`:
 - `btn`, `btn-primary`, `btn-secondary`: botones con hover, active, disabled y
   focus accesible.
 - `icon-button`: botones de icono para header, favoritos y galería.
-- `badge`: estados, formato, stock, demo y descuentos.
+- `badge`: estados, formato, stock, preventa, datos de prueba y descuentos.
 - `form-control` / `input`: inputs, selects y textareas.
 - `admin-table`: tablas operativas con scroll horizontal controlado.
 - `skeleton`: shimmer respetando `prefers-reduced-motion`.

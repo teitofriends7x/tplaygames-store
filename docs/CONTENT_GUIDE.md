@@ -22,11 +22,12 @@ gamer y cercano, pero sin exagerar jerga ni prometer beneficios no configurados.
 - "Entrega inmediata" para productos digitales manuales.
 - Licencias, códigos o fechas de preventa ficticias.
 
-## Demo
+## Catálogo seed
 
-La tienda pública debe verse presentable aunque use datos demo. El panel debe
-mantener la marca "Demo" y recordar que imágenes, precios, stock, garantías y
-textos legales deben reemplazarse antes del lanzamiento.
+La tienda pública muestra productos reales con nombres, plataformas e imágenes
+verificadas. El panel debe recordar que precios, stock, garantías, condiciones
+de entrega y permisos comerciales de assets siguen siendo datos de prueba hasta
+que se confirme la operación real.
 
 ## Legales
 
@@ -36,7 +37,8 @@ pendientes.
 
 ## Pendientes comerciales
 
-- Catálogo real.
+- Confirmación comercial de precios y stock.
+- Permiso final de uso comercial de assets oficiales con proveedor/distribuidor.
 - Condiciones reales de envíos por zona.
 - Garantía y devoluciones.
 - Punto de retiro, si aplica.

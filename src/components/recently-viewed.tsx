@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useSyncExternalStore } from "react";
 
 import { ProductCard } from "@/components/product-card";
 import type { Product } from "@/lib/types";
@@ -14,17 +14,21 @@ export function RecentlyViewedProducts({
   currentProductId: string;
   products: Product[];
 }) {
-  const [ids] = useState<string[]>(() => {
-    if (typeof window === "undefined") {
-      return [currentProductId];
-    }
-
-    return buildRecentlyViewed(currentProductId);
-  });
+  const snapshot = useSyncExternalStore(
+    subscribeRecentlyViewed,
+    getRecentlyViewedSnapshot,
+    getRecentlyViewedServerSnapshot,
+  );
+  const ids = useMemo(() => parseRecentlyViewed(snapshot), [snapshot]);
 
   useEffect(() => {
-    localStorage.setItem(KEY, JSON.stringify(ids));
-  }, [ids]);
+    const nextIds = buildRecentlyViewed(currentProductId);
+    const nextSnapshot = JSON.stringify(nextIds);
+    if (localStorage.getItem(KEY) !== nextSnapshot) {
+      localStorage.setItem(KEY, nextSnapshot);
+      window.dispatchEvent(new Event("tplaygames:recently-viewed"));
+    }
+  }, [currentProductId]);
 
   const viewed = useMemo(
     () =>
@@ -68,5 +72,34 @@ function buildRecentlyViewed(currentProductId: string) {
     ].slice(0, 8);
   } catch {
     return [currentProductId];
+  }
+}
+
+function subscribeRecentlyViewed(callback: () => void) {
+  window.addEventListener("storage", callback);
+  window.addEventListener("tplaygames:recently-viewed", callback);
+
+  return () => {
+    window.removeEventListener("storage", callback);
+    window.removeEventListener("tplaygames:recently-viewed", callback);
+  };
+}
+
+function getRecentlyViewedSnapshot() {
+  return localStorage.getItem(KEY) ?? "[]";
+}
+
+function getRecentlyViewedServerSnapshot() {
+  return "[]";
+}
+
+function parseRecentlyViewed(snapshot: string) {
+  try {
+    const ids = JSON.parse(snapshot) as unknown;
+    return Array.isArray(ids)
+      ? ids.filter((id): id is string => typeof id === "string")
+      : [];
+  } catch {
+    return [];
   }
 }

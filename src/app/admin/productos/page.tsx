@@ -13,8 +13,9 @@ export default function AdminProductsPage() {
       <p className="section-eyebrow">Catálogo</p>
       <h1 className="mt-2 text-3xl font-black text-white">Productos</h1>
       <p className="mt-3 max-w-3xl text-sm leading-6 text-[#A7ACB8]">
-        Los productos demo permiten validar compra y administración. Antes de
-        producir, reemplazá imágenes, descripción, stock y condiciones reales.
+        El catálogo seed usa productos reales verificados e imágenes oficiales,
+        pero precios, stock y condiciones siguen siendo datos de prueba
+        reemplazables antes de vender.
       </p>
       <div className="mt-6">
         <ProductAdminForm />
@@ -41,14 +42,17 @@ export default function AdminProductsPage() {
                         src={product.mainImage}
                         alt={product.images[0]?.alt ?? product.name}
                         fill
+                        unoptimized
                         sizes="48px"
-                        className="object-cover"
+                        className="object-contain p-1"
                       />
                     </div>
                     <div>
                       <p className="font-black text-white">{product.name}</p>
                       <p className="text-xs text-[#A7ACB8]">
-                        {product.demo ? "Demo" : product.publicationStatus}
+                        {product.demo
+                          ? "Datos de prueba"
+                          : product.publicationStatus}
                       </p>
                     </div>
                   </div>

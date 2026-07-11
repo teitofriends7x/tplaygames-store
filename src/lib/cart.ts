@@ -1,4 +1,8 @@
-import { getProductStock, getVariantPrice } from "@/lib/catalog";
+import {
+  getProductStock,
+  getTransferPrice,
+  getVariantPrice,
+} from "@/lib/catalog";
 import { demoCoupons, defaultStoreSettings } from "@/lib/demo-data";
 import { clampCents } from "@/lib/money";
 import { validateCoupon } from "@/lib/coupons";
@@ -7,6 +11,7 @@ import type {
   CartItemInput,
   CartLine,
   Coupon,
+  PaymentMethod,
   Product,
   StoreSettings,
 } from "@/lib/types";
@@ -19,6 +24,7 @@ export type CalculateCartOptions = {
   coupons?: Coupon[];
   settings?: StoreSettings;
   isFirstPurchase?: boolean;
+  paymentMethod?: PaymentMethod;
 };
 
 export function normalizeCartItems(items: CartItemInput[]): CartItemInput[] {
@@ -51,7 +57,9 @@ export function calculateCart({
   coupons = demoCoupons,
   settings = defaultStoreSettings,
   isFirstPurchase,
+  paymentMethod,
 }: CalculateCartOptions): CartCalculation {
+  const isTransfer = paymentMethod === "transfer";
   const warnings: string[] = [];
   const lines: CartLine[] = [];
 
@@ -87,7 +95,14 @@ export function calculateCart({
     }
 
     const originalUnitPriceCents = product.priceCents;
-    const unitPriceCents = getVariantPrice(product, variant?.id);
+    let unitPriceCents: number;
+
+    if (isTransfer) {
+      unitPriceCents = variant?.priceCents ?? getTransferPrice(product);
+    } else {
+      unitPriceCents = getVariantPrice(product, variant?.id);
+    }
+
     const lineSubtotalCents = originalUnitPriceCents * quantity;
     const lineTotalCents = unitPriceCents * quantity;
     const lineDiscountCents = Math.max(0, lineSubtotalCents - lineTotalCents);

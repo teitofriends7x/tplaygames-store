@@ -3,6 +3,7 @@ import { z } from "zod";
 import {
   CATEGORIES,
   ORDER_STATUSES,
+  PAYMENT_METHODS,
   PLATFORMS,
   PRODUCT_CONDITIONS,
   PRODUCT_PUBLICATION_STATUSES,
@@ -39,6 +40,7 @@ export const checkoutSchema = z.object({
   address: addressSchema,
   notes: z.string().trim().max(500).optional(),
   couponCode: z.string().trim().max(40).optional(),
+  paymentMethod: z.enum(PAYMENT_METHODS).optional().default("mercadopago"),
   termsAccepted: z.literal(true),
 });
 

@@ -1,7 +1,9 @@
 # Checklist de lanzamiento
 
-- [ ] Reemplazar o eliminar todos los productos demo.
-- [ ] Reemplazar assets demo de `public/brand/products` por imágenes reales con licencia/procedencia clara.
+- [x] Reemplazar productos genéricos por catálogo real verificado.
+- [x] Documentar imágenes reales en `docs/PRODUCT_ASSETS_SOURCES.md`.
+- [ ] Confirmar permiso comercial definitivo de cada asset oficial con proveedor/distribuidor.
+- [ ] Reemplazar precios, stock y garantías de prueba por condiciones comerciales reales.
 - [ ] Cargar imágenes de categorías y hero definitivas si la marca cambia.
 - [ ] Configurar Supabase real.
 - [ ] Verificar RLS con usuario cliente, operador y administrador.

@@ -28,11 +28,12 @@ export function ProductGallery({
             src={active.url}
             alt={active.alt}
             fill
+            unoptimized
             priority
             sizes="(max-width: 1024px) 100vw, 760px"
             placeholder="blur"
             blurDataURL={active.blurDataUrl ?? fallbackBlur}
-            className="object-cover transition duration-300 group-hover:scale-[1.015]"
+            className="object-contain p-4 transition duration-300 group-hover:scale-[1.015]"
           />
         ) : (
           <div className="grid h-full place-items-center text-[#A7ACB8]">
@@ -66,10 +67,11 @@ export function ProductGallery({
                 src={image.url}
                 alt={image.alt}
                 fill
+                unoptimized
                 sizes="140px"
                 placeholder="blur"
                 blurDataURL={image.blurDataUrl ?? fallbackBlur}
-                className="object-cover"
+                className="object-contain p-2"
               />
             </button>
           ))}
@@ -94,6 +96,7 @@ export function ProductGallery({
               src={active.url}
               alt={active.alt}
               fill
+              unoptimized
               sizes="100vw"
               placeholder="blur"
               blurDataURL={active.blurDataUrl ?? fallbackBlur}

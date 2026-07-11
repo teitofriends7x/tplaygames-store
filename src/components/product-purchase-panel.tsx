@@ -15,11 +15,13 @@ export function ProductPurchasePanel({ product }: { product: Product }) {
   const [added, setAdded] = useState(false);
   const variant = product.variants.find((item) => item.id === variantId);
   const stock = variant ? variant.stock : product.stock;
+  const isPreorder = product.availabilityStatus === "preorder";
   const price = useMemo(
     () => getVariantPrice(product, variantId),
     [product, variantId],
   );
-  const isAvailable = stock > 0 && (variant ? variant.available : true);
+  const isAvailable =
+    !isPreorder && stock > 0 && (variant ? variant.available : true);
 
   function addProduct() {
     addCartItem({ productId: product.id, variantId, quantity });
@@ -60,10 +62,16 @@ export function ProductPurchasePanel({ product }: { product: Product }) {
             className={
               isAvailable
                 ? "font-black text-[#86EFAC]"
-                : "font-black text-[#FCA5A5]"
+                : isPreorder
+                  ? "font-black text-[#8FB7FF]"
+                  : "font-black text-[#FCA5A5]"
             }
           >
-            {isAvailable ? `${stock} unidades` : "Sin stock"}
+            {isAvailable
+              ? `${stock} unidades`
+              : isPreorder
+                ? (product.releaseDateLabel ?? "Preventa sin entrega inmediata")
+                : "Sin stock"}
           </p>
         </div>
         <div className="sm:text-right">
@@ -101,7 +109,7 @@ export function ProductPurchasePanel({ product }: { product: Product }) {
           onClick={addProduct}
           className="btn btn-primary h-12 min-w-44 flex-1"
         >
-          Comprar
+          {isPreorder ? "Preventa no habilitada" : "Comprar"}
         </button>
         <FavoriteButton productId={product.id} compact />
       </div>

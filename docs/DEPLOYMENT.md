@@ -39,8 +39,12 @@ npm run build
 
 ## Assets y performance
 
-- Los assets demo actuales viven en `public/brand` y son SVG originales.
+- Los assets de marca viven en `public/brand` y son SVG originales.
+- Las imágenes seed de productos viven en `public/products` y su procedencia
+  está documentada en `docs/PRODUCT_ASSETS_SOURCES.md`.
 - En producción, las imágenes administradas deberían cargarse desde Supabase
   Storage o un CDN autorizado y conservar `alt`, dimensiones y fallback.
+- Confirmar permiso comercial de assets oficiales antes de usar el catálogo en
+  una publicación real.
 - Usar `priority` solo para el hero y contenido visible inicialmente.
 - Revisar Lighthouse/Web Vitals en staging antes de publicar.

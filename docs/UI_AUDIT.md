@@ -13,6 +13,14 @@ Resultado fase 2:
 - `artifacts/ui-audit/after/manifest.json`
 - `artifacts/ui-audit/responsive-check.json`
 
+Resultado fase 3:
+
+- `artifacts/real-catalog-review`
+- `artifacts/real-catalog-review/assets-manifest.json`
+- `artifacts/real-catalog-review/assets-consoles.png`
+- `artifacts/real-catalog-review/assets-controllers.png`
+- `artifacts/real-catalog-review/assets-games.png`
+
 El script repetible es:
 
 ```bash
@@ -50,7 +58,7 @@ Se midieron 60 combinaciones ruta/tamaño sin overflow horizontal efectivo.
 
 - Home con apariencia MVP y mucho espacio sin propósito.
 - Categorías sin composición visual fuerte.
-- Imágenes demo demasiado simples.
+- Imágenes iniciales demasiado simples para producto real.
 - Producto sin galería profesional ni bloques de confianza suficientes.
 - Login, registro e inventario devolvían 404.
 - Admin funcional pero plano.
@@ -60,7 +68,8 @@ Se midieron 60 combinaciones ruta/tamaño sin overflow horizontal efectivo.
 
 - Nuevo hero original con CTA, promo y composición visual.
 - Categorías con assets dedicados.
-- Nueve productos demo con assets originales, galería y blur placeholder.
+- 27 productos reales con nombres, slugs, SKUs, galerías y fuentes oficiales
+  documentadas.
 - Tarjetas con badges, stock, formato, descuento, favoritos y CTA.
 - Ficha con breadcrumbs, zoom, specs, FAQ, WhatsApp y relacionados.
 - Carrito y checkout con imágenes, pasos, resumen y mensajes por tipo de
@@ -72,8 +81,9 @@ Se midieron 60 combinaciones ruta/tamaño sin overflow horizontal efectivo.
 
 ## Correcciones durante QA
 
-- Migración defensiva del store en memoria para hot reload con settings e
-  imágenes demo actuales.
+- Migración defensiva del store en memoria para hot reload con settings y
+  catálogo seed actual.
+- Purga de productos genéricos legacy de fases anteriores.
 - Corrección de overflow horizontal en admin mobile.
 - Corrección de textos visibles con acentos.
 
@@ -82,3 +92,4 @@ Se midieron 60 combinaciones ruta/tamaño sin overflow horizontal efectivo.
 - Lighthouse/Web Vitals en staging con dominio y CDN reales.
 - Revisión legal profesional.
 - Prueba mobile real en dispositivos físicos.
+- Confirmación comercial final de uso de imágenes oficiales.

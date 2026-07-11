@@ -27,6 +27,30 @@ type StoreState = {
   auditLogs: AuditLog[];
 };
 
+const LEGACY_DEMO_PRODUCT_IDS = new Set([
+  "prod-console-playstation-demo",
+  "prod-console-xbox-demo",
+  "prod-console-nintendo-demo",
+  "prod-controller-playstation-demo",
+  "prod-controller-xbox-demo",
+  "prod-controller-nintendo-demo",
+  "prod-game-physical-demo",
+  "prod-game-digital-demo",
+  "prod-game-preorder-demo",
+]);
+
+const LEGACY_DEMO_PRODUCT_SLUGS = new Set([
+  "consola-playstation-demo",
+  "consola-xbox-demo",
+  "consola-nintendo-demo",
+  "control-playstation-demo",
+  "control-xbox-demo",
+  "control-nintendo-demo",
+  "juego-fisico-demo",
+  "juego-digital-demo",
+  "juego-preventa-demo",
+]);
+
 declare global {
   var __tplaygamesStore: StoreState | undefined;
 }
@@ -52,7 +76,10 @@ export function getStoreState(): StoreState {
   );
   const currentDemoIds = new Set(demoProducts.map((product) => product.id));
   const customProducts = globalThis.__tplaygamesStore.products.filter(
-    (product) => !currentDemoIds.has(product.id),
+    (product) =>
+      !currentDemoIds.has(product.id) &&
+      !LEGACY_DEMO_PRODUCT_IDS.has(product.id) &&
+      !LEGACY_DEMO_PRODUCT_SLUGS.has(product.slug),
   );
   globalThis.__tplaygamesStore.products = [
     ...structuredClone(demoProducts),
@@ -115,6 +142,7 @@ export function createOrder(input: {
   };
   notes?: string;
   couponCode?: string;
+  paymentMethod?: "mercadopago" | "transfer";
   termsAccepted: boolean;
   userId?: string;
 }): Order {
