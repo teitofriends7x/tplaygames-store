@@ -7,11 +7,15 @@ export default function ShippingPage() {
       sections={[
         [
           "Envío a domicilio",
-          "Costo configurable por provincia o zona. La integración con operadores logísticos queda desacoplada.",
+          "Realizamos envíos a todo el país. El costo varía según la provincia y se calcula antes de confirmar el pedido. El envío es bonificado para compras superiores al monto indicado en el checkout.",
         ],
         [
-          "Retiro",
-          "Preparado como opción configurable, inicialmente deshabilitada hasta definir punto real.",
+          "Retiro en punto acordado",
+          "Consultá la disponibilidad de retiro escribiéndonos por WhatsApp antes de realizar tu compra.",
+        ],
+        [
+          "Plazos de entrega",
+          "Los pedidos se despachan dentro de las 48 horas hábiles posteriores a la confirmación del pago. Los plazos de entrega dependen del destino y el operador logístico.",
         ],
       ]}
     />

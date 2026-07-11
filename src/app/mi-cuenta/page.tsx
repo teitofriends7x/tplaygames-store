@@ -16,9 +16,8 @@ export default function AccountPage() {
       <p className="section-eyebrow">Cliente</p>
       <h1 className="mt-2 text-3xl font-black text-white">Mi cuenta</h1>
       <p className="mt-3 max-w-3xl text-sm leading-6 text-[#A7ACB8]">
-        Supabase Auth queda preparado para registro, inicio de sesión,
-        recuperación de contraseña y perfil. Configurar credenciales para usarlo
-        con cuentas reales.
+        Accedé a tu historial de pedidos, productos favoritos y opciones de
+        soporte desde un solo lugar.
       </p>
       <div className="mt-8 grid gap-4 md:grid-cols-3">
         <AccountLink
@@ -42,8 +41,8 @@ export default function AccountPage() {
       </div>
       <div className="mt-8 rounded-2xl border border-[#1D6DFF]/25 bg-[#1D6DFF]/10 p-5 text-sm leading-6 text-[#C8D9FF]">
         <ShieldCheck className="mb-3 h-5 w-5" />
-        En desarrollo, el panel administrativo usa un rol de prueba si Supabase
-        no está configurado. En producción requiere sesión real y RLS activo.
+        Tu información personal está protegida. No almacenamos datos de pago
+        en nuestros servidores.
       </div>
     </section>
   );

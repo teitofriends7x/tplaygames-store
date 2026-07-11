@@ -277,8 +277,8 @@ export function CartPageClient({ products }: { products: Product[] }) {
           Continuar al checkout
         </Link>
         <p className="mt-4 text-xs leading-5 text-[#A7ACB8]">
-          No guardamos datos de pago en la tienda. Mercado Pago procesa el pago
-          cuando las credenciales están activas.
+          No guardamos datos de pago en la tienda. El pago se procesa de forma
+          segura a través de Mercado Pago o transferencia bancaria.
         </p>
       </aside>
     </section>

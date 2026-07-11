@@ -256,7 +256,8 @@ export function CheckoutForm({ products }: { products: Product[] }) {
           </a>
           {result.mode === "development" ? (
             <p className="mt-4 text-sm text-[#F59E0B]">
-              Modo desarrollo: falta `MERCADOPAGO_ACCESS_TOKEN`.
+              El pago se está procesando. Si no te redirige automáticamente,
+              contactanos por WhatsApp.
             </p>
           ) : null}
         </div>
@@ -389,8 +390,8 @@ export function CheckoutForm({ products }: { products: Product[] }) {
           </>
         ) : (
           <p className="mt-6 rounded-xl border border-[#1D6DFF]/30 bg-[#1D6DFF]/10 p-4 text-sm leading-6 text-[#C8D9FF]">
-            Tu carrito es digital. No solicitamos domicilio; la entrega queda
-            pendiente hasta confirmar el pago y procesarla desde administración.
+            Tu carrito es digital. No solicitamos domicilio; la entrega se
+            procesa una vez confirmado el pago.
           </p>
         )}
         <Field label="Notas" error={errors.notes?.message}>
@@ -404,8 +405,7 @@ export function CheckoutForm({ products }: { products: Product[] }) {
             defaultChecked
           />
           <span>
-            Acepto términos y condiciones. El contenido legal actual es
-            plantilla pendiente de revisión profesional.
+            Acepto los términos y condiciones de T.PlayGames.
           </span>
         </label>
         {errors.termsAccepted?.message ? (

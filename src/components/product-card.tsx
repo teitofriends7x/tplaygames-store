@@ -126,10 +126,10 @@ export function ProductCard({
         <div className="tpg-product-stock-row">
           {isPreorder ? (
             <span className="badge tpg-badge-preorder">Preventa</span>
+          ) : product.stock > 3 ? (
+            <span className="badge tpg-badge-stock">En stock</span>
           ) : product.stock > 0 ? (
-            <span className="badge tpg-badge-stock">
-              Stock {product.stock}
-            </span>
+            <span className="badge tpg-badge-stock">Últimas unidades</span>
           ) : (
             <span className="badge tpg-badge-out">Sin stock</span>
           )}

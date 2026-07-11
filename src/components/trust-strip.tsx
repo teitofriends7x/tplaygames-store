@@ -4,22 +4,22 @@ const items = [
   {
     icon: ShieldCheck,
     title: "Compra segura",
-    body: "Precios y stock se revalidan en servidor antes de crear el pedido.",
+    body: "Precios finales y actualizados. Tu pedido se confirma una vez acreditado el pago.",
   },
   {
     icon: CreditCard,
-    title: "Mercado Pago",
-    body: "Checkout preparado para sandbox o producción con credenciales oficiales.",
+    title: "Pago con Mercado Pago",
+    body: "Pagá con tarjeta, dinero en cuenta o cuotas. También aceptamos transferencia con precio especial.",
   },
   {
     icon: Truck,
-    title: "Envíos configurables",
-    body: "Costos por provincia y envío bonificado solo cuando corresponde.",
+    title: "Envíos a todo el país",
+    body: "Envíos a domicilio por provincia o retiro en punto acordado.",
   },
   {
     icon: Headphones,
-    title: "Soporte por WhatsApp",
-    body: "Consultas generales, de producto y de pedido con mensajes contextuales.",
+    title: "Atención por WhatsApp",
+    body: "Consultas sobre productos, pedidos y envíos con atención personalizada.",
   },
 ];
 

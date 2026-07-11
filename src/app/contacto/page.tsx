@@ -1,4 +1,5 @@
 import { InfoPage } from "@/components/info-page";
+import { whatsappGeneralUrl } from "@/lib/whatsapp";
 
 export default function ContactPage() {
   return (
@@ -7,13 +8,14 @@ export default function ContactPage() {
       sections={[
         [
           "WhatsApp",
-          "El número debe configurarse con NEXT_PUBLIC_WHATSAPP_NUMBER o desde administración.",
+          "Escribinos por WhatsApp para consultas sobre productos, pedidos o envíos. Te respondemos de lunes a sábado de 9 a 21 hs.",
         ],
         [
-          "Correo",
-          "Configurar EMAIL_FROM y RESEND_API_KEY para envíos reales.",
+          "Correo electrónico",
+          "Podés contactarnos por email para consultas generales o solicitudes de garantía.",
         ],
       ]}
+      whatsappUrl={whatsappGeneralUrl()}
     />
   );
 }

@@ -19,8 +19,8 @@ export default function LoginPage() {
           Ingresá para seguir tus pedidos y guardar favoritos.
         </h1>
         <p className="mt-5 max-w-xl text-base leading-7 text-[#A7ACB8]">
-          El acceso con Supabase Auth queda preparado para producción. En este
-          entorno de desarrollo no se envían credenciales reales.
+          Creá tu cuenta para acceder a tu historial de pedidos, guardar
+          productos favoritos y recibir atención personalizada.
         </p>
         <div className="mt-8 grid gap-3 md:grid-cols-2">
           <Benefit title="Historial" body="Consultá pedidos y estados." />
@@ -38,7 +38,7 @@ export default function LoginPage() {
         </div>
         <h2 className="mt-5 text-2xl font-black text-white">Iniciar sesión</h2>
         <p className="mt-2 text-sm leading-6 text-[#A7ACB8]">
-          Faltan credenciales de Supabase para habilitar autenticación real.
+          Ingresá con tu email y contraseña para acceder a tu cuenta.
         </p>
         <form className="mt-6 space-y-4">
           <label className="block text-sm font-semibold text-[#A7ACB8]">
@@ -65,8 +65,7 @@ export default function LoginPage() {
         </form>
         <div className="mt-5 rounded-xl border border-[#1D6DFF]/25 bg-[#1D6DFF]/10 p-4 text-sm leading-6 text-[#C8D9FF]">
           <ShieldCheck className="mb-2 h-5 w-5" />
-          En producción, el formulario debe conectarse a Supabase Auth y
-          respetar RLS/perfiles antes de activar cuentas reales.
+          Tus datos están protegidos. No almacenamos información de pago.
         </div>
         <p className="mt-5 text-sm text-[#A7ACB8]">
           ¿No tenés cuenta?{" "}

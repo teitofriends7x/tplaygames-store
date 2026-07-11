@@ -43,9 +43,9 @@ export default async function PaymentResultPage({
           </>
         ) : (
           <p className="mt-3 text-[#A7ACB8]">
-            No encontramos el pedido en el estado local. La URL de retorno no
-            confirma pagos por sí sola; el webhook verificado actualiza el
-            pedido.
+            No encontramos el pedido. Si acabás de realizar el pago, puede
+            tardar unos minutos en reflejarse. Si el problema persiste,
+            contactanos por WhatsApp.
           </p>
         )}
         <Link href="/mis-pedidos" className="btn btn-primary mt-6">

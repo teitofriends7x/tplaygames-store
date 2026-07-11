@@ -12,6 +12,11 @@ import Link from "next/link";
 import { ProductCard } from "@/components/product-card";
 import { TrustStrip } from "@/components/trust-strip";
 import { CATEGORY_ASSETS, CATEGORIES } from "@/lib/constants";
+import {
+  getProductPrice,
+  getTransferPrice,
+  hasTransferDiscount,
+} from "@/lib/catalog";
 import { formatARS } from "@/lib/money";
 import { listBanners, listProducts } from "@/lib/store";
 import { whatsappGeneralUrl } from "@/lib/whatsapp";
@@ -20,10 +25,6 @@ export default function Home() {
   const banner = listBanners()[0];
   const products = listProducts();
   const featured = products.filter((product) => product.featured).slice(0, 4);
-  const offers = products.filter((product) => product.offer).slice(0, 4);
-  const consoles = products
-    .filter((product) => product.category === "Consolas")
-    .slice(0, 4);
   const controllers = products
     .filter((product) => product.category === "Controles")
     .slice(0, 4);
@@ -31,6 +32,15 @@ export default function Home() {
     .filter((product) => product.category === "Juegos")
     .slice(0, 4);
   const promoProduct = featured[0] ?? products[0];
+  const promoNormalPrice = promoProduct
+    ? getProductPrice(promoProduct)
+    : undefined;
+  const promoTransferPrice = promoProduct
+    ? getTransferPrice(promoProduct)
+    : undefined;
+  const promoHasTransfer = promoProduct
+    ? hasTransferDiscount(promoProduct)
+    : false;
 
   return (
     <>
@@ -45,8 +55,8 @@ export default function Home() {
               Tu próxima partida arranca en T.PlayGames.
             </h1>
             <p className="mt-5 max-w-2xl text-lg leading-8 text-[#B7BDCA]">
-              Consolas, controles y juegos con stock validado, checkout seguro y
-              soporte claro para compras físicas, digitales o mixtas.
+              Consolas, controles y juegos con precio especial por transferencia,
+              envíos a todo el país y atención personalizada.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
               <Link
@@ -62,8 +72,8 @@ export default function Home() {
             </div>
             <div className="mt-8 grid max-w-xl gap-3 sm:grid-cols-3">
               <MiniTrust icon={ShieldCheck} title="Pago seguro" />
-              <MiniTrust icon={Truck} title="Envíos AR" />
-              <MiniTrust icon={BadgeCheck} title="Stock validado" />
+              <MiniTrust icon={Truck} title="Envíos a todo el país" />
+              <MiniTrust icon={BadgeCheck} title="Productos sellados" />
             </div>
           </div>
           <div className="relative">
@@ -79,22 +89,39 @@ export default function Home() {
                 />
               </div>
               {promoProduct ? (
-                <div className="mt-3 grid gap-3 rounded-xl border border-white/10 bg-black/35 p-4 sm:grid-cols-[1fr_auto] sm:items-center">
-                  <div>
-                    <p className="text-xs font-black uppercase text-[#8FB7FF]">
-                      Promo destacada
-                    </p>
-                    <h2 className="mt-1 font-black text-white">
-                      {promoProduct.name}
-                    </h2>
-                  </div>
-                  <div className="text-left sm:text-right">
-                    <p className="text-xs text-[#A7ACB8]">Desde</p>
-                    <p className="text-2xl font-black text-white">
-                      {formatARS(
-                        promoProduct.promoPriceCents ?? promoProduct.priceCents,
+                <div className="mt-3 rounded-xl border border-white/10 bg-black/35 p-4">
+                  <p className="text-xs font-black uppercase text-[#8FB7FF]">
+                    Producto destacado
+                  </p>
+                  <h2 className="mt-1 font-black text-white">
+                    {promoProduct.name}
+                  </h2>
+                  <div className="mt-3 flex flex-wrap items-end justify-between gap-3">
+                    <div>
+                      {promoHasTransfer ? (
+                        <>
+                          <p className="text-xs text-[#A7ACB8] line-through">
+                            {formatARS(promoNormalPrice!)}
+                          </p>
+                          <p className="text-xl font-black text-[#86EFAC]">
+                            {formatARS(promoTransferPrice!)}
+                          </p>
+                          <p className="text-[0.65rem] font-bold uppercase text-[#86EFAC]">
+                            por transferencia
+                          </p>
+                        </>
+                      ) : (
+                        <p className="text-xl font-black text-white">
+                          {formatARS(promoNormalPrice!)}
+                        </p>
                       )}
-                    </p>
+                    </div>
+                    <Link
+                      href={`/catalogo/${promoProduct.slug}`}
+                      className="btn btn-primary"
+                    >
+                      Comprar ahora
+                    </Link>
                   </div>
                 </div>
               ) : null}
@@ -125,26 +152,14 @@ export default function Home() {
         products={featured}
       />
       <ProductSection
-        eyebrow="Ahorro"
-        title="Ofertas activas"
-        href="/ofertas"
-        products={offers}
-      />
-      <ProductSection
-        eyebrow="Hardware"
-        title="Consolas destacadas"
-        href="/consolas"
-        products={consoles}
-      />
-      <ProductSection
         eyebrow="Precisión"
-        title="Controles destacados"
+        title="Controles"
         href="/controles"
         products={controllers}
       />
       <ProductSection
         eyebrow="Biblioteca"
-        title="Juegos destacados"
+        title="Juegos"
         href="/juegos"
         products={games}
       />
@@ -154,17 +169,17 @@ export default function Home() {
           <InfoPanel
             icon={CreditCard}
             title="Métodos de pago"
-            body="Mercado Pago queda integrado desde servidor. Transferencia y cuotas se muestran solo cuando estén configuradas."
+            body="Mercado Pago con tarjeta, dinero en cuenta o cuotas. También aceptamos transferencia bancaria con precio especial."
           />
           <InfoPanel
             icon={Truck}
-            title="Envíos"
-            body="Costo configurable por provincia y envío bonificado únicamente si el carrito supera el monto configurado."
+            title="Envíos a todo el país"
+            body="Envío a domicilio por provincia o retiro en punto acordado. Consultá costos y plazos antes de comprar."
           />
           <InfoPanel
             icon={ShieldCheck}
             title="Garantía"
-            body="Cada producto informa sus condiciones. Los textos legales siguen pendientes de revisión profesional."
+            body="Todos los productos son nuevos y sellados. Cada producto indica sus condiciones de garantía."
           />
         </div>
       </section>
@@ -174,21 +189,21 @@ export default function Home() {
           <div>
             <p className="section-eyebrow">Dudas antes de comprar</p>
             <h2 className="mt-2 text-3xl font-black text-white">
-              Respuestas claras antes del checkout
+              Respuestas claras antes de comprar
             </h2>
             <div className="mt-6 grid gap-5 md:grid-cols-3">
               {[
                 [
                   "¿Los precios son finales?",
-                  "En este entorno son valores de prueba. En producción se cargan desde administración antes de vender.",
+                  "Sí. Los precios publicados son finales. Si pagás por transferencia, accedés a un precio especial que se muestra en cada producto.",
                 ],
                 [
                   "¿Cómo se entregan juegos digitales?",
-                  "Con entrega manual protegida desde el panel luego de confirmar el pago.",
+                  "La entrega es manual y se procesa una vez confirmado el pago. Te contactamos por el canal que elijas para completar la entrega.",
                 ],
                 [
-                  "¿El pago vuelve seguro?",
-                  "El pedido se actualiza por webhook verificado; volver a una URL no aprueba pagos.",
+                  "¿Cuándo se confirma mi pedido?",
+                  "Tu pedido se confirma una vez acreditado el pago. Si pagás por transferencia, tenés 24 horas para realizarla y enviar el comprobante.",
                 ],
               ].map(([question, answer]) => (
                 <div key={question}>
@@ -206,8 +221,7 @@ export default function Home() {
               ¿Querés ayuda para elegir?
             </h3>
             <p className="mt-2 text-sm leading-6 text-[#C7F8D9]">
-              Abrí una consulta por WhatsApp. El número real se carga desde la
-              configuración o variables de entorno.
+              Escribinos por WhatsApp y te asesoramos sin compromiso.
             </p>
             <a href={whatsappGeneralUrl()} className="btn btn-secondary mt-5">
               Consultar por WhatsApp

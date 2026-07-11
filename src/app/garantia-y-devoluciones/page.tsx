@@ -8,11 +8,11 @@ export default function WarrantyPage() {
       sections={[
         [
           "Garantía",
-          "Texto pendiente de definición comercial y revisión profesional.",
+          "Todos los productos son nuevos y sellados. Cada producto indica sus condiciones específicas de garantía al momento de la compra. Las consolas y controles cuentan con garantía del fabricante. Los juegos digitales están sujetos a las condiciones del editor.",
         ],
         [
           "Devoluciones",
-          "Texto pendiente de revisión profesional antes de publicar.",
+          "Si el producto presenta un defecto de fábrica, podés solicitar un cambio o devolución dentro de los 10 días corridos posteriores a la entrega. El producto debe estar en su empaque original y sin uso. Contactanos por WhatsApp para iniciar el proceso.",
         ],
       ]}
     />

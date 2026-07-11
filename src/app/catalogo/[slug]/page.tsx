@@ -26,7 +26,6 @@ import {
 import {
   PRODUCT_CONDITION_LABELS,
   PRODUCT_TYPE_LABELS,
-  STORE_NAME,
 } from "@/lib/constants";
 import { formatARS, formatDateTimeAR } from "@/lib/money";
 import { getStoreState, listProducts } from "@/lib/store";
@@ -297,15 +296,15 @@ export default async function ProductPage({
           <div className="mt-4 grid gap-3">
             <Faq
               question="¿El stock se reserva al agregar al carrito?"
-              answer="No. El stock y el precio se vuelven a validar en servidor al crear el pedido."
+              answer="No. El stock y el precio se confirman al crear el pedido. Si tenés dudas sobre disponibilidad, consultanos por WhatsApp antes de comprar."
             />
             <Faq
               question="¿Cuándo recibo un producto digital?"
-              answer="Después de confirmar el pago, el operador procesa la entrega digital manual por el canal configurado."
+              answer="Una vez confirmado el pago, te contactamos para completar la entrega digital por el canal que elijas."
             />
             <Faq
               question="¿Puedo consultar antes de comprar?"
-              answer={`Sí. Desde esta ficha podés abrir WhatsApp con el producto ${STORE_NAME} ya referenciado.`}
+              answer="Sí. Escribinos por WhatsApp y te asesoramos sin compromiso sobre este producto."
             />
           </div>
         </div>
@@ -334,9 +333,8 @@ export default async function ProductPage({
             ))}
           </dl>
           <div className="mt-6 rounded-xl border border-[#1D6DFF]/25 bg-[#1D6DFF]/10 p-4 text-sm leading-6 text-[#C8D9FF]">
-            Los precios y el stock de este entorno son de prueba y se revalidan
-            en servidor al crear el pedido. Las condiciones comerciales finales
-            se editan desde administración antes de operar en producción.
+            Los precios y el stock se verifican al momento de crear el pedido.
+            Consultá disponibilidad antes de comprar si tenés dudas.
           </div>
         </aside>
       </section>
@@ -363,12 +361,12 @@ export default async function ProductPage({
 function paymentText(settings: { mercadoPago: boolean; transfer: boolean }) {
   const methods = [
     settings.mercadoPago ? "Mercado Pago" : undefined,
-    settings.transfer ? "transferencia" : undefined,
+    settings.transfer ? "transferencia bancaria" : undefined,
   ].filter(Boolean);
 
   return methods.length
-    ? `${methods.join(" y ")}. Las credenciales reales se activan por entorno.`
-    : "Los métodos de pago se configuran desde administración.";
+    ? `Aceptamos ${methods.join(" y ")}.`
+    : "Los métodos de pago se muestran al finalizar la compra.";
 }
 
 function InfoPill({
