@@ -30,15 +30,27 @@
 ## UI
 
 - [x] Inicio.
+- [x] Inicio fase 2 con hero visual, beneficios, FAQ, categorías y CTA.
 - [x] Catálogo con filtros y ordenamiento.
 - [x] Búsqueda con sugerencias.
 - [x] Página de producto.
+- [x] Galería de producto reutilizable con thumbnails, zoom, blur y fallback.
 - [x] Carrito persistente en invitado.
 - [x] Checkout físico/digital/mixto.
 - [x] Resultado de pago.
 - [x] Cuenta, pedidos y favoritos.
 - [x] Páginas legales e informativas.
 - [x] Panel admin/operador.
+- [x] Panel de inventario.
+- [x] Capturas visuales before/after.
+
+## Contenido y assets
+
+- [x] Assets originales T.PlayGames en `public/brand`.
+- [x] Imágenes diferenciadas para Consolas, Controles y Juegos.
+- [x] Imágenes principales y secundarias para los 9 productos demo.
+- [x] Guía de reemplazo de imágenes documentada.
+- [x] Avisos de contenido legal pendiente conservados.
 
 ## Verificación
 

@@ -24,7 +24,7 @@ Abrir `http://localhost:3000`.
 
 Sin credenciales externas, la app usa modo desarrollo con datos demo claramente marcados. No usar esos datos como publicaciones reales.
 
-## Verificacion
+## Verificación
 
 ```bash
 npm run lint
@@ -51,13 +51,27 @@ Completar en `.env.local` o Vercel:
 
 No escribir secretos en el cliente.
 
+## Fase 2 visual
+
+La segunda fase consolidó una identidad visual premium para T.PlayGames:
+
+- sistema visual compartido en `src/app/globals.css`;
+- assets SVG originales en `public/brand`;
+- galería de producto con `next/image`, blur placeholder y thumbnails;
+- home comercial completa con hero, categorías, destacados, confianza, FAQ y CTA;
+- carrito/checkout/admin pulidos para desktop y mobile;
+- capturas before/after en `artifacts/ui-audit`.
+
+Los productos demo siguen marcados como demo y deben reemplazarse antes del
+lanzamiento.
+
 ## Supabase
 
 1. Crear proyecto Supabase.
 2. Ejecutar `supabase/migrations/0001_initial_schema.sql`.
 3. Ejecutar opcionalmente `supabase/seed/demo_seed.sql`.
 4. Configurar Auth con el dominio de Vercel/local.
-5. Configurar Storage para imagenes de productos.
+5. Configurar Storage para imágenes de productos.
 
 ## Primer administrador
 
@@ -65,8 +79,8 @@ Procedimiento sin credenciales hardcodeadas:
 
 1. Configurar Supabase.
 2. Registrar el primer usuario por Supabase Auth.
-3. Iniciar sesion en la app.
-4. Ejecutar `POST /api/admin/claim-first-admin` desde esa sesion.
+3. Iniciar sesión en la app.
+4. Ejecutar `POST /api/admin/claim-first-admin` desde esa sesión.
 
 La funcion `claim_first_admin()` solo funciona si todavia no existe ningun administrador.
 
@@ -88,11 +102,11 @@ Para sandbox:
 4. Apuntar webhook a `/api/payments/mercadopago/webhook`.
 5. Verificar que el pedido se actualice solo por webhook consultado contra API.
 
-Para produccion:
+Para producción:
 
 1. Reemplazar token sandbox por token productivo.
 2. Validar URLs HTTPS.
-3. Probar pagos reales de bajo monto con autorizacion expresa.
+3. Probar pagos reales de bajo monto con autorización expresa.
 4. No activar cobros reales sin revisar `docs/LAUNCH_CHECKLIST.md`.
 
 ## Documentacion
@@ -102,5 +116,9 @@ Para produccion:
 - `docs/SECURITY.md`
 - `docs/DEPLOYMENT.md`
 - `docs/ADMIN_OPERATIONS.md`
+- `docs/UI_SYSTEM.md`
+- `docs/CONTENT_GUIDE.md`
+- `docs/IMAGE_ASSETS.md`
+- `docs/UI_AUDIT.md`
 - `docs/LAUNCH_CHECKLIST.md`
 - `docs/TASKS.md`

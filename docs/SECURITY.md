@@ -12,6 +12,9 @@
 - Webhook de Mercado Pago idempotente.
 - No se confirma pago por URL de retorno.
 - Entrega digital protegida fuera de listados.
+- Páginas admin, cuenta, carrito, checkout y resultado de pago con `noindex`.
+- UI de producto/carrito/checkout comunica que precio, stock y cupón se
+  revalidan en servidor.
 
 ## Primer administrador
 
@@ -20,7 +23,8 @@ No hay credenciales hardcodeadas. Usar `claim_first_admin()` mediante `POST /api
 ## Pendientes antes de produccion
 
 - Configurar Supabase real y verificar RLS con usuarios de prueba.
-- Configurar storage con validacion de extension/tamano.
+- Configurar storage con validación de extensión/tamaño, dimensiones máximas y
+  política de reemplazo de imágenes.
 - Configurar proveedor de rate limiting persistente si hay alto trafico.
 - Revisar textos legales con profesional.
 - Revisar `npm audit` y actualizar dependencias si aparece parche compatible.

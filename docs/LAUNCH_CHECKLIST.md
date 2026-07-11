@@ -1,6 +1,8 @@
 # Checklist de lanzamiento
 
 - [ ] Reemplazar o eliminar todos los productos demo.
+- [ ] Reemplazar assets demo de `public/brand/products` por imágenes reales con licencia/procedencia clara.
+- [ ] Cargar imágenes de categorías y hero definitivas si la marca cambia.
 - [ ] Configurar Supabase real.
 - [ ] Verificar RLS con usuario cliente, operador y administrador.
 - [ ] Crear primer administrador con `claim_first_admin()`.
@@ -10,7 +12,9 @@
 - [ ] Configurar WhatsApp real.
 - [ ] Configurar dominio/remitente de correo.
 - [ ] Revisar textos legales con profesional.
-- [ ] Definir politica real de envios, garantia, retiro y devoluciones.
+- [ ] Definir política real de envíos, garantía, retiro y devoluciones.
+- [ ] Completar URLs reales de Instagram/TikTok o dejarlas ocultas.
+- [ ] Ejecutar `node scripts/capture-ui-audit.mjs artifacts/ui-audit/after` en staging.
 - [ ] Ejecutar `npm run lint`.
 - [ ] Ejecutar `npm run typecheck`.
 - [ ] Ejecutar `npm run test`.
@@ -19,4 +23,5 @@
 - [ ] Ejecutar `npm run audit`.
 - [ ] Revisar variables de Vercel.
 - [ ] Hacer prueba mobile real.
-- [ ] Autorizar explicitamente cobros reales.
+- [ ] Revisar Lighthouse/Web Vitals con datos de producción.
+- [ ] Autorizar explícitamente cobros reales.

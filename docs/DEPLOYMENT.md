@@ -12,6 +12,7 @@ npm run build
 
 4. Configurar dominio.
 5. Configurar `NEXT_PUBLIC_SITE_URL` con HTTPS definitivo.
+6. Ejecutar capturas visuales con `node scripts/capture-ui-audit.mjs`.
 
 ## Supabase
 
@@ -20,7 +21,8 @@ npm run build
 3. Configurar Auth redirect URLs:
    - `http://localhost:3000`
    - URL de Vercel
-4. Configurar storage privado para imagenes subidas desde admin.
+4. Configurar storage privado para imágenes subidas desde admin.
+5. Definir política de tamaño, peso, MIME type y reemplazo de assets.
 
 ## Mercado Pago
 
@@ -34,3 +36,11 @@ npm run build
 1. Verificar dominio/remitente.
 2. Completar `RESEND_API_KEY` y `EMAIL_FROM`.
 3. Probar correos transaccionales en entorno de staging.
+
+## Assets y performance
+
+- Los assets demo actuales viven en `public/brand` y son SVG originales.
+- En producción, las imágenes administradas deberían cargarse desde Supabase
+  Storage o un CDN autorizado y conservar `alt`, dimensiones y fallback.
+- Usar `priority` solo para el hero y contenido visible inicialmente.
+- Revisar Lighthouse/Web Vitals en staging antes de publicar.

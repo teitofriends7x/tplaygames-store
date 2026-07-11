@@ -2,13 +2,20 @@ import { describe, expect, it, beforeEach } from "vitest";
 
 import { canManageRole, roleCanAccess } from "@/lib/authz";
 import { calculateCart } from "@/lib/cart";
-import { demoCoupons, demoProducts, defaultStoreSettings } from "@/lib/demo-data";
+import {
+  demoCoupons,
+  demoProducts,
+  defaultStoreSettings,
+} from "@/lib/demo-data";
 import {
   applyPaymentStatus,
   createOrderFromCart,
   registerDigitalDelivery,
 } from "@/lib/orders";
-import { mapMercadoPagoStatus, processVerifiedPaymentEvent } from "@/lib/payments";
+import {
+  mapMercadoPagoStatus,
+  processVerifiedPaymentEvent,
+} from "@/lib/payments";
 import {
   attachPayment,
   createOrder,
@@ -56,6 +63,20 @@ describe("carrito y precios", () => {
     expect(cart.totals.couponDiscountCents).toBeGreaterThan(0);
   });
 
+  it("mantiene total y emite advertencia con cupon invalido", () => {
+    const cart = calculateCart({
+      items: [physicalItem],
+      couponCode: "NOEXISTE",
+      products: demoProducts,
+      coupons: demoCoupons,
+      settings: defaultStoreSettings,
+    });
+
+    expect(cart.coupon).toBeUndefined();
+    expect(cart.totals.couponDiscountCents).toBe(0);
+    expect(cart.warnings.some((warning) => /cupón/i.test(warning))).toBe(true);
+  });
+
   it("ajusta cantidades al stock disponible", () => {
     const cart = calculateCart({
       items: [{ productId: "prod-game-physical-demo", quantity: 999 }],
@@ -64,7 +85,9 @@ describe("carrito y precios", () => {
     });
 
     expect(cart.lines[0]?.quantity).toBe(20);
-    expect(cart.warnings.some((warning) => warning.includes("stock"))).toBe(true);
+    expect(cart.warnings.some((warning) => warning.includes("stock"))).toBe(
+      true,
+    );
   });
 });
 
@@ -121,7 +144,9 @@ describe("pedidos", () => {
     });
 
     expect(delivered.status).toBe("digital_delivery_done");
-    expect(delivered.digitalDelivery?.secureReference).toBe("Referencia segura");
+    expect(delivered.digitalDelivery?.secureReference).toBe(
+      "Referencia segura",
+    );
   });
 });
 

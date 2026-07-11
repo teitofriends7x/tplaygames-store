@@ -5,18 +5,36 @@
 - `src/app`: rutas App Router, paginas y route handlers.
 - `src/components`: componentes de UI, incluyendo interactividad cliente.
 - `src/lib`: dominio, validaciones, integraciones y adaptadores.
+- `public/brand`: assets originales de marca, categorías y productos demo.
+- `artifacts/ui-audit`: evidencia visual before/after generada por Playwright.
 - `supabase/migrations`: esquema SQL, indices, constraints y RLS.
 - `tests`: pruebas unitarias y E2E.
 
+## UI y design system
+
+La identidad visual se centraliza en `src/app/globals.css` con tokens y clases
+reutilizables (`tpg-container`, `tpg-card`, `btn`, `badge`, `form-control`,
+`admin-table`, `skeleton`). El storefront y el panel comparten base visual; el
+panel usa una composición más densa y operativa.
+
+Las imágenes se renderizan con `next/image` en tarjetas, galería, carrito,
+checkout e inventario. Los productos demo incluyen `blurDataUrl`, dimensiones y
+varias imágenes para evitar layout shift.
+
 ## Dominio
 
-Los calculos de carrito se hacen en `src/lib/cart.ts`. El navegador solo guarda ids, variante y cantidad; el servidor revalida producto, variante, precio, cupon, stock y envio.
+Los cálculos de carrito se hacen en `src/lib/cart.ts`. El navegador solo guarda
+ids, variante y cantidad; el servidor revalida producto, variante, precio,
+cupón, stock y envío.
 
-Los pedidos guardan snapshot historico en `src/lib/orders.ts` para que cambios posteriores de productos no modifiquen compras anteriores.
+Los pedidos guardan snapshot histórico en `src/lib/orders.ts` para que cambios
+posteriores de productos no modifiquen compras anteriores.
 
 ## Persistencia
 
-La version local usa un store en memoria para desarrollo sin credenciales. Supabase queda preparado como fuente real mediante:
+La versión local usa un store en memoria para desarrollo sin credenciales.
+`getStoreState()` normaliza settings y productos demo para tolerar hot reload
+durante desarrollo. Supabase queda preparado como fuente real mediante:
 
 - tablas normalizadas,
 - claves foraneas,

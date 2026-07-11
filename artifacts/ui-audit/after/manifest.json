@@ -1,0 +1,246 @@
+{
+  "baseUrl": "http://localhost:3000",
+  "capturedAt": "2026-07-11T03:26:49.331Z",
+  "screenshots": [
+    {
+      "viewport": "desktop",
+      "route": "/",
+      "file": "desktop-home.png"
+    },
+    {
+      "viewport": "desktop",
+      "route": "/consolas",
+      "file": "desktop-consolas.png"
+    },
+    {
+      "viewport": "desktop",
+      "route": "/controles",
+      "file": "desktop-controles.png"
+    },
+    {
+      "viewport": "desktop",
+      "route": "/juegos",
+      "file": "desktop-juegos.png"
+    },
+    {
+      "viewport": "desktop",
+      "route": "/ofertas",
+      "file": "desktop-ofertas.png"
+    },
+    {
+      "viewport": "desktop",
+      "route": "/buscar?q=juego",
+      "file": "desktop-busqueda-resultados.png"
+    },
+    {
+      "viewport": "desktop",
+      "route": "/buscar?q=zzzzzz",
+      "file": "desktop-busqueda-sin-resultados.png"
+    },
+    {
+      "viewport": "desktop",
+      "route": "/catalogo/juego-digital-demo",
+      "file": "desktop-producto.png"
+    },
+    {
+      "viewport": "desktop",
+      "route": "/carrito",
+      "file": "desktop-carrito-vacio.png"
+    },
+    {
+      "viewport": "desktop",
+      "route": "/carrito",
+      "file": "desktop-carrito-mixto.png"
+    },
+    {
+      "viewport": "desktop",
+      "route": "/checkout",
+      "file": "desktop-checkout-fisico.png"
+    },
+    {
+      "viewport": "desktop",
+      "route": "/checkout",
+      "file": "desktop-checkout-digital.png"
+    },
+    {
+      "viewport": "desktop",
+      "route": "/checkout",
+      "file": "desktop-checkout-mixto.png"
+    },
+    {
+      "viewport": "desktop",
+      "route": "/login",
+      "file": "desktop-login.png"
+    },
+    {
+      "viewport": "desktop",
+      "route": "/registro",
+      "file": "desktop-registro.png"
+    },
+    {
+      "viewport": "desktop",
+      "route": "/mi-cuenta",
+      "file": "desktop-mi-cuenta.png"
+    },
+    {
+      "viewport": "desktop",
+      "route": "/mis-pedidos",
+      "file": "desktop-mis-pedidos.png"
+    },
+    {
+      "viewport": "desktop",
+      "route": "/admin",
+      "file": "desktop-admin.png"
+    },
+    {
+      "viewport": "desktop",
+      "route": "/admin/pedidos",
+      "file": "desktop-admin-pedidos.png"
+    },
+    {
+      "viewport": "desktop",
+      "route": "/admin/productos",
+      "file": "desktop-admin-productos.png"
+    },
+    {
+      "viewport": "desktop",
+      "route": "/admin/inventario",
+      "file": "desktop-admin-inventario.png"
+    },
+    {
+      "viewport": "desktop",
+      "route": "/admin/cupones",
+      "file": "desktop-admin-cupones.png"
+    },
+    {
+      "viewport": "desktop",
+      "route": "/admin/configuracion",
+      "file": "desktop-admin-configuracion.png"
+    },
+    {
+      "viewport": "desktop",
+      "route": "/ruta-inexistente-tplaygames",
+      "file": "desktop-404.png"
+    },
+    {
+      "viewport": "mobile",
+      "route": "/",
+      "file": "mobile-home.png"
+    },
+    {
+      "viewport": "mobile",
+      "route": "/consolas",
+      "file": "mobile-consolas.png"
+    },
+    {
+      "viewport": "mobile",
+      "route": "/controles",
+      "file": "mobile-controles.png"
+    },
+    {
+      "viewport": "mobile",
+      "route": "/juegos",
+      "file": "mobile-juegos.png"
+    },
+    {
+      "viewport": "mobile",
+      "route": "/ofertas",
+      "file": "mobile-ofertas.png"
+    },
+    {
+      "viewport": "mobile",
+      "route": "/buscar?q=juego",
+      "file": "mobile-busqueda-resultados.png"
+    },
+    {
+      "viewport": "mobile",
+      "route": "/buscar?q=zzzzzz",
+      "file": "mobile-busqueda-sin-resultados.png"
+    },
+    {
+      "viewport": "mobile",
+      "route": "/catalogo/juego-digital-demo",
+      "file": "mobile-producto.png"
+    },
+    {
+      "viewport": "mobile",
+      "route": "/carrito",
+      "file": "mobile-carrito-vacio.png"
+    },
+    {
+      "viewport": "mobile",
+      "route": "/carrito",
+      "file": "mobile-carrito-mixto.png"
+    },
+    {
+      "viewport": "mobile",
+      "route": "/checkout",
+      "file": "mobile-checkout-fisico.png"
+    },
+    {
+      "viewport": "mobile",
+      "route": "/checkout",
+      "file": "mobile-checkout-digital.png"
+    },
+    {
+      "viewport": "mobile",
+      "route": "/checkout",
+      "file": "mobile-checkout-mixto.png"
+    },
+    {
+      "viewport": "mobile",
+      "route": "/login",
+      "file": "mobile-login.png"
+    },
+    {
+      "viewport": "mobile",
+      "route": "/registro",
+      "file": "mobile-registro.png"
+    },
+    {
+      "viewport": "mobile",
+      "route": "/mi-cuenta",
+      "file": "mobile-mi-cuenta.png"
+    },
+    {
+      "viewport": "mobile",
+      "route": "/mis-pedidos",
+      "file": "mobile-mis-pedidos.png"
+    },
+    {
+      "viewport": "mobile",
+      "route": "/admin",
+      "file": "mobile-admin.png"
+    },
+    {
+      "viewport": "mobile",
+      "route": "/admin/pedidos",
+      "file": "mobile-admin-pedidos.png"
+    },
+    {
+      "viewport": "mobile",
+      "route": "/admin/productos",
+      "file": "mobile-admin-productos.png"
+    },
+    {
+      "viewport": "mobile",
+      "route": "/admin/inventario",
+      "file": "mobile-admin-inventario.png"
+    },
+    {
+      "viewport": "mobile",
+      "route": "/admin/cupones",
+      "file": "mobile-admin-cupones.png"
+    },
+    {
+      "viewport": "mobile",
+      "route": "/admin/configuracion",
+      "file": "mobile-admin-configuracion.png"
+    },
+    {
+      "viewport": "mobile",
+      "route": "/ruta-inexistente-tplaygames",
+      "file": "mobile-404.png"
+    }
+  ]
+}
