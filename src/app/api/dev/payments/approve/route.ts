@@ -19,7 +19,10 @@ export async function POST(request: Request) {
       : undefined;
 
   if (!order) {
-    return NextResponse.json({ error: "Pedido no encontrado." }, { status: 404 });
+    return NextResponse.json(
+      { error: "Pedido no encontrado." },
+      { status: 404 },
+    );
   }
 
   const result = processVerifiedPaymentEvent({

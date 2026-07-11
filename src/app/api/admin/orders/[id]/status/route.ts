@@ -14,7 +14,10 @@ export async function PATCH(
     const { id } = await context.params;
     const order = findOrder(id);
     if (!order) {
-      return NextResponse.json({ error: "Pedido no encontrado." }, { status: 404 });
+      return NextResponse.json(
+        { error: "Pedido no encontrado." },
+        { status: 404 },
+      );
     }
 
     const payload = await request.json().catch(() => undefined);

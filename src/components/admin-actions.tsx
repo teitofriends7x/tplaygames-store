@@ -26,12 +26,14 @@ export function OrderStatusForm({ orderId }: { orderId: string }) {
   }
 
   return (
-    <form action={submit} className="rounded-lg border border-white/10 bg-[#111318] p-4">
+    <form action={submit} className="tpg-card p-4">
       <h2 className="font-black text-white">Actualizar estado</h2>
       <select
         value={status}
-        onChange={(event) => setStatus(event.currentTarget.value as OrderStatus)}
-        className="mt-3 h-11 w-full rounded-lg border border-white/10 bg-[#070707] px-3 text-white"
+        onChange={(event) =>
+          setStatus(event.currentTarget.value as OrderStatus)
+        }
+        className="form-control mt-3"
       >
         {ORDER_STATUSES.map((item) => (
           <option key={item} value={item}>
@@ -42,13 +44,15 @@ export function OrderStatusForm({ orderId }: { orderId: string }) {
       <textarea
         name="internalComment"
         placeholder="Comentario interno"
-        className="mt-3 min-h-24 w-full rounded-lg border border-white/10 bg-[#070707] px-3 py-3 text-white"
+        className="input mt-3 min-h-24 py-3"
       />
-      <button className="mt-3 inline-flex h-10 items-center gap-2 rounded-lg bg-[#1D6DFF] px-4 text-sm font-bold text-white">
+      <button className="btn btn-primary mt-3">
         <Send className="h-4 w-4" />
         Guardar
       </button>
-      {message ? <p className="mt-3 text-sm text-[#22C55E]">{message}</p> : null}
+      {message ? (
+        <p className="mt-3 text-sm text-[#22C55E]">{message}</p>
+      ) : null}
     </form>
   );
 }
@@ -57,29 +61,30 @@ export function DigitalDeliveryForm({ orderId }: { orderId: string }) {
   const [message, setMessage] = useState("");
 
   async function submit(formData: FormData) {
-    const response = await fetch(`/api/admin/orders/${orderId}/digital-delivery`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "x-demo-role": "operator",
+    const response = await fetch(
+      `/api/admin/orders/${orderId}/digital-delivery`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-demo-role": "operator",
+        },
+        body: JSON.stringify({
+          secureReference: formData.get("secureReference"),
+          internalNote: formData.get("internalNote"),
+          channel: formData.get("channel"),
+        }),
       },
-      body: JSON.stringify({
-        secureReference: formData.get("secureReference"),
-        internalNote: formData.get("internalNote"),
-        channel: formData.get("channel"),
-      }),
-    });
-    setMessage(response.ok ? "Entrega digital registrada." : "No se pudo registrar.");
+    );
+    setMessage(
+      response.ok ? "Entrega digital registrada." : "No se pudo registrar.",
+    );
   }
 
   return (
-    <form action={submit} className="rounded-lg border border-white/10 bg-[#111318] p-4">
+    <form action={submit} className="tpg-card p-4">
       <h2 className="font-black text-white">Entrega digital manual</h2>
-      <select
-        name="channel"
-        className="mt-3 h-11 w-full rounded-lg border border-white/10 bg-[#070707] px-3 text-white"
-        defaultValue="email"
-      >
+      <select name="channel" className="form-control mt-3" defaultValue="email">
         <option value="email">Correo</option>
         <option value="whatsapp">WhatsApp</option>
         <option value="manual">Manual</option>
@@ -87,17 +92,17 @@ export function DigitalDeliveryForm({ orderId }: { orderId: string }) {
       <textarea
         name="secureReference"
         placeholder="Contenido o referencia segura. No se muestra en listados."
-        className="mt-3 min-h-24 w-full rounded-lg border border-white/10 bg-[#070707] px-3 py-3 text-white"
+        className="input mt-3 min-h-24 py-3"
       />
       <textarea
         name="internalNote"
-        placeholder="Nota interna de auditoria"
-        className="mt-3 min-h-24 w-full rounded-lg border border-white/10 bg-[#070707] px-3 py-3 text-white"
+        placeholder="Nota interna de auditoría"
+        className="input mt-3 min-h-24 py-3"
       />
-      <button className="mt-3 inline-flex h-10 items-center rounded-lg bg-[#1D6DFF] px-4 text-sm font-bold text-white">
-        Registrar entrega
-      </button>
-      {message ? <p className="mt-3 text-sm text-[#22C55E]">{message}</p> : null}
+      <button className="btn btn-primary mt-3">Registrar entrega</button>
+      {message ? (
+        <p className="mt-3 text-sm text-[#22C55E]">{message}</p>
+      ) : null}
     </form>
   );
 }
@@ -135,18 +140,31 @@ export function ProductAdminForm() {
       },
       body: JSON.stringify(payload),
     });
-    setMessage(response.ok ? "Producto guardado como borrador." : "Error al guardar.");
+    setMessage(
+      response.ok ? "Producto guardado como borrador." : "Error al guardar.",
+    );
   }
 
   return (
-    <form action={submit} className="grid gap-3 rounded-lg border border-white/10 bg-[#111318] p-4 md:grid-cols-2">
-      <h2 className="md:col-span-2 font-black text-white">Nuevo producto</h2>
+    <form action={submit} className="tpg-card grid gap-3 p-4 md:grid-cols-2">
+      <div className="md:col-span-2">
+        <h2 className="font-black text-white">Nuevo producto</h2>
+        <p className="mt-1 text-sm leading-6 text-[#A7ACB8]">
+          Guarda como borrador demo. La gestión completa de imágenes queda
+          preparada para Supabase Storage/URLs externas validadas.
+        </p>
+      </div>
       <input name="name" placeholder="Nombre" required className="input" />
       <input name="slug" placeholder="slug-unico" required className="input" />
       <input name="brand" placeholder="Marca" required className="input" />
       <input name="model" placeholder="Modelo" required className="input" />
       <input name="sku" placeholder="SKU" required className="input" />
-      <input name="priceArs" placeholder="Precio ARS" required className="input" />
+      <input
+        name="priceArs"
+        placeholder="Precio ARS"
+        required
+        className="input"
+      />
       <input name="stock" placeholder="Stock" required className="input" />
       <select name="category" className="input" defaultValue="Juegos">
         <option>Consolas</option>
@@ -160,25 +178,27 @@ export function ProductAdminForm() {
         <option>PC</option>
       </select>
       <select name="type" className="input" defaultValue="physical">
-        <option value="physical">Fisico</option>
+        <option value="physical">Físico</option>
         <option value="digital">Digital</option>
       </select>
       <input
         name="shortDescription"
-        placeholder="Descripcion corta"
+        placeholder="Descripción corta"
         required
         className="input md:col-span-2"
       />
       <textarea
         name="description"
-        placeholder="Descripcion completa"
+        placeholder="Descripción completa"
         required
         className="input min-h-24 py-3 md:col-span-2"
       />
-      <button className="h-10 rounded-lg bg-[#1D6DFF] px-4 text-sm font-bold text-white md:col-span-2">
+      <button className="btn btn-primary md:col-span-2">
         Guardar borrador
       </button>
-      {message ? <p className="text-sm text-[#22C55E] md:col-span-2">{message}</p> : null}
+      {message ? (
+        <p className="text-sm text-[#22C55E] md:col-span-2">{message}</p>
+      ) : null}
     </form>
   );
 }
