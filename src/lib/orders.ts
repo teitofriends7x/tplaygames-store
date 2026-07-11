@@ -196,7 +196,9 @@ export function registerDigitalDelivery(
   }
 
   if (order.paymentStatus !== "approved") {
-    throw new Error("No se puede entregar un producto digital sin pago aprobado.");
+    throw new Error(
+      "No se puede entregar un producto digital sin pago aprobado.",
+    );
   }
 
   const now = new Date().toISOString();
