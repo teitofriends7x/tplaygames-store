@@ -24,6 +24,9 @@ export type ProductImage = {
   alt: string;
   position: number;
   isPrimary: boolean;
+  blurDataUrl?: string;
+  width?: number;
+  height?: number;
 };
 
 export type ProductVariant = {
@@ -242,6 +245,19 @@ export type StoreSettings = {
   provinceShippingCents: Record<string, number>;
   whatsappNumber?: string;
   digitalDeliveryChannel: "email" | "whatsapp" | "manual";
+  paymentMethods: {
+    mercadoPago: boolean;
+    transfer: boolean;
+  };
+  transferDiscountPercent?: number;
+  installments?: {
+    label: string;
+    active: boolean;
+  }[];
+  socialLinks?: {
+    instagram?: string;
+    tiktok?: string;
+  };
 };
 
 export type AuditLog = {

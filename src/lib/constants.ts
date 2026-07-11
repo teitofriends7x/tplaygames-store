@@ -65,8 +65,45 @@ export const PAYMENT_STATUS_LABELS: Record<
   refunded: "Reembolsado",
 };
 
+export const PRODUCT_TYPE_LABELS: Record<
+  (typeof PRODUCT_TYPES)[number],
+  string
+> = {
+  physical: "Físico",
+  digital: "Digital",
+};
+
+export const PRODUCT_CONDITION_LABELS: Record<
+  (typeof PRODUCT_CONDITIONS)[number],
+  string
+> = {
+  new: "Nuevo",
+  used: "Usado",
+  refurbished: "Reacondicionado",
+};
+
+export const CATEGORY_ASSETS: Record<
+  (typeof CATEGORIES)[number],
+  { image: string; href: string; description: string }
+> = {
+  Consolas: {
+    image: "/brand/categories/consolas.svg",
+    href: "/consolas",
+    description: "Equipos para jugar en casa con stock validado.",
+  },
+  Controles: {
+    image: "/brand/categories/controles.svg",
+    href: "/controles",
+    description: "Mandos y accesorios de control para cada plataforma.",
+  },
+  Juegos: {
+    image: "/brand/categories/juegos.svg",
+    href: "/juegos",
+    description: "Juegos físicos y digitales con entrega clara.",
+  },
+};
+
 export const DEFAULT_SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
 
-export const WHATSAPP_NUMBER =
-  process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "";
+export const WHATSAPP_NUMBER = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "";

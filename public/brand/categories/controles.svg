@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="900" viewBox="0 0 1200 900" role="img" aria-label="Categoria Controles">
+  <defs>
+    <radialGradient id="blueGlow" cx="50%" cy="34%" r="68%">
+      <stop offset="0%" stop-color="#1D6DFF" stop-opacity=".42"/>
+      <stop offset="48%" stop-color="#1D6DFF" stop-opacity=".10"/>
+      <stop offset="100%" stop-color="#070707" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="glass" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#242833"/>
+      <stop offset="55%" stop-color="#1B1D23"/>
+      <stop offset="100%" stop-color="#0C0E13"/>
+    </linearGradient>
+    <filter id="softShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="34" stdDeviation="28" flood-color="#000000" flood-opacity=".45"/>
+    </filter>
+  </defs>
+  <rect width="1200" height="900" fill="#070707"/>
+  <rect width="1200" height="900" fill="url(#blueGlow)"/>
+  <g opacity=".42">
+    <path d="M0 720 C230 612 340 832 560 704 C760 588 916 642 1200 520" fill="none" stroke="#1D6DFF" stroke-width="2"/>
+    <path d="M0 224 C220 148 356 286 530 204 C720 116 914 184 1200 78" fill="none" stroke="#2A2E39" stroke-width="2"/>
+    <path d="M110 0 V900 M330 0 V900 M550 0 V900 M770 0 V900 M990 0 V900" stroke="#2A2E39" stroke-width="1" opacity=".24"/>
+  </g>
+  <rect x="98" y="120" width="1004" height="660" rx="60" fill="url(#glass)" stroke="#2A2E39" stroke-width="3"/>
+      <path d="M302 376c72-128 524-128 596 0 68 120 112 272 45 316-56 36-130-28-188-104H445c-58 76-132 140-188 104-67-44-23-196 45-316z" fill="#F5F7FB" filter="url(#softShadow)"/>
+      <circle cx="394" cy="404" r="34" fill="#050608"/>
+      <circle cx="748" cy="408" r="18" fill="#1D6DFF"/>
+      <circle cx="794" cy="452" r="18" fill="#22C55E"/>
+      <circle cx="704" cy="452" r="18" fill="#EF4444"/>
+      <text x="120" y="690" fill="#FFFFFF" font-family="Inter,Arial" font-size="58" font-weight="900">Controles</text>
+</svg>
