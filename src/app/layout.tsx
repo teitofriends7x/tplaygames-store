@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
+import { ClerkProvider } from "@clerk/nextjs";
+import { esES } from "@clerk/localizations";
 import { Geist, Geist_Mono } from "next/font/google";
-import { AuthProvider } from "@/components/auth-provider";
 import { Footer } from "@/components/footer";
 import { Header } from "@/components/header";
 import { WhatsappFloat } from "@/components/whatsapp-float";
 import { STORE_NAME, STORE_TAGLINE } from "@/lib/constants";
-import { logAuthConfigurationIssues } from "@/lib/supabase/config-server";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -47,21 +47,23 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  logAuthConfigurationIssues("root-layout");
-
   return (
-    <html
-      lang="es-AR"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+    <ClerkProvider
+      localization={esES}
+      signInUrl="/login"
+      signUpUrl="/registro"
     >
-      <body className="flex min-h-full flex-col">
-        <AuthProvider>
+      <html
+        lang="es-AR"
+        className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      >
+        <body className="flex min-h-full flex-col">
           <Header />
           <main className="flex-1">{children}</main>
           <Footer />
           <WhatsappFloat />
-        </AuthProvider>
-      </body>
-    </html>
+        </body>
+      </html>
+    </ClerkProvider>
   );
 }

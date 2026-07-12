@@ -4,22 +4,11 @@ import {
   getAccountProfile,
   updateAccountProfile,
 } from "@/lib/order-persistence";
-import { getSupabaseServerClient } from "@/lib/supabase/server";
+import { getCurrentClerkUser } from "@/lib/clerk-auth";
 import { accountProfileSchema } from "@/lib/validation";
 
-async function getCurrentUser() {
-  const supabase = await getSupabaseServerClient();
-  if (!supabase) return null;
-
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  return user;
-}
-
 export async function GET() {
-  const user = await getCurrentUser();
+  const user = await getCurrentClerkUser();
   if (!user?.id || !user.email) {
     return NextResponse.json(
       { error: "Necesitás iniciar sesión para ver tu cuenta." },
@@ -28,15 +17,18 @@ export async function GET() {
   }
 
   const profile = await getAccountProfile({
-    userId: user.id,
+    clerkUserId: user.id,
     email: user.email,
+    firstName: user.firstName,
+    lastName: user.lastName,
+    phone: user.phone,
   });
 
   return NextResponse.json({ profile });
 }
 
 export async function PATCH(request: Request) {
-  const user = await getCurrentUser();
+  const user = await getCurrentClerkUser();
   if (!user?.id || !user.email) {
     return NextResponse.json(
       { error: "Necesitás iniciar sesión para actualizar tu cuenta." },
@@ -68,6 +60,12 @@ export async function PATCH(request: Request) {
   }
 
   return NextResponse.json({
-    profile: await getAccountProfile({ userId: user.id, email: user.email }),
+    profile: await getAccountProfile({
+      clerkUserId: user.id,
+      email: user.email,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      phone: user.phone,
+    }),
   });
 }

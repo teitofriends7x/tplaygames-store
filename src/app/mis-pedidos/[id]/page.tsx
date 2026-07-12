@@ -10,7 +10,7 @@ import {
 } from "@/lib/constants";
 import { formatARS, formatDateTimeAR } from "@/lib/money";
 import { getOrderForCustomer } from "@/lib/order-persistence";
-import { getSupabaseServerClient } from "@/lib/supabase/server";
+import { getCurrentClerkUser } from "@/lib/clerk-auth";
 import { PackageOpen } from "lucide-react";
 
 export default async function OrderDetailPage({
@@ -19,10 +19,7 @@ export default async function OrderDetailPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const supabase = await getSupabaseServerClient();
-  const {
-    data: { user },
-  } = supabase ? await supabase.auth.getUser() : { data: { user: null } };
+  const user = await getCurrentClerkUser();
 
   if (!user?.id || !user.email) {
     return (
@@ -40,7 +37,7 @@ export default async function OrderDetailPage({
 
   const order = await getOrderForCustomer({
     idOrNumber: id,
-    userId: user.id,
+    clerkUserId: user.id,
     email: user.email,
   });
   if (!order) {

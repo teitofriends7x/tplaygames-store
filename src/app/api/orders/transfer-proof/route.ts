@@ -6,7 +6,7 @@ import {
   submitTransferProof,
 } from "@/lib/order-persistence";
 import { checkRateLimit, getClientKey } from "@/lib/rate-limit";
-import { getSupabaseServerClient } from "@/lib/supabase/server";
+import { getCurrentClerkUser } from "@/lib/clerk-auth";
 import { validateTransferProofFile } from "@/lib/transfer-proofs";
 
 export async function POST(request: Request) {
@@ -40,14 +40,11 @@ export async function POST(request: Request) {
     );
   }
 
-  const supabase = await getSupabaseServerClient();
-  const {
-    data: { user },
-  } = supabase ? await supabase.auth.getUser() : { data: { user: null } };
+  const user = await getCurrentClerkUser();
 
   const order = await getOrderForCustomer({
     idOrNumber: orderNumber,
-    userId: user?.id,
+    clerkUserId: user?.id,
     email: user?.email ?? email,
   });
   if (!order) {
@@ -97,7 +94,7 @@ export async function POST(request: Request) {
     fileName: file.name,
     mimeType: validation.mimeType,
     extension: validation.extension,
-    actorId: user?.id,
+    actorClerkUserId: user?.id,
     actorRole: user ? "customer" : undefined,
     guestEmail: user?.email ?? email,
     uploadedIp: getClientKey(request),

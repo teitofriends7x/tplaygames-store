@@ -47,7 +47,7 @@
 - [x] Cuenta, pedidos y favoritos.
 - [x] Perfil editable en `Mi cuenta`.
 - [x] Recuperación y actualización de contraseña.
-- [x] Login/registro estándar, Google OAuth, callback seguro y sesión persistente.
+- [x] Login/registro, Google, recuperación y sesión persistente con Clerk.
 - [x] Header condicionado por sesión y acceso admin por rol.
 - [x] Checkout con datos de cuenta precargados y alternativa invitado.
 - [x] Recibos imprimibles para cuenta, invitado y admin.

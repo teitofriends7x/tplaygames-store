@@ -18,6 +18,16 @@ export type PublicationStatus = (typeof PRODUCT_PUBLICATION_STATUSES)[number];
 export type ProductAvailabilityStatus =
   "available" | "preorder" | "out_of_stock";
 export type Role = (typeof ROLES)[number];
+
+export type AuthUser = {
+  id: string;
+  email: string;
+  emailConfirmed: boolean;
+  firstName?: string;
+  lastName?: string;
+  phone?: string;
+  role: Role;
+};
 export type OrderStatus = (typeof ORDER_STATUSES)[number];
 export type PaymentStatus = (typeof PAYMENT_STATUSES)[number];
 export type PaymentMethod = (typeof PAYMENT_METHODS)[number];
@@ -255,6 +265,7 @@ export type DigitalDelivery = {
 export type Order = {
   id: string;
   orderNumber: string;
+  clerkUserId?: string;
   userId?: string;
   customer: CustomerSnapshot;
   address?: AddressSnapshot;

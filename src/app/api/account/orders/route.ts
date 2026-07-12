@@ -1,20 +1,10 @@
 import { NextResponse } from "next/server";
 
 import { listAccountOrders } from "@/lib/order-persistence";
-import { getSupabaseServerClient } from "@/lib/supabase/server";
+import { getCurrentClerkUser } from "@/lib/clerk-auth";
 
 export async function GET() {
-  const supabase = await getSupabaseServerClient();
-  if (!supabase) {
-    return NextResponse.json(
-      { error: "El acceso a cuentas no está disponible en este momento." },
-      { status: 503 },
-    );
-  }
-
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const user = await getCurrentClerkUser();
 
   if (!user?.id || !user.email) {
     return NextResponse.json(
@@ -24,7 +14,7 @@ export async function GET() {
   }
 
   const orders = await listAccountOrders({
-    userId: user.id,
+    clerkUserId: user.id,
   });
 
   return NextResponse.json({ orders });

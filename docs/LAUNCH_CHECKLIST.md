@@ -6,19 +6,18 @@
 - [ ] Reemplazar precios, stock y garantías de prueba por condiciones comerciales reales.
 - [ ] Cargar imágenes de categorías y hero definitivas si la marca cambia.
 - [ ] Configurar Supabase real.
-- [ ] Aplicar migraciones `0001`, `0002`, `0003` y `0004` en orden.
-- [ ] Configurar Site URL y redirect allow list de Supabase Auth.
-- [ ] Confirmar `/api/auth/config` con tres valores `true` en producción.
+- [ ] Aplicar migraciones `0001` a `0005` en orden.
+- [ ] Crear aplicación Clerk y cargar Publishable key y Secret key en Vercel.
 - [ ] Confirmar variables en el proyecto Vercel que sirve el dominio, no solo en proyectos duplicados.
-- [ ] Crear credenciales Google OAuth y activar el provider en Supabase.
+- [ ] Activar Google en Clerk y probar el flujo administrado.
 - [ ] Verificar RLS con usuario cliente, operador y administrador.
 - [ ] Verificar bucket privado `transfer-proofs`.
 - [ ] Probar registro, confirmación, login, persistencia, logout, recuperación y actualización de contraseña.
-- [ ] Probar Google OAuth en localhost, staging y dominio final.
+- [ ] Probar Google con Clerk en localhost, staging y dominio final.
 - [ ] Probar vinculación de pedidos invitados con email verificado.
 - [ ] Probar carga y revisión de comprobantes de transferencia.
 - [ ] Probar recibos imprimibles en cuenta, seguimiento y admin.
-- [ ] Crear primer administrador con `claim_first_admin()`.
+- [ ] Asignar el primer administrador con Public metadata en Clerk Dashboard.
 - [ ] Configurar Mercado Pago sandbox.
 - [ ] Probar pago aprobado, pendiente, rechazado y duplicado.
 - [ ] Configurar webhook HTTPS.

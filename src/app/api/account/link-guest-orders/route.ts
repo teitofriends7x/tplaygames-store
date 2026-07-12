@@ -2,22 +2,17 @@ import { NextResponse } from "next/server";
 
 import {
   countGuestOrdersForEmail,
-  linkGuestOrdersToUser,
+  linkGuestOrdersToClerkUser,
 } from "@/lib/order-persistence";
-import { getSupabaseServerClient } from "@/lib/supabase/server";
+import { getCurrentClerkUser } from "@/lib/clerk-auth";
 import { linkGuestOrdersSchema } from "@/lib/validation";
 
 async function getVerifiedUser(): Promise<{
   id: string;
   email: string;
 } | null> {
-  const supabase = await getSupabaseServerClient();
-  if (!supabase) return null;
-
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user?.id || !user.email || !user.email_confirmed_at) return null;
+  const user = await getCurrentClerkUser();
+  if (!user?.id || !user.email || !user.emailVerified) return null;
 
   return { id: user.id, email: user.email };
 }
@@ -59,7 +54,7 @@ export async function POST(request: Request) {
     );
   }
 
-  const result = await linkGuestOrdersToUser(user.id, user.email);
+  const result = await linkGuestOrdersToClerkUser(user.id, user.email);
   if (result.error) {
     console.error("guest_order_link_failed", result.error);
     return NextResponse.json(

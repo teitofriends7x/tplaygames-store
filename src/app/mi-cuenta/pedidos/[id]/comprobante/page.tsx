@@ -2,7 +2,7 @@ import { notFound } from "next/navigation";
 
 import { OrderReceipt } from "@/components/order-receipt";
 import { getOrderForCustomer } from "@/lib/order-persistence";
-import { getSupabaseServerClient } from "@/lib/supabase/server";
+import { getCurrentClerkUser } from "@/lib/clerk-auth";
 
 export const metadata = {
   title: "Comprobante de pedido",
@@ -18,16 +18,13 @@ export default async function AccountOrderReceiptPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const supabase = await getSupabaseServerClient();
-  const {
-    data: { user },
-  } = supabase ? await supabase.auth.getUser() : { data: { user: null } };
+  const user = await getCurrentClerkUser();
 
   if (!user?.id || !user.email) notFound();
 
   const order = await getOrderForCustomer({
     idOrNumber: id,
-    userId: user.id,
+    clerkUserId: user.id,
     email: user.email,
   });
   if (!order) notFound();

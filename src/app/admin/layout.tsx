@@ -11,7 +11,8 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 
-import { getRoleFromServerSession, roleCanAccess } from "@/lib/authz";
+import { getRoleFromServerSession } from "@/lib/authz";
+import { roleCanAccess } from "@/lib/role-access";
 
 const nav = [
   ["Resumen", "/admin", Gauge],

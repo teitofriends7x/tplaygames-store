@@ -1,6 +1,6 @@
 import { describe, expect, it, beforeEach } from "vitest";
 
-import { canManageRole, roleCanAccess } from "@/lib/authz";
+import { canManageRole, roleCanAccess } from "@/lib/role-access";
 import { mergeCartItems, mergeFavoriteIds } from "@/lib/account-sync";
 import { calculateCart } from "@/lib/cart";
 import {

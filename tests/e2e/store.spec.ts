@@ -61,6 +61,7 @@ test("flujo e2e mixto: catalogo, carrito, checkout, pago dev y entrega digital",
   await page.reload();
   await expect(page.getByText("Aprobado", { exact: true })).toBeVisible();
 
+  await page.setExtraHTTPHeaders({ "x-demo-role": "admin" });
   await page.goto("/admin/pedidos");
   await expect(page.getByRole("heading", { name: "Pedidos" })).toBeVisible();
   await page.getByRole("link", { name: /TPG-/ }).first().click();

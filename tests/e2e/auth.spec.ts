@@ -1,17 +1,6 @@
 import { expect, test } from "@playwright/test";
 
-test("diagnóstico de auth no expone variables ni secretos", async ({ request }) => {
-  const response = await request.get("/api/auth/config");
-  expect(response.ok()).toBe(true);
-  const body = await response.json();
-  expect(typeof body.authenticationConfigured).toBe("boolean");
-  expect(typeof body.accountPersistenceConfigured).toBe("boolean");
-  expect(typeof body.siteUrlConfigured).toBe("boolean");
-  expect(JSON.stringify(body)).not.toContain("SUPABASE_SERVICE_ROLE_KEY");
-  expect(JSON.stringify(body)).not.toContain("NEXT_PUBLIC_SUPABASE_ANON_KEY");
-});
-
-test("el acceso principal abre un login comercial completo", async ({ page }) => {
+test("el header dirige a un login integrado y comercial", async ({ page }) => {
   await page.goto("/");
   await expect(page.locator('a[aria-label="Ingresar"]:visible')).toHaveAttribute(
     "href",
@@ -19,51 +8,55 @@ test("el acceso principal abre un login comercial completo", async ({ page }) =>
   );
 
   await page.goto("/login");
-  await expect(page.getByRole("heading", { name: "Iniciar sesión" })).toBeVisible();
-  await expect(page.getByLabel("Email")).toBeVisible();
-  await expect(page.getByLabel("Contraseña", { exact: true })).toBeVisible();
-  await expect(page.getByRole("button", { name: "Continuar con Google" })).toBeVisible();
-  await expect(page.getByRole("link", { name: "Olvidé mi contraseña" })).toHaveAttribute(
-    "href",
-    "/recuperar-contrasena",
-  );
-  await expect(page.getByText(/requiere configuración de Supabase/i)).toHaveCount(0);
-  await expect(page.getByRole("link", { name: "Consultá un pedido" })).toHaveAttribute(
-    "href",
-    "/seguimiento",
-  );
-});
-
-test("registro y recuperación muestran todos los campos esperados", async ({ page }) => {
-  await page.goto("/registro");
-  await expect(page.getByLabel("Nombre")).toBeVisible();
-  await expect(page.getByLabel("Apellido")).toBeVisible();
-  await expect(page.getByLabel("Email")).toBeVisible();
-  await expect(page.getByLabel("Teléfono (opcional)")).toBeVisible();
-  await expect(page.getByLabel("Contraseña", { exact: true })).toBeVisible();
-  await expect(page.getByLabel("Repetir contraseña", { exact: true })).toBeVisible();
-  await expect(page.getByRole("button", { name: "Registrarme con Google" })).toBeVisible();
-
-  await page.goto("/recuperar-contrasena");
-  await expect(page.getByRole("heading", { name: "Recuperar contraseña" })).toBeVisible();
-  await expect(page.getByRole("button", { name: "Enviar enlace" })).toBeVisible();
-
-  await page.goto("/recuperar-password");
-  await expect(page).toHaveURL(/\/recuperar-contrasena$/);
-});
-
-test("seguimiento queda separado del acceso a la cuenta", async ({ page }) => {
-  await page.goto("/seguimiento");
   await expect(
-    page.getByRole("link", {
-      name: "Iniciá sesión para ver todos tus pedidos.",
+    page.getByRole("heading", {
+      name: "Todo tu historial, listo para la próxima partida.",
     }),
-  ).toHaveAttribute("href", "/login");
-  await expect(page.getByLabel("Número de pedido")).toBeVisible();
-  await expect(page.getByLabel("Email")).toBeVisible();
+  ).toBeVisible();
+  await expect(page.getByText(/Continuar con Google/i)).toBeVisible();
+  await expect(page.getByText(/dirección de correo|email/i).first()).toBeVisible();
+  await expect(page.locator("body")).not.toContainText(/Supabase|variables de entorno/i);
 });
 
-test("checkout ofrece cuenta e invitado sin imponer registro", async ({ page }) => {
+test("registro ofrece Google y email dentro del diseño de la tienda", async ({
+  page,
+}) => {
+  await page.goto("/registro");
+  await expect(
+    page.getByRole("heading", {
+      name: "Creá tu cuenta y tené cada compra a mano.",
+    }),
+  ).toBeVisible();
+  await expect(page.getByText(/Continuar con Google/i)).toBeVisible();
+  await expect(page.getByText(/dirección de correo|email/i).first()).toBeVisible();
+  await expect(page.getByRole("link", { name: /iniciar sesión/i })).toHaveAttribute(
+    "href",
+    /\/login$/,
+  );
+});
+
+test("las rutas privadas redirigen al login sin sesión", async ({ page }) => {
+  await page.goto("/mi-cuenta");
+  await expect(page).toHaveURL(/\/login/);
+
+  await page.goto("/mis-pedidos");
+  await expect(page).toHaveURL(/\/login/);
+
+  await page.goto("/admin");
+  await expect(page).toHaveURL(/\/login/);
+});
+
+test("las rutas antiguas de recuperación usan el flujo de Clerk", async ({
+  page,
+}) => {
+  await page.goto("/recuperar-contrasena");
+  await expect(page).toHaveURL(/\/login$/);
+  await expect(page.locator("body")).not.toContainText(/Supabase/i);
+});
+
+test("checkout conserva la compra invitada y ofrece acceso a cuenta", async ({
+  page,
+}) => {
   await page.addInitScript(() => {
     localStorage.setItem(
       "tplaygames.cart.v1",
@@ -83,10 +76,4 @@ test("checkout ofrece cuenta e invitado sin imponer registro", async ({ page }) 
   );
   await expect(page.getByRole("link", { name: "Continuar como invitado" })).toBeVisible();
   await expect(page.getByLabel("Email")).toBeEditable();
-});
-
-test("callback no permite redirects externos", async ({ page }) => {
-  await page.goto("/auth/callback?next=https://evil.example/phishing");
-  await expect(page).toHaveURL(/\/login\?error=confirmation$/);
-  await expect(page.getByRole("heading", { name: "Iniciar sesión" })).toBeVisible();
 });

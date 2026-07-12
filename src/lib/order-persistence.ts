@@ -55,9 +55,15 @@ function generateGuestToken(): string {
   return randomBytes(32).toString("hex");
 }
 
+function actorColumns(actorId?: string) {
+  return isUuid(actorId ?? "")
+    ? { actor_id: actorId, actor_clerk_user_id: null }
+    : { actor_id: null, actor_clerk_user_id: actorId ?? null };
+}
+
 export async function persistOrderToSupabase(
   order: Order,
-  userId?: string,
+  owner: { clerkUserId?: string; legacyUserId?: string } = {},
 ): Promise<{
   success: boolean;
   publicOrderNumber?: string;
@@ -77,7 +83,8 @@ export async function persistOrderToSupabase(
   try {
     const { error: orderError } = await supabase.from("orders").upsert({
       id: order.id,
-      user_id: userId ?? null,
+      user_id: owner.legacyUserId ?? null,
+      clerk_user_id: owner.clerkUserId ?? null,
       public_order_number: publicOrderNumber,
       guest_email: order.customer.email,
       guest_phone: order.customer.phone,
@@ -130,7 +137,7 @@ export async function persistOrderToSupabase(
     }
 
     let guestToken: string | undefined;
-    if (!userId) {
+    if (!owner.clerkUserId && !owner.legacyUserId) {
       guestToken = generateGuestToken();
       const { error: tokenError } = await supabase
         .from("guest_order_access")
@@ -148,8 +155,10 @@ export async function persistOrderToSupabase(
     const { error: eventError } = await supabase.from("order_events").insert({
       order_id: order.id,
       event_type: "order_created",
-      actor_id: userId ?? null,
-      actor_role: userId ? "customer" : null,
+      actor_id: owner.legacyUserId ?? null,
+      actor_clerk_user_id: owner.clerkUserId ?? null,
+      actor_role:
+        owner.clerkUserId || owner.legacyUserId ? "customer" : null,
       payload: {
         paymentMethod: order.paymentMethod ?? "mercadopago",
         totalCents: order.totals.totalCents,
@@ -209,8 +218,8 @@ export async function findOrderByPublicNumber(
   return { order };
 }
 
-export async function linkGuestOrdersToUser(
-  userId: string,
+export async function linkGuestOrdersToClerkUser(
+  clerkUserId: string,
   email: string,
 ): Promise<{ linked: number; error?: string }> {
   const supabase = getSupabaseAdminClient();
@@ -218,10 +227,13 @@ export async function linkGuestOrdersToUser(
     return { linked: 0, error: "Supabase no configurado." };
   }
 
-  const { data, error } = await supabase.rpc("link_guest_orders_to_user", {
-    p_user_id: userId,
-    p_email: email,
-  });
+  const { data, error } = await supabase.rpc(
+    "link_guest_orders_to_clerk_user",
+    {
+      p_clerk_user_id: clerkUserId,
+      p_email: email,
+    },
+  );
 
   if (error) {
     return { linked: 0, error: error.message };
@@ -353,6 +365,7 @@ export async function getOrderDetailsForAdmin(
 export async function getOrderForCustomer(options: {
   idOrNumber: string;
   email?: string;
+  clerkUserId?: string;
   userId?: string;
 }): Promise<Order | null> {
   const supabase = getSupabaseAdminClient();
@@ -360,7 +373,7 @@ export async function getOrderForCustomer(options: {
     const order = findOrderForCustomer(
       options.idOrNumber,
       options.email,
-      options.userId,
+      options.clerkUserId ?? options.userId,
     );
     return order
       ? {
@@ -378,7 +391,9 @@ export async function getOrderForCustomer(options: {
       )
     : query.eq("public_order_number", options.idOrNumber);
 
-  if (options.userId) {
+  if (options.clerkUserId) {
+    query = query.eq("clerk_user_id", options.clerkUserId);
+  } else if (options.userId) {
     query = query.eq("user_id", options.userId);
   } else if (options.email) {
     query = query.eq("guest_email", options.email.toLowerCase().trim());
@@ -409,16 +424,22 @@ export async function getOrderForCustomer(options: {
 }
 
 export async function listAccountOrders(options: {
+  clerkUserId?: string;
   userId?: string;
   email?: string;
 }): Promise<Order[]> {
   const supabase = getSupabaseAdminClient();
   if (!supabase) {
-    return listOrdersByCustomer(options);
+    return listOrdersByCustomer({
+      userId: options.clerkUserId ?? options.userId,
+      email: options.email,
+    });
   }
 
   let query = supabase.from("orders").select("*");
-  if (options.userId && options.email) {
+  if (options.clerkUserId) {
+    query = query.eq("clerk_user_id", options.clerkUserId);
+  } else if (options.userId && options.email) {
     query = query.or(
       `user_id.eq.${options.userId},guest_email.eq.${options.email.toLowerCase().trim()}`,
     );
@@ -435,43 +456,40 @@ export async function listAccountOrders(options: {
 }
 
 export async function getAccountProfile(options: {
-  userId: string;
+  clerkUserId: string;
   email: string;
+  firstName?: string;
+  lastName?: string;
+  phone?: string;
 }): Promise<AccountProfile> {
   const supabase = getSupabaseAdminClient();
   if (!supabase) {
     return {
-      id: options.userId,
+      id: options.clerkUserId,
       email: options.email,
+      firstName: options.firstName,
+      lastName: options.lastName,
+      phone: options.phone,
     };
   }
 
-  const [{ data: profile }, { data: address }] = await Promise.all([
-    supabase
-      .from("profiles")
-      .select("*")
-      .eq("id", options.userId)
-      .maybeSingle(),
-    supabase
-      .from("addresses")
-      .select("*")
-      .eq("user_id", options.userId)
-      .order("created_at", { ascending: false })
-      .limit(1)
-      .maybeSingle(),
-  ]);
+  const { data: profile } = await supabase
+    .from("clerk_profiles")
+    .select("*")
+    .eq("clerk_user_id", options.clerkUserId)
+    .maybeSingle();
 
   return {
-    id: options.userId,
+    id: options.clerkUserId,
     email: options.email,
-    firstName: profile?.first_name ?? undefined,
-    lastName: profile?.last_name ?? undefined,
-    phone: profile?.phone ?? undefined,
-    street: address?.street ?? undefined,
-    city: address?.city ?? undefined,
-    province: address?.province ?? undefined,
-    postalCode: address?.postal_code ?? undefined,
-    addressNotes: address?.notes ?? undefined,
+    firstName: profile?.first_name ?? options.firstName,
+    lastName: profile?.last_name ?? options.lastName,
+    phone: profile?.phone ?? options.phone,
+    street: profile?.street ?? undefined,
+    city: profile?.city ?? undefined,
+    province: profile?.province ?? undefined,
+    postalCode: profile?.postal_code ?? undefined,
+    addressNotes: profile?.address_notes ?? undefined,
   };
 }
 
@@ -483,48 +501,22 @@ export async function updateAccountProfile(
     return { ok: true };
   }
 
-  const { error: profileError } = await supabase.from("profiles").upsert({
-    id: profile.id,
-    first_name: profile.firstName,
-    last_name: profile.lastName,
-    phone: profile.phone,
+  const { error } = await supabase.from("clerk_profiles").upsert({
+    clerk_user_id: profile.id,
+    email: profile.email.toLowerCase().trim(),
+    first_name: profile.firstName ?? null,
+    last_name: profile.lastName ?? null,
+    phone: profile.phone ?? null,
+    street: profile.street ?? null,
+    city: profile.city ?? null,
+    province: profile.province ?? null,
+    postal_code: profile.postalCode ?? null,
+    address_notes: profile.addressNotes ?? null,
     updated_at: new Date().toISOString(),
   });
-  if (profileError) return { ok: false, error: profileError.message };
 
-  const { data: existing } = await supabase
-    .from("addresses")
-    .select("id")
-    .eq("user_id", profile.id)
-    .limit(1)
-    .maybeSingle();
-
-  const payload = {
-    user_id: profile.id,
-    label: "Principal",
-    street: profile.street ?? "",
-    city: profile.city ?? "",
-    province: profile.province ?? "",
-    postal_code: profile.postalCode ?? "",
-    notes: profile.addressNotes ?? null,
-    updated_at: new Date().toISOString(),
-  };
-
-  const hasAddress = Boolean(
-    profile.street ||
-      profile.city ||
-      profile.province ||
-      profile.postalCode ||
-      profile.addressNotes,
-  );
-  if (!existing?.id && !hasAddress) return { ok: true };
-
-  const { error: addressError } = existing?.id
-    ? await supabase.from("addresses").update(payload).eq("id", existing.id)
-    : await supabase.from("addresses").insert(payload);
-
-  return addressError
-    ? { ok: false, error: addressError.message }
+  return error
+    ? { ok: false, error: error.message }
     : { ok: true };
 }
 
@@ -542,7 +534,7 @@ export async function countGuestOrdersForEmail(email: string): Promise<number> {
   const { count } = await supabase
     .from("orders")
     .select("id", { count: "exact", head: true })
-    .is("user_id", null)
+    .is("clerk_user_id", null)
     .eq("guest_email", normalized);
 
   return count ?? 0;
@@ -555,6 +547,7 @@ export async function submitTransferProof(input: {
   mimeType: "image/jpeg" | "image/png" | "application/pdf";
   extension: string;
   actorId?: string;
+  actorClerkUserId?: string;
   actorRole?: Role;
   guestEmail?: string;
   uploadedIp?: string;
@@ -568,9 +561,10 @@ export async function submitTransferProof(input: {
   const now = new Date().toISOString();
 
   if (!supabase) {
+    const localActorId = input.actorClerkUserId ?? input.actorId;
     const proof = addTransferProof({
       orderId: input.order.id,
-      uploadedBy: input.actorId,
+      uploadedBy: localActorId,
       guestEmail: input.guestEmail,
       storagePath: `development://${storagePath}`,
       fileName: input.fileName,
@@ -581,14 +575,14 @@ export async function submitTransferProof(input: {
     const updated = transitionOrderStatus(
       input.order,
       "transfer_proof_submitted",
-      { id: input.actorId, role: input.actorRole ?? "customer" },
+      { id: localActorId, role: input.actorRole ?? "customer" },
       "Comprobante de transferencia enviado.",
     );
     replaceOrder(updated);
     addOrderEvent({
       orderId: updated.id,
       eventType: "transfer_proof_submitted",
-      actorId: input.actorId,
+      actorId: localActorId,
       actorRole: input.actorRole ?? "customer",
       payload: {
         proofId: proof.id,
@@ -617,6 +611,7 @@ export async function submitTransferProof(input: {
     .insert({
       order_id: input.order.id,
       uploaded_by: input.actorId ?? null,
+      uploaded_by_clerk_user_id: input.actorClerkUserId ?? null,
       uploaded_by_role: input.actorRole ?? null,
       guest_email: input.guestEmail ?? null,
       storage_path: storagePath,
@@ -645,6 +640,7 @@ export async function submitTransferProof(input: {
       order_id: input.order.id,
       event_type: "transfer_proof_submitted",
       actor_id: input.actorId ?? null,
+      actor_clerk_user_id: input.actorClerkUserId ?? null,
       actor_role: input.actorRole ?? "customer",
       payload: {
         proofId: proofRow.id,
@@ -731,12 +727,14 @@ export async function reviewTransferProof(input: {
   }
 
   const proofStatus = isApproval ? "approved" : "rejected";
+  const reviewer = actorColumns(input.actorId);
   const { data: proofRow, error: proofError } = await supabase
     .from("transfer_proofs")
     .update({
       status: proofStatus,
       rejection_reason: isApproval ? null : (input.reason ?? null),
-      reviewed_by: input.actorId ?? null,
+      reviewed_by: reviewer.actor_id,
+      reviewed_by_clerk_user_id: reviewer.actor_clerk_user_id,
       reviewed_at: now,
       updated_at: now,
     })
@@ -765,7 +763,7 @@ export async function reviewTransferProof(input: {
     supabase.from("order_events").insert({
       order_id: input.orderId,
       event_type: isApproval ? "transfer_approved" : "transfer_rejected",
-      actor_id: input.actorId ?? null,
+      ...actorColumns(input.actorId),
       actor_role: input.actorRole,
       payload: { proofId: input.proofId, reason: input.reason ?? null },
       internal_note: isApproval
@@ -832,7 +830,7 @@ export async function updateStoredOrderStatus(input: {
     supabase.from("order_status_history").insert({
       order_id: order.id,
       status: input.status,
-      actor_id: input.actorId ?? null,
+      ...actorColumns(input.actorId),
       actor_role: input.actorRole,
       internal_comment: input.internalComment ?? null,
       created_at: updated.updatedAt,
@@ -840,7 +838,7 @@ export async function updateStoredOrderStatus(input: {
     supabase.from("order_events").insert({
       order_id: order.id,
       event_type: "order_status_updated",
-      actor_id: input.actorId ?? null,
+      ...actorColumns(input.actorId),
       actor_role: input.actorRole,
       payload: eventPayload,
       internal_note: input.internalComment ?? null,
@@ -901,7 +899,9 @@ export async function registerStoredDigitalDelivery(input: {
       secure_reference: input.secureReference,
       internal_note: input.internalNote,
       channel: input.channel,
-      delivered_by: input.actorId ?? null,
+      delivered_by: actorColumns(input.actorId).actor_id,
+      delivered_by_clerk_user_id:
+        actorColumns(input.actorId).actor_clerk_user_id,
       delivered_at:
         updated.digitalDelivery?.deliveredAt ?? new Date().toISOString(),
     });
@@ -925,7 +925,7 @@ export async function registerStoredDigitalDelivery(input: {
     supabase.from("order_status_history").insert({
       order_id: order.id,
       status: updated.status,
-      actor_id: input.actorId ?? null,
+      ...actorColumns(input.actorId),
       actor_role: input.actorRole,
       internal_comment: "Entrega digital registrada manualmente.",
       created_at: now,
@@ -933,7 +933,7 @@ export async function registerStoredDigitalDelivery(input: {
     supabase.from("order_events").insert({
       order_id: order.id,
       event_type: "digital_delivery_registered",
-      actor_id: input.actorId ?? null,
+      ...actorColumns(input.actorId),
       actor_role: input.actorRole,
       payload: { channel: input.channel },
       internal_note: input.internalNote,
@@ -1052,7 +1052,7 @@ async function loadOrderEvents(orderId: string): Promise<OrderEvent[]> {
     id: row.id,
     orderId: row.order_id,
     eventType: row.event_type,
-    actorId: row.actor_id ?? undefined,
+    actorId: row.actor_clerk_user_id ?? row.actor_id ?? undefined,
     actorRole: row.actor_role ?? undefined,
     payload: row.payload ?? {},
     internalNote: row.internal_note ?? undefined,
@@ -1077,7 +1077,7 @@ async function loadOrderStatusHistory(
   return (data ?? []).map((row) => ({
     id: row.id,
     status: row.status,
-    actorId: row.actor_id ?? undefined,
+    actorId: row.actor_clerk_user_id ?? row.actor_id ?? undefined,
     actorRole: row.actor_role ?? undefined,
     internalComment: row.internal_comment ?? undefined,
     createdAt: row.created_at,
@@ -1106,7 +1106,8 @@ async function loadDigitalDelivery(
     secureReference: data.secure_reference,
     internalNote: data.internal_note,
     channel: data.channel,
-    deliveredBy: data.delivered_by ?? "operator",
+    deliveredBy:
+      data.delivered_by_clerk_user_id ?? data.delivered_by ?? "operator",
     deliveredAt: data.delivered_at,
   };
 }
@@ -1123,6 +1124,7 @@ function mapOrderRow(
   return {
     id: String(data.id),
     orderNumber: publicNumber,
+    clerkUserId: optionalString(data.clerk_user_id),
     userId: optionalString(data.user_id),
     customer: data.customer_snapshot as Order["customer"],
     address: (data.address_snapshot ?? undefined) as Order["address"],
@@ -1170,7 +1172,9 @@ function mapTransferProofRow(row: Record<string, unknown>): TransferProof {
   return {
     id: String(row.id),
     orderId: String(row.order_id),
-    uploadedBy: optionalString(row.uploaded_by),
+    uploadedBy:
+      optionalString(row.uploaded_by_clerk_user_id) ??
+      optionalString(row.uploaded_by),
     guestEmail: optionalString(row.guest_email),
     storagePath: String(row.storage_path),
     fileName: String(row.original_file_name ?? row.file_name),
@@ -1178,7 +1182,9 @@ function mapTransferProofRow(row: Record<string, unknown>): TransferProof {
     mimeType: String(row.mime_type),
     status: row.status as TransferProof["status"],
     rejectionReason: optionalString(row.rejection_reason),
-    reviewedBy: optionalString(row.reviewed_by),
+    reviewedBy:
+      optionalString(row.reviewed_by_clerk_user_id) ??
+      optionalString(row.reviewed_by),
     reviewedAt: optionalString(row.reviewed_at),
     internalNote: optionalString(row.internal_note),
     createdAt: String(row.created_at),

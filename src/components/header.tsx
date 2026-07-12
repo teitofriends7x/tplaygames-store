@@ -6,7 +6,7 @@ import { useState } from "react";
 
 import { Logo } from "@/components/logo";
 import { SearchBox } from "@/components/search-box";
-import { useAuth } from "@/components/auth-provider";
+import { useStoreAuth } from "@/components/clerk-store-auth";
 import { useCartItems, useFavoriteProductIds } from "@/lib/cart-client";
 
 const nav = [
@@ -19,7 +19,7 @@ const nav = [
 
 export function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
-  const { user, loading: authLoading } = useAuth();
+  const { user, loading: authLoading } = useStoreAuth();
   const cartCount = useCartItems().reduce(
     (total, item) => total + item.quantity,
     0,
@@ -97,7 +97,7 @@ export function Header() {
           >
             Favoritos{favoriteCount ? ` (${favoriteCount})` : ""}
           </Link>
-          {user?.role === "admin" ? (
+          {user && ["admin", "operator"].includes(user.role) ? (
             <Link
               href="/admin"
               onClick={() => setMenuOpen(false)}
@@ -108,7 +108,7 @@ export function Header() {
           ) : null}
         </nav>
         <div className="hidden items-center gap-1 lg:flex">
-          {user?.role === "admin" ? (
+          {user && ["admin", "operator"].includes(user.role) ? (
             <HeaderIcon href="/admin" label="Panel administrador" icon={<ShieldCheck />} />
           ) : null}
           <AccountIcon user={user} loading={authLoading} />
@@ -134,7 +134,7 @@ function AccountIcon({
   user,
   loading,
 }: {
-  user: ReturnType<typeof useAuth>["user"];
+  user: ReturnType<typeof useStoreAuth>["user"];
   loading: boolean;
 }) {
   if (loading) {

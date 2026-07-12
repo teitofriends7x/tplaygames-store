@@ -6,7 +6,7 @@ import { EmptyState } from "@/components/empty-state";
 import { PAYMENT_STATUS_LABELS, STATUS_LABELS } from "@/lib/constants";
 import { formatARS, formatDateTimeAR } from "@/lib/money";
 import { listAccountOrders } from "@/lib/order-persistence";
-import { getSupabaseServerClient } from "@/lib/supabase/server";
+import { getCurrentClerkUser } from "@/lib/clerk-auth";
 
 export const metadata: Metadata = {
   title: "Mis pedidos",
@@ -17,13 +17,10 @@ export const metadata: Metadata = {
 };
 
 export default async function OrdersPage() {
-  const supabase = await getSupabaseServerClient();
-  const {
-    data: { user },
-  } = supabase ? await supabase.auth.getUser() : { data: { user: null } };
+  const user = await getCurrentClerkUser();
   const orders =
     user?.id && user.email
-      ? await listAccountOrders({ userId: user.id, email: user.email })
+      ? await listAccountOrders({ clerkUserId: user.id })
       : [];
 
   return (

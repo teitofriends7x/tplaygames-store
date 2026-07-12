@@ -1,25 +1,15 @@
 import { NextResponse } from "next/server";
 
 import { mergeCartItems, mergeFavoriteIds } from "@/lib/account-sync";
+import { getCurrentClerkUser } from "@/lib/clerk-auth";
 import { getSupabaseAdminClient } from "@/lib/supabase/admin";
-import { getSupabaseServerClient } from "@/lib/supabase/server";
 import { accountSyncSchema } from "@/lib/validation";
 
 const uuidPattern =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
 export async function POST(request: Request) {
-  const supabase = await getSupabaseServerClient();
-  if (!supabase) {
-    return NextResponse.json(
-      { error: "El acceso a cuentas no está disponible en este momento." },
-      { status: 503 },
-    );
-  }
-
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const user = await getCurrentClerkUser();
   if (!user?.id) {
     return NextResponse.json(
       { error: "Necesitás iniciar sesión para sincronizar tu cuenta." },
@@ -40,9 +30,9 @@ export async function POST(request: Request) {
   let remoteFavorites: string[] = [];
   if (admin) {
     const { data } = await admin
-      .from("favorites")
+      .from("clerk_favorites")
       .select("product_id")
-      .eq("user_id", user.id);
+      .eq("clerk_user_id", user.id);
     remoteFavorites = (data ?? []).map((item) => item.product_id);
   }
 
@@ -56,9 +46,9 @@ export async function POST(request: Request) {
       uuidPattern.test(id),
     );
     if (writableFavorites.length > 0) {
-      await admin.from("favorites").upsert(
+      await admin.from("clerk_favorites").upsert(
         writableFavorites.map((productId) => ({
-          user_id: user.id,
+          clerk_user_id: user.id,
           product_id: productId,
         })),
       );

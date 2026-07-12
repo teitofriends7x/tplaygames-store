@@ -15,7 +15,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 import { EmptyState } from "@/components/empty-state";
-import { useAuth } from "@/components/auth-provider";
+import { useStoreAuth } from "@/components/clerk-store-auth";
 import { PAYMENT_STATUS_LABELS, STATUS_LABELS } from "@/lib/constants";
 import { formatARS, formatDateTimeAR } from "@/lib/money";
 import type { AccountProfile, Order } from "@/lib/types";
@@ -26,7 +26,7 @@ type AccountPayload = {
 };
 
 export function AccountDashboard() {
-  const { user, loading: authLoading, configured, signOut } = useAuth();
+  const { user, loading: authLoading, signOut } = useStoreAuth();
   const router = useRouter();
   const [payload, setPayload] = useState<AccountPayload | null>(null);
   const [guestCount, setGuestCount] = useState(0);
@@ -73,7 +73,7 @@ export function AccountDashboard() {
     );
   }
 
-  if (!configured || !user) {
+  if (!user) {
     return (
       <section className="tpg-container py-10">
         <p className="section-eyebrow">Cliente</p>
@@ -277,7 +277,7 @@ export function AccountDashboard() {
           <Link href="/seguimiento" className="btn btn-secondary w-full">
             Seguir un pedido puntual
           </Link>
-          {user.role === "admin" ? (
+          {["admin", "operator"].includes(user.role) ? (
             <Link href="/admin" className="btn btn-secondary w-full">
               <ShieldCheck className="h-4 w-4" />
               Panel administrador

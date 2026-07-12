@@ -7,7 +7,7 @@ Tienda online argentina para consolas, controles y juegos.
 - Next.js 16 App Router.
 - TypeScript estricto.
 - Tailwind CSS 4.
-- Supabase para PostgreSQL, Auth, RLS y Storage.
+- Clerk para autenticación; Supabase para PostgreSQL, RLS y Storage.
 - Mercado Pago Checkout Pro desde servidor.
 - Zod, React Hook Form, Vitest y Playwright.
 - Resend desacoplado para correos.
@@ -23,8 +23,8 @@ npm run dev
 Abrir `http://localhost:3000`.
 
 Sin credenciales externas, la app usa modo desarrollo con catálogo seed, precios
-temporales y roles de prueba. Los formularios de cuenta permanecen visibles,
-pero las acciones de autenticación se deshabilitan con un mensaje comercial.
+temporales y roles de prueba. Clerk puede usar su modo de desarrollo local;
+las credenciales reales siguen siendo necesarias para desplegar.
 No usar valores demo como publicaciones comerciales finales.
 
 ## Verificación
@@ -44,8 +44,9 @@ Completar en `.env.local` o Vercel:
 
 - `NEXT_PUBLIC_SITE_URL`
 - `NEXT_PUBLIC_WHATSAPP_NUMBER`
+- `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`
+- `CLERK_SECRET_KEY`
 - `NEXT_PUBLIC_SUPABASE_URL`
-- `NEXT_PUBLIC_SUPABASE_ANON_KEY`
 - `SUPABASE_SERVICE_ROLE_KEY`
 - `MERCADOPAGO_ACCESS_TOKEN`
 - `MERCADOPAGO_WEBHOOK_SECRET`
@@ -89,13 +90,11 @@ reemplazables desde administración antes de vender.
 2. Ejecutar `supabase/migrations/0001_initial_schema.sql`.
 3. Ejecutar `supabase/migrations/0002_accounts_orders_persistence.sql`.
 4. Ejecutar `supabase/migrations/0003_complete_order_management.sql`.
-5. Ejecutar `supabase/migrations/0004_standard_auth_flow.sql`.
-6. Ejecutar opcionalmente `supabase/seed/demo_seed.sql`.
-7. Configurar Auth con el dominio de Vercel/local y callback
-   `/auth/callback`.
-8. Activar Google en Supabase con las credenciales OAuth de Google Cloud.
-9. Verificar el bucket privado `transfer-proofs` para comprobantes.
-10. Configurar Storage para imágenes de productos.
+5. Ejecutar `supabase/migrations/0004_standard_auth_flow.sql` solo como legado.
+6. Ejecutar `supabase/migrations/0005_clerk_auth_compatibility.sql`.
+7. Ejecutar opcionalmente `supabase/seed/demo_seed.sql`.
+8. Verificar el bucket privado `transfer-proofs` para comprobantes.
+9. Configurar Storage para imágenes de productos.
 
 ## Cuentas y pedidos persistentes
 
@@ -104,27 +103,27 @@ La fase actual completa la persistencia operativa:
 - checkout asociado a usuario autenticado cuando existe sesión;
 - historial de pedidos en `/mi-cuenta` y `/mis-pedidos`;
 - vinculación explícita de pedidos invitados por email verificado;
-- recuperación y actualización de contraseña vía Supabase Auth;
+- recuperación y actualización de contraseña vía Clerk;
 - carga privada de comprobantes de transferencia JPG, PNG o PDF hasta 10 MB;
 - revisión de comprobantes desde admin con aprobación/rechazo y email;
 - recibos imprimibles para cliente, seguimiento invitado y admin;
 - emails transaccionales desacoplados, no bloqueantes si Resend falla;
 - sincronización de carrito/favoritos al iniciar sesión.
-- login y registro estándar por email, Google OAuth y callback PKCE seguro;
-- sesión persistente renovada por `src/proxy.ts`;
-- perfil automático para altas por email y Google;
+- login y registro por email o Google con componentes oficiales de Clerk;
+- sesión persistente y rutas privadas protegidas por `src/proxy.ts`;
+- perfil operativo vinculado por `clerk_user_id`;
 - checkout precargado y elección explícita de cuenta o invitado.
 
 ## Primer administrador
 
 Procedimiento sin credenciales hardcodeadas:
 
-1. Configurar Supabase.
-2. Registrar el primer usuario por Supabase Auth.
-3. Iniciar sesión en la app.
-4. Ejecutar `POST /api/admin/claim-first-admin` desde esa sesión.
+1. Registrar el usuario en Clerk.
+2. Abrir ese usuario en Clerk Dashboard > Metadata.
+3. Guardar `{ "role": "admin" }` en Public metadata.
+4. Cerrar sesión y volver a ingresar.
 
-La funcion `claim_first_admin()` solo funciona si todavia no existe ningun administrador.
+La autorización de `/admin` vuelve a validar la metadata desde servidor.
 
 ## Compra de prueba
 

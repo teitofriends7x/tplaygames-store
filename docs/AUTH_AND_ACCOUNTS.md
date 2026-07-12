@@ -1,149 +1,98 @@
 # Autenticación y cuentas
 
-## Experiencia implementada
+## Proveedor
 
-- El ícono de cuenta abre `/login` sin sesión y `/mi-cuenta` con sesión.
-- Login y registro por email usan Supabase Auth; la aplicación nunca guarda contraseñas.
-- Google usa `supabase.auth.signInWithOAuth({ provider: "google" })` con PKCE.
-- `/auth/callback` intercambia el código por sesión, garantiza el perfil y acepta solo destinos internos.
-- `src/proxy.ts` valida la sesión y renueva cookies con headers privados de caché.
-- Recuperación: `/recuperar-contrasena` -> email -> `/auth/callback` -> `/actualizar-contrasena`.
-- Las rutas anteriores con sufijo `-password` redirigen a las rutas canónicas en español.
-- Los mensajes de Supabase se traducen a textos comerciales; no se muestran variables, stack traces ni instrucciones internas.
+Clerk gestiona registro, login, Google, email, recuperación, cierre de sesión y
+persistencia de sesión. Supabase Auth ya no participa del runtime. Supabase se
+conserva como PostgreSQL y Storage para pedidos, comprobantes y operación.
 
-Sin variables de Supabase, los formularios siguen visibles y explican de forma comercial que el acceso no está disponible. Comprar y seguir pedidos como invitado continúa funcionando.
+`ClerkProvider` vive en el layout raíz y `src/proxy.ts` protege `/mi-cuenta`,
+`/mis-pedidos` y `/admin`. Las pantallas oficiales `<SignIn>` y `<SignUp>` usan
+rutas catch-all y una apariencia oscura adaptada a T.PlayGames.
 
-## Perfil automático
+## Variables
 
-La migración `0004_standard_auth_flow.sql`:
-
-- crea `profiles` al dar de alta un usuario por email o Google;
-- importa nombre, apellido, teléfono y avatar desde metadata cuando existen;
-- conserva roles existentes;
-- permite que cada usuario inserte únicamente su propio perfil;
-- completa perfiles faltantes de usuarios ya existentes.
-
-## Pedidos de usuario
-
-El checkout valida la sesión en servidor. Con usuario autenticado:
-
-- fuerza el email verificado de la cuenta;
-- guarda `orders.user_id` con `user.id`;
-- conserva el snapshot histórico del cliente;
-- muestra el pedido en `/mi-cuenta` sin solicitar número ni código.
-
-El formulario precarga nombre, apellido, teléfono y dirección guardados. El servidor vuelve a validar stock, cupón y precio final.
-
-## Compras invitadas
-
-El checkout ofrece explícitamente iniciar sesión, crear una cuenta o continuar como invitado. Un pedido invitado guarda email y número público y se consulta en `/seguimiento`.
-
-Después de crear una cuenta con el mismo email y verificarlo, el cliente puede vincular los pedidos. El historial normal consulta solo `user_id`; las compras invitadas no aparecen silenciosamente antes de la vinculación.
-
-## Google OAuth
-
-1. En Google Cloud, crear una credencial OAuth de tipo `Web application`.
-2. Agregar como Authorized JavaScript origins:
-   - `http://localhost:3000`
-   - `https://tu-dominio.com`
-   - el dominio de staging/Vercel que se vaya a probar.
-3. Agregar como Authorized redirect URI la URL que muestra Supabase en Auth > Providers > Google, normalmente:
-   - `https://<project-ref>.supabase.co/auth/v1/callback`
-4. Copiar Client ID y Client Secret en Supabase Auth > Providers > Google y activar el proveedor.
-5. En Supabase Auth > URL Configuration:
-   - Site URL: el valor productivo de `NEXT_PUBLIC_SITE_URL`;
-   - Redirect URLs: `http://localhost:3000/auth/callback`, la URL de staging y `https://tu-dominio.com/auth/callback`.
-
-El Client Secret de Google no se carga en variables públicas de Next.js.
-
-## Variables requeridas
-
-- `NEXT_PUBLIC_SITE_URL`: origen canónico, sin path final.
-- `NEXT_PUBLIC_SUPABASE_URL`: URL del proyecto Supabase.
-- `NEXT_PUBLIC_SUPABASE_ANON_KEY`: clave pública/anon del proyecto.
-- `SUPABASE_SERVICE_ROLE_KEY`: solo servidor; persistencia operativa y administración.
-
-`GET /api/auth/config` permite verificar un deployment sin revelar nombres ni
-valores secretos. La respuesta esperada antes de probar cuentas es:
-
-```json
-{
-  "authenticationConfigured": true,
-  "accountPersistenceConfigured": true,
-  "siteUrlConfigured": true
-}
+```dotenv
+NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=
+CLERK_SECRET_KEY=
+NEXT_PUBLIC_CLERK_SIGN_IN_URL=/login
+NEXT_PUBLIC_CLERK_SIGN_UP_URL=/registro
+NEXT_PUBLIC_CLERK_AFTER_SIGN_IN_URL=/mi-cuenta
+NEXT_PUBLIC_CLERK_AFTER_SIGN_UP_URL=/mi-cuenta
 ```
 
-Cuando la configuración es inválida, el servidor registra únicamente los
-nombres de las variables faltantes o inválidas. Nunca registra sus valores.
+`CLERK_SECRET_KEY` es exclusivamente de servidor. Nunca debe usar el prefijo
+`NEXT_PUBLIC_`, imprimirse en logs ni enviarse al navegador.
 
-## Diagnóstico de producción
+## Configuración simple de Clerk y Vercel
 
-Revisión del 12 de julio de 2026 sobre
-`https://tplaygames-store.vercel.app/registro`:
+1. Entrar a [Clerk Dashboard](https://dashboard.clerk.com/) y crear una aplicación.
+2. En **SSO connections / Social connections**, habilitar Google. En desarrollo,
+   usar la conexión simplificada administrada por Clerk; no hace falta crear un
+   proyecto manual en Google Cloud.
+3. En **API keys**, copiar únicamente la Publishable key y la Secret key.
+4. En Vercel, abrir el proyecto que sirve el dominio público y crear
+   `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` y `CLERK_SECRET_KEY` para Production y
+   Preview. Agregar también las seis variables de ruta del bloque anterior.
+5. Guardar y ejecutar **Redeploy** del último commit. Un deployment anterior no
+   incorpora variables agregadas después del build.
+6. Probar `/registro`, `/login`, recuperación, recarga de sesión y logout.
 
-- el deployment responde HTTP 200 y corresponde al flujo nuevo;
-- el bundle público no contiene una URL Supabase ni una clave anon/publishable;
-- por eso `getSupabaseBrowserClient()` devuelve `null`;
-- `configured` queda en `false` y ambos botones se deshabilitan;
-- no es una condición relacionada con pedidos ni con campos del formulario.
+En producción, Clerk puede solicitar una conexión OAuth personalizada según el
+plan o la configuración elegida. Seguir entonces el asistente del Dashboard sin
+copiar secretos de Google al proyecto Next.js.
 
-GitHub informa deployments del mismo commit en tres proyectos Vercel:
-`tplaygames`, `tplaygames-store` y `tplaygames-store-web`. Las variables de un
-proyecto no se copian a los otros. Para la URL pública revisada deben cargarse
-en el proyecto `tplaygames-store` y luego crear un redeploy.
+## Roles
 
-### Configuración manual en Vercel
+Los roles válidos son `customer`, `operator` y `admin`. El servidor lee
+`publicMetadata.role` directamente desde Clerk mediante `currentUser()`; no
+confía en un valor enviado por el cliente.
 
-En Project settings > Environment Variables del proyecto correcto, cargar en
-Production y Preview (y Development si se usa `vercel dev`):
+Para asignar el primer administrador:
 
-- `NEXT_PUBLIC_SUPABASE_URL`
-- `NEXT_PUBLIC_SUPABASE_ANON_KEY`
-- `SUPABASE_SERVICE_ROLE_KEY`
-- `NEXT_PUBLIC_SITE_URL=https://tplaygames-store.vercel.app`
+1. Registrarse normalmente en la tienda.
+2. En Clerk Dashboard, abrir **Users** y seleccionar el usuario.
+3. Abrir **Metadata**.
+4. En **Public metadata**, guardar:
 
-Guardar y ejecutar Redeploy sobre el último commit. Un deployment existente no
-incorpora variables agregadas después de su build. Verificar luego
-`/api/auth/config` y `/registro`.
+```json
+{ "role": "admin" }
+```
 
-### Configuración manual en Supabase
+5. Cerrar sesión y volver a ingresar para refrescar la sesión.
 
-1. Ejecutar las migraciones `0001` a `0004` en orden.
-2. En Authentication > Providers, habilitar Email.
-3. Definir si Email confirmation queda habilitada y revisar la plantilla.
-4. En Authentication > URL Configuration usar como Site URL
-   `https://tplaygames-store.vercel.app`.
-5. Autorizar `http://localhost:3000/auth/callback` y
-   `https://tplaygames-store.vercel.app/auth/callback`.
-6. Confirmar la tabla `profiles`, el trigger `on_auth_user_created` y sus RLS.
-7. Para Google, copiar la Callback URL que muestra el provider de Supabase; esa
-   URL depende del project ref real y no debe inventarse.
+Usar `{ "role": "operator" }` para operadores. Si falta la metadata o contiene
+otro valor, la aplicación aplica `customer`.
 
-### Configuración manual en Google Cloud
+## Pedidos y compatibilidad
 
-En el cliente OAuth Web:
+La migración `0005_clerk_auth_compatibility.sql` agrega de forma no destructiva:
 
-- Authorized JavaScript origins:
-  - `http://localhost:3000`
-  - `https://tplaygames-store.vercel.app`
-- Authorized redirect URI:
-  - copiar exactamente la Callback URL mostrada por Supabase Auth > Providers > Google.
+- `orders.clerk_user_id` para compras nuevas autenticadas;
+- `clerk_profiles` para datos de contacto y envío;
+- `clerk_favorites` para favoritos sincronizados;
+- identificadores Clerk separados en eventos, auditoría y comprobantes;
+- `link_guest_orders_to_clerk_user()` para vincular por email verificado.
 
-Cargar Client ID y Client Secret en el provider Google de Supabase. Esas
-credenciales no pertenecen a `.env.local` ni a variables públicas de Next.js.
+`orders.user_id` y las tablas anteriores no se eliminan: conservan pedidos
+históricos creados con Supabase Auth. Al vincular una cuenta Clerk se busca el
+email normalizado en `guest_email` o en el snapshot histórico, incluso si el
+pedido conserva un `user_id` legacy.
 
-## Pruebas con credenciales
+En checkout autenticado, el servidor toma el ID y el email de Clerk y vuelve a
+validar stock, cupón y precio. Las compras invitadas siguen disponibles y se
+consultan por email más número de pedido.
 
-Antes de producción, ejecutar manualmente con un proyecto Supabase configurado:
+## Verificación manual con credenciales
 
-1. registro con confirmación de email habilitada y deshabilitada;
-2. login por email, recarga y reapertura del navegador;
-3. Google OAuth desde localhost, staging y dominio final;
-4. recuperación y cambio de contraseña;
-5. checkout autenticado y aparición inmediata del pedido en `/mi-cuenta`;
-6. checkout invitado, seguimiento y vinculación posterior;
-7. logout y protección de endpoints de cuenta;
-8. visibilidad de Panel administrador solo para rol `admin`.
+1. Registro con Google.
+2. Registro con email y verificación.
+3. Login, recarga, reapertura del navegador y logout.
+4. Recuperación de contraseña.
+5. Compra autenticada visible en `/mi-cuenta`.
+6. Compra invitada y vinculación posterior por email verificado.
+7. Usuario `customer` rechazado en `/admin`.
+8. Usuarios `operator` y `admin` habilitados según metadata.
 
-La suite local cubre el cliente Supabase con mocks de contrato, redirects seguros, UI pública, checkout invitado y regresiones. Los emails y consentimientos OAuth reales requieren las credenciales externas.
+Los consentimientos OAuth y emails reales no pueden automatizarse sin una
+aplicación Clerk y cuentas de prueba externas.

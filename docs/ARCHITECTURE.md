@@ -43,33 +43,37 @@ preparado como fuente real mediante:
 - claves foraneas,
 - indices,
 - RLS,
-- funcion segura para primer administrador,
+- compatibilidad no destructiva entre usuarios históricos y Clerk,
 - pedidos persistentes con `public_order_number`, `guest_email`,
   `payment_method` y `transfer_expires_at`,
 - eventos de pedido (`order_events`) para trazabilidad operativa,
 - comprobantes de transferencia en tabla `transfer_proofs` y bucket privado
   `transfer-proofs`,
-- vinculación de pedidos invitados mediante `link_guest_orders_to_user()`.
+- vinculación de pedidos invitados mediante
+  `link_guest_orders_to_clerk_user()`.
 
 Las migraciones se aplican en orden:
 
 1. `0001_initial_schema.sql`
 2. `0002_accounts_orders_persistence.sql`
 3. `0003_complete_order_management.sql`
+4. `0004_standard_auth_flow.sql` (esquema histórico)
+5. `0005_clerk_auth_compatibility.sql`
 
 ## Cuentas
 
-Supabase Auth gestiona registro, login, recuperación y actualización de
-contraseña. La app expone:
+Clerk gestiona registro, login, Google, recuperación y persistencia de sesión.
+Supabase no participa de la autenticación y sigue como base de datos. La app
+expone:
 
 - `/mi-cuenta` para perfil, pedidos y vinculación de compras anteriores;
 - `/mis-pedidos` para historial autenticado;
 - `/seguimiento` para consulta invitada por número de pedido y email;
-- `/auth/callback` para intercambiar códigos de recuperación/confirmación.
+- `/login` y `/registro` como rutas catch-all de los componentes Clerk.
 
-El checkout asocia el pedido al usuario autenticado cuando hay sesión activa.
+El checkout guarda `orders.clerk_user_id` cuando hay sesión activa.
 Si la compra fue invitada, el usuario puede vincularla después solo con email
-verificado.
+verificado. `orders.user_id` continúa disponible para registros históricos.
 
 ## Pagos
 

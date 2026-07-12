@@ -26,7 +26,7 @@ import { checkoutSchema } from "@/lib/validation";
 import { formatARS } from "@/lib/money";
 import type { Product } from "@/lib/types";
 import { EmptyState } from "@/components/empty-state";
-import { useAuth } from "@/components/auth-provider";
+import { useStoreAuth } from "@/components/clerk-store-auth";
 
 const checkoutClientSchema = checkoutSchema.omit({ items: true }).extend({
   paymentMethod: z.enum(["mercadopago", "transfer"]).optional(),
@@ -57,7 +57,7 @@ type MercadoPagoResult = {
 type CheckoutResult = TransferResult | MercadoPagoResult;
 
 export function CheckoutForm({ products }: { products: Product[] }) {
-  const { user, loading: authLoading } = useAuth();
+  const { user, loading: authLoading } = useStoreAuth();
   const items = useCartItems();
   const [couponCode, setCouponCode] = useState("");
   const [submitting, setSubmitting] = useState(false);

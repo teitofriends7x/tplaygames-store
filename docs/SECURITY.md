@@ -4,8 +4,8 @@
 
 - Validaciones Zod en checkout, busqueda, admin, estados y entrega digital.
 - Autorizacion server-side en endpoints admin.
-- Autorización admin por bearer token, cookie de sesión Supabase o rol demo solo
-  fuera de producción.
+- Autorización admin por sesión Clerk validada en servidor o rol demo por
+  encabezado solo fuera de producción.
 - Roles `customer`, `operator` y `admin`.
 - RLS Supabase para perfiles, direcciones, productos, pedidos, pagos, entregas digitales y auditoria.
 - RLS y Storage privado para comprobantes de transferencia.
@@ -26,20 +26,25 @@
 - Pedidos invitados se vinculan a usuario solo con email autenticado y
   verificado.
 - Emails transaccionales no bloquean mutaciones críticas si Resend falla.
-- Sesiones Supabase renovadas desde Proxy con respuestas privadas/no cacheables.
-- Callback OAuth con intercambio PKCE y redirect interno validado contra open redirect.
-- Perfiles creados por trigger `SECURITY DEFINER` con `search_path` fijo.
+- Sesiones Clerk protegidas desde Proxy en cuenta, pedidos y administración.
+- Login, registro, Google y recuperación delegados a componentes oficiales de Clerk.
+- La metadata de rol se obtiene desde Clerk en servidor; valores desconocidos
+  se reducen a `customer`.
 - El email de checkout autenticado se toma de la identidad verificada en servidor.
-- Historial autenticado limitado a `orders.user_id`; invitados requieren vinculación explícita.
+- Historial nuevo limitado a `orders.clerk_user_id`; `orders.user_id` se conserva
+  para compatibilidad histórica e invitados requieren vinculación explícita.
 
 ## Primer administrador
 
-No hay credenciales hardcodeadas. Usar `claim_first_admin()` mediante `POST /api/admin/claim-first-admin` una sola vez, con usuario autenticado.
+No hay credenciales hardcodeadas. Asignar `{ "role": "admin" }` en Public
+metadata del usuario desde Clerk Dashboard. `/admin` vuelve a validar ese rol
+del lado del servidor.
 
 ## Pendientes antes de produccion
 
-- Configurar Supabase real y verificar RLS con usuarios de prueba.
-- Activar Google OAuth y probar callback en localhost, staging y dominio final.
+- Configurar Clerk y probar Google/email en localhost, staging y dominio final.
+- Aplicar `0005_clerk_auth_compatibility.sql` en Supabase y verificar la capa de
+  servicio con usuarios de prueba.
 - Verificar bucket privado `transfer-proofs` y expiración de URLs firmadas.
 - Configurar storage de imágenes administradas con validación de
   extensión/tamaño, dimensiones máximas y política de reemplazo de imágenes.
