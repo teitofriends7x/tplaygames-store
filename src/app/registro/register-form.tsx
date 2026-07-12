@@ -28,12 +28,34 @@ export function RegisterForm({
   const [success, setSuccess] = useState(false);
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
+  const normalizedEmail = email.trim();
+  const normalizedPhone = phone.trim();
+  const formIsValid =
+    firstName.trim().length >= 2 &&
+    lastName.trim().length >= 2 &&
+    /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalizedEmail) &&
+    (!normalizedPhone || normalizedPhone.length >= 6) &&
+    password.length >= 8 &&
+    password === confirmPassword &&
+    acceptedTerms;
 
   async function handleSubmit(event: React.FormEvent) {
     event.preventDefault();
     if (loading) return;
     setError("");
 
+    if (firstName.trim().length < 2 || lastName.trim().length < 2) {
+      setError("Ingresá un nombre y apellido válidos.");
+      return;
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalizedEmail)) {
+      setError("Ingresá un email válido.");
+      return;
+    }
+    if (normalizedPhone && normalizedPhone.length < 6) {
+      setError("Revisá el teléfono o dejalo vacío.");
+      return;
+    }
     if (password.length < 8) {
       setError("La contraseña debe tener al menos 8 caracteres.");
       return;
@@ -49,7 +71,13 @@ export function RegisterForm({
 
     setLoading(true);
     const result = await signUp(
-      { firstName, lastName, email: email.trim(), phone: phone.trim() || undefined, password },
+      {
+        firstName: firstName.trim(),
+        lastName: lastName.trim(),
+        email: normalizedEmail,
+        phone: normalizedPhone || undefined,
+        password,
+      },
       next,
     );
     setLoading(false);
@@ -118,8 +146,8 @@ export function RegisterForm({
         <p className="mt-2 text-sm leading-6 text-[#A7ACB8]">Completá tus datos o registrate con Google.</p>
 
         {!configured ? (
-          <p className="mt-5 rounded-xl border border-[#F59E0B]/30 bg-[#F59E0B]/10 p-4 text-sm leading-6 text-[#FDE68A]" role="status">
-            La creación de cuentas no está disponible en este momento. Podés seguir comprando como invitado.
+          <p className="mt-3 rounded-lg border border-[#F59E0B]/30 bg-[#F59E0B]/10 px-3 py-2 text-sm leading-5 text-[#FDE68A]" role="status">
+            En este momento no podemos crear cuentas. Intentá nuevamente más tarde.
           </p>
         ) : null}
 
@@ -163,7 +191,11 @@ export function RegisterForm({
             <span>Acepto los <Link href="/terminos-y-condiciones" className="font-bold text-[#8FB7FF]">términos</Link> y la <Link href="/privacidad" className="font-bold text-[#8FB7FF]">política de privacidad</Link>.</span>
           </label>
           {error ? <p className="text-sm leading-6 text-[#FCA5A5]" role="alert">{error}</p> : null}
-          <button type="submit" disabled={!configured || loading || googleLoading} className="btn btn-primary w-full">
+          <button
+            type="submit"
+            disabled={!configured || !formIsValid || loading || googleLoading}
+            className="btn btn-primary w-full"
+          >
             {loading ? "Creando cuenta..." : "Crear cuenta"}
           </button>
         </form>

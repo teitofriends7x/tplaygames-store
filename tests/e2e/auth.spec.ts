@@ -1,5 +1,16 @@
 import { expect, test } from "@playwright/test";
 
+test("diagnóstico de auth no expone variables ni secretos", async ({ request }) => {
+  const response = await request.get("/api/auth/config");
+  expect(response.ok()).toBe(true);
+  const body = await response.json();
+  expect(typeof body.authenticationConfigured).toBe("boolean");
+  expect(typeof body.accountPersistenceConfigured).toBe("boolean");
+  expect(typeof body.siteUrlConfigured).toBe("boolean");
+  expect(JSON.stringify(body)).not.toContain("SUPABASE_SERVICE_ROLE_KEY");
+  expect(JSON.stringify(body)).not.toContain("NEXT_PUBLIC_SUPABASE_ANON_KEY");
+});
+
 test("el acceso principal abre un login comercial completo", async ({ page }) => {
   await page.goto("/");
   await expect(page.locator('a[aria-label="Ingresar"]:visible')).toHaveAttribute(

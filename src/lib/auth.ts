@@ -39,10 +39,27 @@ export function getAuthCallbackUrl(next = "/mi-cuenta") {
   const configuredSiteUrl = process.env.NEXT_PUBLIC_SITE_URL?.trim();
   const browserOrigin =
     typeof window !== "undefined" ? window.location.origin : undefined;
-  const siteUrl = configuredSiteUrl || browserOrigin || "http://localhost:3000";
+  const fallback = browserOrigin || "http://localhost:3000";
+  const siteUrl = getSafeSiteOrigin(configuredSiteUrl, fallback);
   const url = new URL("/auth/callback", siteUrl);
   url.searchParams.set("next", getSafeNextPath(next));
   return url.toString();
+}
+
+export function getSafeSiteOrigin(
+  configuredSiteUrl: string | null | undefined,
+  fallback: string,
+) {
+  if (!configuredSiteUrl) return new URL(fallback).origin;
+  try {
+    const url = new URL(configuredSiteUrl);
+    if (url.protocol !== "http:" && url.protocol !== "https:") {
+      return new URL(fallback).origin;
+    }
+    return url.origin;
+  } catch {
+    return new URL(fallback).origin;
+  }
 }
 
 export function getCommercialAuthError(error?: {
@@ -51,6 +68,14 @@ export function getCommercialAuthError(error?: {
 } | null) {
   const code = error?.code?.toLowerCase() ?? "";
   const message = error?.message?.toLowerCase() ?? "";
+
+  if (
+    message.includes("failed to fetch") ||
+    message.includes("networkerror") ||
+    message.includes("network request failed")
+  ) {
+    return "No pudimos conectarnos con el servicio de cuentas. Revisá tu conexión e intentá nuevamente.";
+  }
 
   if (code === "invalid_credentials" || message.includes("invalid login")) {
     return "El email o la contraseña no son correctos.";

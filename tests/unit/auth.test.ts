@@ -4,8 +4,10 @@ import {
   getAuthPageError,
   getCommercialAuthError,
   getSafeNextPath,
+  getSafeSiteOrigin,
 } from "@/lib/auth";
 import { associateCustomerWithUser } from "@/lib/checkout-customer";
+import { validatePublicSupabaseConfig } from "@/lib/supabase/config";
 
 describe("autenticacion", () => {
   it("acepta destinos internos y conserva query string", () => {
@@ -35,6 +37,34 @@ describe("autenticacion", () => {
       getCommercialAuthError({ message: "database connection stack trace" }),
     ).not.toContain("database");
     expect(getAuthPageError("oauth")).toMatch(/Google/);
+  });
+
+  it("usa un origen seguro si NEXT_PUBLIC_SITE_URL es inválida", () => {
+    expect(getSafeSiteOrigin("javascript:alert(1)", "https://store.test")).toBe(
+      "https://store.test",
+    );
+  });
+
+  it("valida las dos variables públicas requeridas", () => {
+    expect(validatePublicSupabaseConfig({})).toMatchObject({
+      configured: false,
+      issues: [
+        "NEXT_PUBLIC_SUPABASE_URL_missing",
+        "NEXT_PUBLIC_SUPABASE_ANON_KEY_missing",
+      ],
+    });
+    expect(
+      validatePublicSupabaseConfig({
+        url: "https://project.supabase.co",
+        anonKey: "sb_publishable_12345678901234567890",
+      }).configured,
+    ).toBe(true);
+  });
+
+  it("traduce errores de red sin borrar datos del formulario", () => {
+    expect(getCommercialAuthError({ message: "Failed to fetch" })).toMatch(
+      /conectarnos/i,
+    );
   });
 });
 

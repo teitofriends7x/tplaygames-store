@@ -8,6 +8,8 @@
 - [ ] Configurar Supabase real.
 - [ ] Aplicar migraciones `0001`, `0002`, `0003` y `0004` en orden.
 - [ ] Configurar Site URL y redirect allow list de Supabase Auth.
+- [ ] Confirmar `/api/auth/config` con tres valores `true` en producción.
+- [ ] Confirmar variables en el proyecto Vercel que sirve el dominio, no solo en proyectos duplicados.
 - [ ] Crear credenciales Google OAuth y activar el provider en Supabase.
 - [ ] Verificar RLS con usuario cliente, operador y administrador.
 - [ ] Verificar bucket privado `transfer-proofs`.

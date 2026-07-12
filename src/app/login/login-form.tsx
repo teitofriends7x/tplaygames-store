@@ -79,8 +79,8 @@ export function LoginForm({
         </p>
 
         {!configured ? (
-          <p className="mt-5 rounded-xl border border-[#F59E0B]/30 bg-[#F59E0B]/10 p-4 text-sm leading-6 text-[#FDE68A]" role="status">
-            El acceso a cuentas no está disponible en este momento. Podés seguir comprando como invitado.
+          <p className="mt-3 rounded-lg border border-[#F59E0B]/30 bg-[#F59E0B]/10 px-3 py-2 text-sm leading-5 text-[#FDE68A]" role="status">
+            En este momento no podemos iniciar sesión. Intentá nuevamente más tarde.
           </p>
         ) : null}
 

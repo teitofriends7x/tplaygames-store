@@ -5,6 +5,7 @@ import { Footer } from "@/components/footer";
 import { Header } from "@/components/header";
 import { WhatsappFloat } from "@/components/whatsapp-float";
 import { STORE_NAME, STORE_TAGLINE } from "@/lib/constants";
+import { logAuthConfigurationIssues } from "@/lib/supabase/config-server";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -46,6 +47,8 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  logAuthConfigurationIssues("root-layout");
+
   return (
     <html
       lang="es-AR"

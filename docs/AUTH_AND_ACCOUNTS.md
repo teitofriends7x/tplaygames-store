@@ -63,6 +63,76 @@ El Client Secret de Google no se carga en variables públicas de Next.js.
 - `NEXT_PUBLIC_SUPABASE_ANON_KEY`: clave pública/anon del proyecto.
 - `SUPABASE_SERVICE_ROLE_KEY`: solo servidor; persistencia operativa y administración.
 
+`GET /api/auth/config` permite verificar un deployment sin revelar nombres ni
+valores secretos. La respuesta esperada antes de probar cuentas es:
+
+```json
+{
+  "authenticationConfigured": true,
+  "accountPersistenceConfigured": true,
+  "siteUrlConfigured": true
+}
+```
+
+Cuando la configuración es inválida, el servidor registra únicamente los
+nombres de las variables faltantes o inválidas. Nunca registra sus valores.
+
+## Diagnóstico de producción
+
+Revisión del 12 de julio de 2026 sobre
+`https://tplaygames-store.vercel.app/registro`:
+
+- el deployment responde HTTP 200 y corresponde al flujo nuevo;
+- el bundle público no contiene una URL Supabase ni una clave anon/publishable;
+- por eso `getSupabaseBrowserClient()` devuelve `null`;
+- `configured` queda en `false` y ambos botones se deshabilitan;
+- no es una condición relacionada con pedidos ni con campos del formulario.
+
+GitHub informa deployments del mismo commit en tres proyectos Vercel:
+`tplaygames`, `tplaygames-store` y `tplaygames-store-web`. Las variables de un
+proyecto no se copian a los otros. Para la URL pública revisada deben cargarse
+en el proyecto `tplaygames-store` y luego crear un redeploy.
+
+### Configuración manual en Vercel
+
+En Project settings > Environment Variables del proyecto correcto, cargar en
+Production y Preview (y Development si se usa `vercel dev`):
+
+- `NEXT_PUBLIC_SUPABASE_URL`
+- `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+- `SUPABASE_SERVICE_ROLE_KEY`
+- `NEXT_PUBLIC_SITE_URL=https://tplaygames-store.vercel.app`
+
+Guardar y ejecutar Redeploy sobre el último commit. Un deployment existente no
+incorpora variables agregadas después de su build. Verificar luego
+`/api/auth/config` y `/registro`.
+
+### Configuración manual en Supabase
+
+1. Ejecutar las migraciones `0001` a `0004` en orden.
+2. En Authentication > Providers, habilitar Email.
+3. Definir si Email confirmation queda habilitada y revisar la plantilla.
+4. En Authentication > URL Configuration usar como Site URL
+   `https://tplaygames-store.vercel.app`.
+5. Autorizar `http://localhost:3000/auth/callback` y
+   `https://tplaygames-store.vercel.app/auth/callback`.
+6. Confirmar la tabla `profiles`, el trigger `on_auth_user_created` y sus RLS.
+7. Para Google, copiar la Callback URL que muestra el provider de Supabase; esa
+   URL depende del project ref real y no debe inventarse.
+
+### Configuración manual en Google Cloud
+
+En el cliente OAuth Web:
+
+- Authorized JavaScript origins:
+  - `http://localhost:3000`
+  - `https://tplaygames-store.vercel.app`
+- Authorized redirect URI:
+  - copiar exactamente la Callback URL mostrada por Supabase Auth > Providers > Google.
+
+Cargar Client ID y Client Secret en el provider Google de Supabase. Esas
+credenciales no pertenecen a `.env.local` ni a variables públicas de Next.js.
+
 ## Pruebas con credenciales
 
 Antes de producción, ejecutar manualmente con un proyecto Supabase configurado:

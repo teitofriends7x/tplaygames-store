@@ -3,17 +3,20 @@ import "server-only";
 import { cookies } from "next/headers";
 import { createServerClient } from "@supabase/ssr";
 
-export async function getSupabaseServerClient() {
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+import { getPublicSupabaseConfig } from "@/lib/supabase/config";
+import { logAuthConfigurationIssues } from "@/lib/supabase/config-server";
 
-  if (!url || !anonKey) {
+export async function getSupabaseServerClient() {
+  const config = getPublicSupabaseConfig();
+
+  if (!config.configured || !config.url || !config.anonKey) {
+    logAuthConfigurationIssues("server-client");
     return null;
   }
 
   const cookieStore = await cookies();
 
-  return createServerClient(url, anonKey, {
+  return createServerClient(config.url, config.anonKey, {
     cookies: {
       getAll() {
         return cookieStore.getAll();

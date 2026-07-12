@@ -63,6 +63,19 @@ npm run build
 6. Probar consentimiento y retorno en cada dominio. Ver detalles en
    `docs/AUTH_AND_ACCOUNTS.md`.
 
+## Verificación de autenticación desplegada
+
+1. Confirmar que las cuatro variables de cuentas existen en Production y
+   Preview dentro del proyecto Vercel que sirve el dominio público.
+2. Ejecutar un redeploy después de cualquier cambio de variables.
+3. Abrir `/api/auth/config`; los tres campos deben ser `true`.
+4. Abrir `/registro`, completar un formulario válido y comprobar que `Crear
+   cuenta` se habilita.
+5. Probar Email y Google contra el proyecto Supabase real.
+
+Este repositorio tiene checks de tres proyectos Vercel (`tplaygames`,
+`tplaygames-store` y `tplaygames-store-web`). Sus variables son independientes.
+
 ## Pruebas de lanzamiento operativas
 
 1. Registrar usuario, confirmar email y recuperar contraseña.
