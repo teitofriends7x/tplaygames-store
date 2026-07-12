@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
 import { ClerkProvider } from "@clerk/nextjs";
-import { esES } from "@clerk/localizations";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Footer } from "@/components/footer";
 import { Header } from "@/components/header";
 import { WhatsappFloat } from "@/components/whatsapp-float";
 import { STORE_NAME, STORE_TAGLINE } from "@/lib/constants";
+import { clerkLocalization } from "@/lib/clerk-localization";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -49,7 +49,7 @@ export default function RootLayout({
 }>) {
   return (
     <ClerkProvider
-      localization={esES}
+      localization={clerkLocalization}
       signInUrl="/login"
       signUpUrl="/registro"
     >

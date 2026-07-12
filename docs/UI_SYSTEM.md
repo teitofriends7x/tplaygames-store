@@ -1,5 +1,23 @@
 # Sistema visual
 
+## Autenticación Clerk
+
+`src/lib/clerk-appearance.ts` aplica el tema oficial `simple` y personaliza los
+componentes preconstruidos mediante `appearance.options`, `variables` y
+`elements`. Usa los tokens cromáticos de la tienda, campos de 50 px, foco azul,
+card de hasta 500 px y enlaces legales reales. No se apuntan clases internas de
+Clerk.
+
+`src/components/auth-shell.tsx` aporta la composición exterior. En escritorio
+muestra beneficios comerciales junto al formulario; por debajo de `lg` oculta
+ese panel y deja una única columna fluida. Los textos del flujo viven en
+`src/lib/clerk-localization.ts` para conservar español argentino en login,
+registro y recuperación.
+
+La marca **Secured by Clerk** se conserva con jerarquía secundaria. La etiqueta
+**Development mode** no se oculta: solo desaparece al conectar claves de una
+instancia Clerk Production.
+
 ## Identidad
 
 T.PlayGames mantiene fondo oscuro, azul principal y estética gamer sobria. La

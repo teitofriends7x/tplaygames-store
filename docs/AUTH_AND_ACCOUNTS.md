@@ -42,6 +42,37 @@ En producción, Clerk puede solicitar una conexión OAuth personalizada según e
 plan o la configuración elegida. Seguir entonces el asistente del Dashboard sin
 copiar secretos de Google al proyecto Next.js.
 
+## Pasar de Development a Production
+
+La etiqueta **Development mode** pertenece a Clerk y no se oculta desde CSS.
+Desaparece al usar una instancia de producción con sus claves live.
+
+Revisión del 12 de julio de 2026: la página pública
+`https://tplaygames-store.vercel.app/login` todavía muestra **Development mode**.
+Eso confirma que el deployment está conectado a una instancia Development. El
+repositorio local no está vinculado a Vercel CLI, por lo que los valores de sus
+variables no pueden inspeccionarse desde acá; revisar en Vercel que no continúen
+usando prefijos `pk_test_` y `sk_test_`.
+
+1. En Clerk Dashboard, abrir el selector **Development** y elegir **Go to prod**
+   o **Create production instance**.
+2. Crear la instancia de producción. Se pueden clonar los ajustes generales,
+   pero las conexiones sociales y rutas deben revisarse nuevamente.
+3. Abrir **Domains**, cargar el dominio real y completar los registros DNS que
+   indique Clerk hasta que quede verificado.
+4. Habilitar Google en la instancia Production y completar la conexión OAuth
+   productiva que solicite Clerk.
+5. En **API keys**, copiar la Publishable key `pk_live_...` y la Secret key
+   `sk_live_...`.
+6. En Vercel > Project Settings > Environment Variables, reemplazar únicamente
+   `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` y `CLERK_SECRET_KEY` en Production.
+7. Mantener las rutas `NEXT_PUBLIC_CLERK_*_URL` existentes y ejecutar Redeploy.
+8. Verificar que desaparezca **Development mode** y repetir registro, Google,
+   recuperación, persistencia de sesión y logout.
+
+No reemplazar claves de Preview/Development por claves live salvo que exista una
+decisión explícita de compartir usuarios productivos con esos entornos.
+
 ## Roles
 
 Los roles válidos son `customer`, `operator` y `admin`. El servidor lee

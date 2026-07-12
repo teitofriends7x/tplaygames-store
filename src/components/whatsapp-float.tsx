@@ -1,8 +1,15 @@
+"use client";
+
 import { MessageCircle } from "lucide-react";
+import { usePathname } from "next/navigation";
 
 import { whatsappGeneralUrl } from "@/lib/whatsapp";
 
 export function WhatsappFloat() {
+  const pathname = usePathname();
+  if (pathname === "/login" || pathname.startsWith("/login/")) return null;
+  if (pathname === "/registro" || pathname.startsWith("/registro/")) return null;
+
   return (
     <a
       href={whatsappGeneralUrl()}
