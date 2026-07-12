@@ -21,9 +21,10 @@ npm run build
    - `supabase/migrations/0001_initial_schema.sql`
    - `supabase/migrations/0002_accounts_orders_persistence.sql`
    - `supabase/migrations/0003_complete_order_management.sql`
+   - `supabase/migrations/0004_standard_auth_flow.sql`
 3. Configurar Auth redirect URLs:
-   - `http://localhost:3000`
-   - URL de Vercel
+   - `http://localhost:3000/auth/callback`
+   - `https://staging-o-vercel/auth/callback`
    - `https://dominio/auth/callback`
 4. Confirmar bucket privado `transfer-proofs` para comprobantes.
 5. Configurar storage privado para imágenes subidas desde admin.
@@ -47,6 +48,20 @@ npm run build
 - `SUPABASE_TRANSFER_PROOFS_BUCKET`: por defecto `transfer-proofs`.
 - `NEXT_PUBLIC_SITE_URL`: requerido para links de recuperación de contraseña,
   Mercado Pago y recibos.
+- `NEXT_PUBLIC_SUPABASE_URL`: URL pública del proyecto Supabase.
+- `NEXT_PUBLIC_SUPABASE_ANON_KEY`: clave pública/anon usada por SSR y navegador.
+- `SUPABASE_SERVICE_ROLE_KEY`: solo servidor; nunca usar prefijo `NEXT_PUBLIC_`.
+
+## Google OAuth
+
+1. Crear cliente OAuth Web en Google Cloud.
+2. Agregar origins para localhost, staging/Vercel y dominio final.
+3. Agregar como redirect URI la callback de Supabase:
+   `https://<project-ref>.supabase.co/auth/v1/callback`.
+4. Cargar Client ID/Secret y activar Google en Supabase Auth > Providers.
+5. Configurar Site URL y allow list de callbacks de la aplicación en Supabase.
+6. Probar consentimiento y retorno en cada dominio. Ver detalles en
+   `docs/AUTH_AND_ACCOUNTS.md`.
 
 ## Pruebas de lanzamiento operativas
 

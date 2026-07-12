@@ -23,6 +23,7 @@
 - [x] Crear migración Supabase con tablas esperadas.
 - [x] Crear políticas RLS.
 - [x] Crear migración `0003_complete_order_management.sql`.
+- [x] Crear migración `0004_standard_auth_flow.sql` para perfiles y OAuth.
 - [x] Crear bucket privado `transfer-proofs` y políticas de Storage.
 - [x] Persistir pedidos con número público, email invitado y eventos.
 - [x] Vincular pedidos invitados a usuario por email verificado.
@@ -46,12 +47,16 @@
 - [x] Cuenta, pedidos y favoritos.
 - [x] Perfil editable en `Mi cuenta`.
 - [x] Recuperación y actualización de contraseña.
+- [x] Login/registro estándar, Google OAuth, callback seguro y sesión persistente.
+- [x] Header condicionado por sesión y acceso admin por rol.
+- [x] Checkout con datos de cuenta precargados y alternativa invitado.
 - [x] Recibos imprimibles para cuenta, invitado y admin.
 - [x] Páginas legales e informativas.
 - [x] Panel admin/operador.
 - [x] Panel admin de pedidos con filtros, historial y comprobantes.
 - [x] Panel de inventario.
 - [x] Capturas visuales before/after.
+- [x] Capturas de autenticación desktop/mobile en `artifacts/auth-flow-review`.
 
 ## Contenido y assets
 

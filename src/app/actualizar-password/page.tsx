@@ -1,15 +1,5 @@
-import type { Metadata } from "next";
-
-import { UpdatePasswordForm } from "./update-password-form";
-
-export const metadata: Metadata = {
-  title: "Actualizar contraseña",
-  robots: {
-    index: false,
-    follow: false,
-  },
-};
+import { redirect } from "next/navigation";
 
 export default function UpdatePasswordPage() {
-  return <UpdatePasswordForm />;
+  redirect("/actualizar-contrasena");
 }

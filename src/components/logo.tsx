@@ -12,7 +12,7 @@ export function Logo() {
       <span className="grid h-9 w-9 place-items-center rounded-lg bg-[#1D6DFF] text-sm font-black text-white shadow-[0_0_22px_rgba(29,109,255,0.38)]">
         T
       </span>
-      <span className="text-lg font-black tracking-normal text-white">
+      <span className="hidden text-lg font-black tracking-normal text-white min-[350px]:inline">
         {STORE_NAME}
       </span>
     </Link>

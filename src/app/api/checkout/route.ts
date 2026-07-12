@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 
 import { createPaymentPreference } from "@/lib/payments";
+import { associateCustomerWithUser } from "@/lib/checkout-customer";
 import { getClientKey, checkRateLimit } from "@/lib/rate-limit";
 import { createOrder, getStoreState } from "@/lib/store";
 import { checkoutSchema } from "@/lib/validation";
@@ -31,10 +32,7 @@ export async function POST(request: Request) {
     const {
       data: { user },
     } = supabase ? await supabase.auth.getUser() : { data: { user: null } };
-    const customer = {
-      ...parsed.data.customer,
-      userId: user?.id,
-    };
+    const customer = associateCustomerWithUser(parsed.data.customer, user);
     const order = createOrder({
       ...parsed.data,
       customer,

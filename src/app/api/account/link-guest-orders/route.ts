@@ -61,7 +61,11 @@ export async function POST(request: Request) {
 
   const result = await linkGuestOrdersToUser(user.id, user.email);
   if (result.error) {
-    return NextResponse.json({ error: result.error }, { status: 500 });
+    console.error("guest_order_link_failed", result.error);
+    return NextResponse.json(
+      { error: "No pudimos vincular los pedidos. Intentá nuevamente." },
+      { status: 500 },
+    );
   }
 
   return NextResponse.json({ linked: result.linked });

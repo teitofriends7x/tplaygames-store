@@ -60,6 +60,12 @@ export function OrderTrackingForm() {
         Ingresá el número de pedido y el email que usaste al comprar para ver el
         estado de tu compra.
       </p>
+      <div className="mt-5 max-w-xl rounded-xl border border-[#1D6DFF]/30 bg-[#1D6DFF]/10 p-4 text-sm leading-6 text-[#C8D9FF]">
+        ¿Tenés una cuenta?{" "}
+        <Link href="/login" className="font-black text-white hover:text-[#8FB7FF]">
+          Iniciá sesión para ver todos tus pedidos.
+        </Link>
+      </div>
 
       <form onSubmit={handleSubmit} className="tpg-card mt-6 max-w-xl p-5">
         <div className="grid gap-4 sm:grid-cols-2">

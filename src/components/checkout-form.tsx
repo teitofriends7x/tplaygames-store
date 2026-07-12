@@ -14,7 +14,8 @@ import {
   Truck,
 } from "lucide-react";
 import Image from "next/image";
-import { useMemo, useState } from "react";
+import Link from "next/link";
+import { useEffect, useMemo, useState } from "react";
 import { useForm, useWatch } from "react-hook-form";
 import { z } from "zod";
 
@@ -25,6 +26,7 @@ import { checkoutSchema } from "@/lib/validation";
 import { formatARS } from "@/lib/money";
 import type { Product } from "@/lib/types";
 import { EmptyState } from "@/components/empty-state";
+import { useAuth } from "@/components/auth-provider";
 
 const checkoutClientSchema = checkoutSchema.omit({ items: true }).extend({
   paymentMethod: z.enum(["mercadopago", "transfer"]).optional(),
@@ -41,6 +43,7 @@ type TransferResult = {
     accountHolder: string;
   };
   transferExpiresAt?: string;
+  email: string;
 };
 
 type MercadoPagoResult = {
@@ -48,11 +51,13 @@ type MercadoPagoResult = {
   paymentMethod: "mercadopago";
   paymentUrl: string;
   mode: string;
+  email: string;
 };
 
 type CheckoutResult = TransferResult | MercadoPagoResult;
 
 export function CheckoutForm({ products }: { products: Product[] }) {
+  const { user, loading: authLoading } = useAuth();
   const items = useCartItems();
   const [couponCode, setCouponCode] = useState("");
   const [submitting, setSubmitting] = useState(false);
@@ -63,6 +68,7 @@ export function CheckoutForm({ products }: { products: Product[] }) {
     register,
     handleSubmit,
     control,
+    setValue,
     formState: { errors },
   } = useForm<CheckoutFormData>({
     resolver: zodResolver(checkoutClientSchema),
@@ -74,6 +80,30 @@ export function CheckoutForm({ products }: { products: Product[] }) {
       },
     },
   });
+
+  useEffect(() => {
+    if (!user) return;
+
+    setValue("customer.email", user.email);
+    if (user.firstName) setValue("customer.firstName", user.firstName);
+    if (user.lastName) setValue("customer.lastName", user.lastName);
+    if (user.phone) setValue("customer.phone", user.phone);
+
+    fetch("/api/account")
+      .then((response) => (response.ok ? response.json() : null))
+      .then((data) => {
+        const profile = data?.profile;
+        if (!profile) return;
+        if (profile.firstName) setValue("customer.firstName", profile.firstName);
+        if (profile.lastName) setValue("customer.lastName", profile.lastName);
+        if (profile.phone) setValue("customer.phone", profile.phone);
+        if (profile.street) setValue("address.street", profile.street);
+        if (profile.city) setValue("address.city", profile.city);
+        if (profile.province) setValue("address.province", profile.province);
+        if (profile.postalCode) setValue("address.postalCode", profile.postalCode);
+      })
+      .catch(() => {});
+  }, [setValue, user]);
   const province =
     useWatch({ control, name: "address.province" }) || "Buenos Aires";
   const paymentMethod =
@@ -234,6 +264,7 @@ export function CheckoutForm({ products }: { products: Product[] }) {
             <MessageCircle className="h-4 w-4" />
             Enviar comprobante por WhatsApp
           </a>
+          {!user ? <GuestAccountOffer email={result.email} /> : null}
         </div>
       </section>
     );
@@ -260,6 +291,7 @@ export function CheckoutForm({ products }: { products: Product[] }) {
               contactanos por WhatsApp.
             </p>
           ) : null}
+          {!user ? <GuestAccountOffer email={result.email} /> : null}
         </div>
       </section>
     );
@@ -275,6 +307,29 @@ export function CheckoutForm({ products }: { products: Product[] }) {
           <CheckoutStep icon={MapPin} label="Entrega" active />
           <CheckoutStep icon={CreditCard} label="Pago" active />
         </div>
+        <div className="mt-6 rounded-xl border border-white/10 bg-white/[0.03] p-4">
+          {authLoading ? (
+            <p className="text-sm text-[#A7ACB8]">Comprobando tu cuenta...</p>
+          ) : user ? (
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <div>
+                <p className="font-black text-white">Comprás con tu cuenta</p>
+                <p className="mt-1 text-sm text-[#A7ACB8]">El pedido quedará guardado en {user.email}.</p>
+              </div>
+              <Link href="/mi-cuenta" className="btn btn-secondary">Mi cuenta</Link>
+            </div>
+          ) : (
+            <div>
+              <p className="font-black text-white">¿Cómo querés continuar?</p>
+              <p className="mt-1 text-sm leading-6 text-[#A7ACB8]">Podés guardar la compra en una cuenta o completar tus datos como invitado.</p>
+              <div className="mt-4 flex flex-wrap gap-2">
+                <Link href="/login?next=%2Fcheckout" className="btn btn-primary">Iniciar sesión</Link>
+                <Link href="/registro?next=%2Fcheckout" className="btn btn-secondary">Crear cuenta</Link>
+                <a href="#checkout-customer" className="btn btn-secondary">Continuar como invitado</a>
+              </div>
+            </div>
+          )}
+        </div>
         <div className="mt-6 grid gap-3 md:grid-cols-2">
           <CheckoutNotice
             icon={LockKeyhole}
@@ -287,7 +342,7 @@ export function CheckoutForm({ products }: { products: Product[] }) {
             body="El servidor confirma stock, cupón y total antes del pago."
           />
         </div>
-        <div className="mt-6 grid gap-4 sm:grid-cols-2">
+        <div id="checkout-customer" className="mt-6 grid scroll-mt-28 gap-4 sm:grid-cols-2">
           <Field label="Nombre" error={errors.customer?.firstName?.message}>
             <input {...register("customer.firstName")} className="input" />
           </Field>
@@ -299,6 +354,7 @@ export function CheckoutForm({ products }: { products: Product[] }) {
               type="email"
               {...register("customer.email")}
               className="input"
+              readOnly={!!user}
             />
           </Field>
           <Field label="Teléfono" error={errors.customer?.phone?.message}>
@@ -528,6 +584,20 @@ export function CheckoutForm({ products }: { products: Product[] }) {
         </p>
       </aside>
     </section>
+  );
+}
+
+function GuestAccountOffer({ email }: { email: string }) {
+  return (
+    <div className="mt-5 rounded-xl border border-[#1D6DFF]/30 bg-[#1D6DFF]/10 p-4 text-left">
+      <p className="font-black text-white">Guardá esta compra en una cuenta</p>
+      <p className="mt-1 text-sm leading-6 text-[#C8D9FF]">
+        Creá una cuenta con {email} y, después de verificarlo, vas a poder vincular este pedido.
+      </p>
+      <Link href={`/registro?email=${encodeURIComponent(email)}`} className="btn btn-secondary mt-3">
+        Crear cuenta
+      </Link>
+    </div>
   );
 }
 

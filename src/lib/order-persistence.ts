@@ -509,6 +509,16 @@ export async function updateAccountProfile(
     notes: profile.addressNotes ?? null,
     updated_at: new Date().toISOString(),
   };
+
+  const hasAddress = Boolean(
+    profile.street ||
+      profile.city ||
+      profile.province ||
+      profile.postalCode ||
+      profile.addressNotes,
+  );
+  if (!existing?.id && !hasAddress) return { ok: true };
+
   const { error: addressError } = existing?.id
     ? await supabase.from("addresses").update(payload).eq("id", existing.id)
     : await supabase.from("addresses").insert(payload);

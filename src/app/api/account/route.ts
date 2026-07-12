@@ -60,8 +60,9 @@ export async function PATCH(request: Request) {
   });
 
   if (!result.ok) {
+    console.error("account_profile_update_failed", result.error);
     return NextResponse.json(
-      { error: result.error ?? "No se pudo guardar el perfil." },
+      { error: "No pudimos guardar el perfil. Intentá nuevamente." },
       { status: 500 },
     );
   }

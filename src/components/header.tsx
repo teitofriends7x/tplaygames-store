@@ -1,11 +1,12 @@
 "use client";
 
-import { Heart, Menu, ShoppingBag, UserRound, X } from "lucide-react";
+import { Heart, Loader2, Menu, ShieldCheck, ShoppingBag, UserRound, X } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 
 import { Logo } from "@/components/logo";
 import { SearchBox } from "@/components/search-box";
+import { useAuth } from "@/components/auth-provider";
 import { useCartItems, useFavoriteProductIds } from "@/lib/cart-client";
 
 const nav = [
@@ -18,6 +19,7 @@ const nav = [
 
 export function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const { user, loading: authLoading } = useAuth();
   const cartCount = useCartItems().reduce(
     (total, item) => total + item.quantity,
     0,
@@ -30,12 +32,15 @@ export function Header() {
         <div className="flex items-center justify-between gap-3">
           <Logo />
           <div className="flex items-center gap-2 lg:hidden">
-            <HeaderIcon
-              href="/favoritos"
-              label="Favoritos"
-              icon={<Heart />}
-              count={favoriteCount}
-            />
+            <AccountIcon user={user} loading={authLoading} />
+            <span className="hidden sm:block">
+              <HeaderIcon
+                href="/favoritos"
+                label="Favoritos"
+                icon={<Heart />}
+                count={favoriteCount}
+              />
+            </span>
             <HeaderIcon
               href="/carrito"
               label="Carrito"
@@ -79,15 +84,34 @@ export function Header() {
             </Link>
           ))}
           <Link
-            href="/login"
+            href={user ? "/mi-cuenta" : "/login"}
             onClick={() => setMenuOpen(false)}
             className="rounded-lg px-3 py-2 text-sm font-bold text-[#A7ACB8] transition hover:bg-white/8 hover:text-white lg:hidden"
           >
-            Iniciar sesión
+            {user ? "Mi cuenta" : "Iniciar sesión"}
           </Link>
+          <Link
+            href="/favoritos"
+            onClick={() => setMenuOpen(false)}
+            className="rounded-lg px-3 py-2 text-sm font-bold text-[#A7ACB8] transition hover:bg-white/8 hover:text-white lg:hidden"
+          >
+            Favoritos{favoriteCount ? ` (${favoriteCount})` : ""}
+          </Link>
+          {user?.role === "admin" ? (
+            <Link
+              href="/admin"
+              onClick={() => setMenuOpen(false)}
+              className="rounded-lg px-3 py-2 text-sm font-bold text-[#8FB7FF] transition hover:bg-white/8 hover:text-white lg:hidden"
+            >
+              Panel administrador
+            </Link>
+          ) : null}
         </nav>
         <div className="hidden items-center gap-1 lg:flex">
-          <HeaderIcon href="/mi-cuenta" label="Cuenta" icon={<UserRound />} />
+          {user?.role === "admin" ? (
+            <HeaderIcon href="/admin" label="Panel administrador" icon={<ShieldCheck />} />
+          ) : null}
+          <AccountIcon user={user} loading={authLoading} />
           <HeaderIcon
             href="/favoritos"
             label="Favoritos"
@@ -103,6 +127,39 @@ export function Header() {
         </div>
       </div>
     </header>
+  );
+}
+
+function AccountIcon({
+  user,
+  loading,
+}: {
+  user: ReturnType<typeof useAuth>["user"];
+  loading: boolean;
+}) {
+  if (loading) {
+    return (
+      <span className="icon-button border-0 bg-transparent" aria-label="Cargando cuenta" title="Cargando cuenta">
+        <Loader2 className="h-5 w-5 animate-spin" />
+      </span>
+    );
+  }
+
+  const label = user ? "Mi cuenta" : "Ingresar";
+  return (
+    <HeaderIcon
+      href={user ? "/mi-cuenta" : "/login"}
+      label={label}
+      icon={
+        user ? (
+          <span className="grid h-7 w-7 place-items-center rounded-full bg-[#1D6DFF] text-xs font-black text-white" aria-hidden="true">
+            {(user.firstName?.[0] ?? user.email[0] ?? "U").toUpperCase()}
+          </span>
+        ) : (
+          <UserRound />
+        )
+      }
+    />
   );
 }
 

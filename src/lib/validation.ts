@@ -74,13 +74,13 @@ export const transferProofReviewSchema = z.object({
 });
 
 export const accountProfileSchema = z.object({
-  firstName: z.string().trim().min(2).max(80),
-  lastName: z.string().trim().min(2).max(80),
-  phone: z.string().trim().min(6).max(40),
-  street: z.string().trim().min(3).max(160),
-  city: z.string().trim().min(2).max(80),
-  province: z.string().trim().min(2).max(80),
-  postalCode: z.string().trim().min(2).max(20),
+  firstName: z.string().trim().max(80),
+  lastName: z.string().trim().max(80),
+  phone: z.string().trim().max(40),
+  street: z.string().trim().max(160),
+  city: z.string().trim().max(80),
+  province: z.string().trim().max(80),
+  postalCode: z.string().trim().max(20),
   addressNotes: z.string().trim().max(500).optional(),
 });
 

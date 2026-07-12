@@ -26,6 +26,11 @@
 - Pedidos invitados se vinculan a usuario solo con email autenticado y
   verificado.
 - Emails transaccionales no bloquean mutaciones críticas si Resend falla.
+- Sesiones Supabase renovadas desde Proxy con respuestas privadas/no cacheables.
+- Callback OAuth con intercambio PKCE y redirect interno validado contra open redirect.
+- Perfiles creados por trigger `SECURITY DEFINER` con `search_path` fijo.
+- El email de checkout autenticado se toma de la identidad verificada en servidor.
+- Historial autenticado limitado a `orders.user_id`; invitados requieren vinculación explícita.
 
 ## Primer administrador
 
@@ -34,6 +39,7 @@ No hay credenciales hardcodeadas. Usar `claim_first_admin()` mediante `POST /api
 ## Pendientes antes de produccion
 
 - Configurar Supabase real y verificar RLS con usuarios de prueba.
+- Activar Google OAuth y probar callback en localhost, staging y dominio final.
 - Verificar bucket privado `transfer-proofs` y expiración de URLs firmadas.
 - Configurar storage de imágenes administradas con validación de
   extensión/tamaño, dimensiones máximas y política de reemplazo de imágenes.

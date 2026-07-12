@@ -49,8 +49,8 @@ export function RecoverPasswordForm() {
           Recuperar contraseña
         </h2>
         {!configured ? (
-          <p className="mt-4 text-sm text-[#FCA5A5]">
-            La autenticación requiere configurar Supabase.
+          <p className="mt-4 rounded-xl border border-[#F59E0B]/30 bg-[#F59E0B]/10 p-4 text-sm leading-6 text-[#FDE68A]" role="status">
+            La recuperación de cuentas no está disponible en este momento. Intentá nuevamente más tarde.
           </p>
         ) : null}
         <label className="mt-6 block text-sm font-semibold text-[#A7ACB8]">
@@ -67,7 +67,7 @@ export function RecoverPasswordForm() {
         {message ? (
           <p className="mt-3 text-sm text-[#86EFAC]">{message}</p>
         ) : null}
-        {error ? <p className="mt-3 text-sm text-[#FCA5A5]">{error}</p> : null}
+        {error ? <p className="mt-3 text-sm text-[#FCA5A5]" role="alert">{error}</p> : null}
         <button
           disabled={loading || !configured}
           className="btn btn-primary mt-5 w-full"

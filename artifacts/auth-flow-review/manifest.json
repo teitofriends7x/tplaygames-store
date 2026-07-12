@@ -1,0 +1,75 @@
+{
+  "capturedAt": "2026-07-12T20:07:22.573Z",
+  "screenshots": [
+    {
+      "route": "login",
+      "viewport": "1440x900",
+      "scrollWidth": 1440,
+      "title": "Iniciar sesión | T.PlayGames",
+      "width": 1440
+    },
+    {
+      "route": "registro",
+      "viewport": "1440x900",
+      "scrollWidth": 1440,
+      "title": "Registro | T.PlayGames",
+      "width": 1440
+    },
+    {
+      "route": "recuperar",
+      "viewport": "1440x900",
+      "scrollWidth": 1440,
+      "title": "Recuperar contraseña | T.PlayGames",
+      "width": 1440
+    },
+    {
+      "route": "seguimiento",
+      "viewport": "1440x900",
+      "scrollWidth": 1440,
+      "title": "Seguimiento de pedido | T.PlayGames",
+      "width": 1440
+    },
+    {
+      "route": "mi-cuenta-sin-sesion",
+      "viewport": "1440x900",
+      "scrollWidth": 1440,
+      "title": "Mi cuenta | T.PlayGames",
+      "width": 1440
+    },
+    {
+      "route": "login",
+      "viewport": "390x844",
+      "scrollWidth": 390,
+      "title": "Iniciar sesión | T.PlayGames",
+      "width": 390
+    },
+    {
+      "route": "registro",
+      "viewport": "390x844",
+      "scrollWidth": 390,
+      "title": "Registro | T.PlayGames",
+      "width": 390
+    },
+    {
+      "route": "recuperar",
+      "viewport": "390x844",
+      "scrollWidth": 390,
+      "title": "Recuperar contraseña | T.PlayGames",
+      "width": 390
+    },
+    {
+      "route": "seguimiento",
+      "viewport": "390x844",
+      "scrollWidth": 390,
+      "title": "Seguimiento de pedido | T.PlayGames",
+      "width": 390
+    },
+    {
+      "route": "login",
+      "viewport": "320x568",
+      "scrollWidth": 320,
+      "title": "Iniciar sesión | T.PlayGames",
+      "width": 320
+    }
+  ]
+}

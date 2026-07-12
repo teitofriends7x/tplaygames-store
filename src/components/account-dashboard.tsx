@@ -4,11 +4,14 @@ import {
   Heart,
   Link2,
   Loader2,
+  LogOut,
   PackageCheck,
+  Pencil,
   Save,
   ShieldCheck,
 } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 import { EmptyState } from "@/components/empty-state";
@@ -23,11 +26,13 @@ type AccountPayload = {
 };
 
 export function AccountDashboard() {
-  const { user, loading: authLoading, configured } = useAuth();
+  const { user, loading: authLoading, configured, signOut } = useAuth();
+  const router = useRouter();
   const [payload, setPayload] = useState<AccountPayload | null>(null);
   const [guestCount, setGuestCount] = useState(0);
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
+  const [editing, setEditing] = useState(false);
 
   useEffect(() => {
     if (!user) return;
@@ -111,6 +116,13 @@ export function AccountDashboard() {
 
     setPayload((current) => ({ ...(current ?? {}), profile: data.profile }));
     setMessage("Perfil actualizado.");
+    setEditing(false);
+  }
+
+  async function handleSignOut() {
+    await signOut();
+    router.replace("/login");
+    router.refresh();
   }
 
   async function linkGuestOrders() {
@@ -144,10 +156,11 @@ export function AccountDashboard() {
   return (
     <section className="tpg-container py-10">
       <p className="section-eyebrow">Cliente</p>
-      <h1 className="mt-2 text-3xl font-black text-white">Mi cuenta</h1>
+      <h1 className="mt-2 text-3xl font-black text-white">
+        Hola{profile?.firstName || user.firstName ? `, ${profile?.firstName ?? user.firstName}` : ""}
+      </h1>
       <p className="mt-3 max-w-3xl text-sm leading-6 text-[#A7ACB8]">
-        Gestioná tus datos, revisá pedidos y descargá recibos sin perder el hilo
-        de compra.
+        Revisá tus pedidos, favoritos y datos guardados desde un solo lugar.
       </p>
 
       {message ? (
@@ -163,56 +176,63 @@ export function AccountDashboard() {
 
       <div className="mt-8 grid gap-6 lg:grid-cols-[360px_1fr]">
         <aside className="space-y-4">
-          <form action={saveProfile} className="tpg-card grid gap-3 p-5">
+          <div className="tpg-card p-5">
             <h2 className="font-black text-white">Datos de cuenta</h2>
+            <dl className="mt-4 space-y-3 text-sm">
+              <div><dt className="text-[#737986]">Email</dt><dd className="mt-1 break-all font-semibold text-white">{user.email}</dd></div>
+              <div><dt className="text-[#737986]">Teléfono</dt><dd className="mt-1 text-[#D7DAE2]">{profile?.phone || "Sin completar"}</dd></div>
+              <div><dt className="text-[#737986]">Dirección</dt><dd className="mt-1 text-[#D7DAE2]">{profile?.street ? `${profile.street}, ${profile.city ?? ""}` : "Sin completar"}</dd></div>
+            </dl>
+            <button type="button" onClick={() => setEditing((value) => !value)} className="btn btn-secondary mt-4 w-full">
+              <Pencil className="h-4 w-4" />
+              {editing ? "Cerrar edición" : "Editar perfil"}
+            </button>
+          </div>
+
+          {editing ? (
+          <form action={saveProfile} className="tpg-card grid gap-3 p-5">
+            <h2 className="font-black text-white">Editar perfil</h2>
             <input
               name="firstName"
               defaultValue={profile?.firstName}
               placeholder="Nombre"
               className="input"
-              required
             />
             <input
               name="lastName"
               defaultValue={profile?.lastName}
               placeholder="Apellido"
               className="input"
-              required
             />
             <input
               name="phone"
               defaultValue={profile?.phone}
               placeholder="Teléfono"
               className="input"
-              required
             />
             <input
               name="street"
               defaultValue={profile?.street}
               placeholder="Dirección"
               className="input"
-              required
             />
             <input
               name="city"
               defaultValue={profile?.city}
               placeholder="Ciudad"
               className="input"
-              required
             />
             <input
               name="province"
               defaultValue={profile?.province}
               placeholder="Provincia"
               className="input"
-              required
             />
             <input
               name="postalCode"
               defaultValue={profile?.postalCode}
               placeholder="Código postal"
               className="input"
-              required
             />
             <textarea
               name="addressNotes"
@@ -225,6 +245,7 @@ export function AccountDashboard() {
               Guardar datos
             </button>
           </form>
+          ) : null}
 
           {guestCount > 0 ? (
             <div className="tpg-card p-5">
@@ -249,9 +270,23 @@ export function AccountDashboard() {
             <Heart className="h-5 w-5 text-[#8FB7FF]" />
             <h2 className="mt-3 font-black text-white">Favoritos</h2>
             <p className="mt-1 text-sm text-[#A7ACB8]">
-              Se sincronizan al iniciar sesión cuando Supabase está disponible.
+              Guardá productos y retomá tu selección desde cualquier sesión.
             </p>
           </Link>
+
+          <Link href="/seguimiento" className="btn btn-secondary w-full">
+            Seguir un pedido puntual
+          </Link>
+          {user.role === "admin" ? (
+            <Link href="/admin" className="btn btn-secondary w-full">
+              <ShieldCheck className="h-4 w-4" />
+              Panel administrador
+            </Link>
+          ) : null}
+          <button type="button" onClick={handleSignOut} className="btn btn-secondary w-full">
+            <LogOut className="h-4 w-4" />
+            Cerrar sesión
+          </button>
         </aside>
 
         <div>
@@ -260,10 +295,10 @@ export function AccountDashboard() {
             <div className="mt-4">
               <EmptyState
                 icon={PackageCheck}
-                title="Todavía no hay pedidos"
+                title="Todavía no realizaste ninguna compra."
                 body="Cuando completes una compra con tu cuenta, va a aparecer en esta sección."
                 href="/catalogo"
-                action="Explorar catálogo"
+                action="Ver productos"
               />
             </div>
           ) : (

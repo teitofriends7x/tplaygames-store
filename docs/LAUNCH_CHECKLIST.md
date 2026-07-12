@@ -6,10 +6,13 @@
 - [ ] Reemplazar precios, stock y garantías de prueba por condiciones comerciales reales.
 - [ ] Cargar imágenes de categorías y hero definitivas si la marca cambia.
 - [ ] Configurar Supabase real.
-- [ ] Aplicar migraciones `0001`, `0002` y `0003` en orden.
+- [ ] Aplicar migraciones `0001`, `0002`, `0003` y `0004` en orden.
+- [ ] Configurar Site URL y redirect allow list de Supabase Auth.
+- [ ] Crear credenciales Google OAuth y activar el provider en Supabase.
 - [ ] Verificar RLS con usuario cliente, operador y administrador.
 - [ ] Verificar bucket privado `transfer-proofs`.
-- [ ] Probar registro, login, recuperación y actualización de contraseña.
+- [ ] Probar registro, confirmación, login, persistencia, logout, recuperación y actualización de contraseña.
+- [ ] Probar Google OAuth en localhost, staging y dominio final.
 - [ ] Probar vinculación de pedidos invitados con email verificado.
 - [ ] Probar carga y revisión de comprobantes de transferencia.
 - [ ] Probar recibos imprimibles en cuenta, seguimiento y admin.

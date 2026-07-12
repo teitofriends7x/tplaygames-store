@@ -10,7 +10,7 @@ export async function GET(
   const supabase = await getSupabaseServerClient();
   if (!supabase) {
     return NextResponse.json(
-      { error: "Supabase no está configurado." },
+      { error: "El acceso a cuentas no está disponible en este momento." },
       { status: 503 },
     );
   }

@@ -23,8 +23,9 @@ npm run dev
 Abrir `http://localhost:3000`.
 
 Sin credenciales externas, la app usa modo desarrollo con catálogo seed, precios
-temporales y roles de prueba. No usar esos valores como publicaciones
-comerciales finales.
+temporales y roles de prueba. Los formularios de cuenta permanecen visibles,
+pero las acciones de autenticación se deshabilitan con un mensaje comercial.
+No usar valores demo como publicaciones comerciales finales.
 
 ## Verificación
 
@@ -88,11 +89,13 @@ reemplazables desde administración antes de vender.
 2. Ejecutar `supabase/migrations/0001_initial_schema.sql`.
 3. Ejecutar `supabase/migrations/0002_accounts_orders_persistence.sql`.
 4. Ejecutar `supabase/migrations/0003_complete_order_management.sql`.
-5. Ejecutar opcionalmente `supabase/seed/demo_seed.sql`.
-6. Configurar Auth con el dominio de Vercel/local y callback
+5. Ejecutar `supabase/migrations/0004_standard_auth_flow.sql`.
+6. Ejecutar opcionalmente `supabase/seed/demo_seed.sql`.
+7. Configurar Auth con el dominio de Vercel/local y callback
    `/auth/callback`.
-7. Verificar el bucket privado `transfer-proofs` para comprobantes.
-8. Configurar Storage para imágenes de productos.
+8. Activar Google en Supabase con las credenciales OAuth de Google Cloud.
+9. Verificar el bucket privado `transfer-proofs` para comprobantes.
+10. Configurar Storage para imágenes de productos.
 
 ## Cuentas y pedidos persistentes
 
@@ -107,6 +110,10 @@ La fase actual completa la persistencia operativa:
 - recibos imprimibles para cliente, seguimiento invitado y admin;
 - emails transaccionales desacoplados, no bloqueantes si Resend falla;
 - sincronización de carrito/favoritos al iniciar sesión.
+- login y registro estándar por email, Google OAuth y callback PKCE seguro;
+- sesión persistente renovada por `src/proxy.ts`;
+- perfil automático para altas por email y Google;
+- checkout precargado y elección explícita de cuenta o invitado.
 
 ## Primer administrador
 
