@@ -126,6 +126,11 @@ export function toggleFavorite(productId: string): string[] {
   return next;
 }
 
+export function writeFavorites(productIds: string[]): void {
+  window.localStorage.setItem(FAVORITES_KEY, JSON.stringify(productIds));
+  window.dispatchEvent(new Event("tplaygames-favorites"));
+}
+
 export function useCartItems(): CartItemInput[] {
   return useSyncExternalStore(
     (callback) => {

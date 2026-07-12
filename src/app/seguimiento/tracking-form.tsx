@@ -4,8 +4,13 @@ import { useState } from "react";
 import { PackageCheck, Search, MessageCircle } from "lucide-react";
 import Link from "next/link";
 
+import { TransferProofUpload } from "@/components/transfer-proof-upload";
 import { formatARS } from "@/lib/money";
-import { STATUS_LABELS, PAYMENT_STATUS_LABELS, PAYMENT_METHOD_LABELS } from "@/lib/constants";
+import {
+  PAYMENT_METHOD_LABELS,
+  PAYMENT_STATUS_LABELS,
+  STATUS_LABELS,
+} from "@/lib/constants";
 import type { Order } from "@/lib/types";
 
 export function OrderTrackingForm() {
@@ -25,7 +30,10 @@ export function OrderTrackingForm() {
       const response = await fetch("/api/orders/track", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ orderNumber: orderNumber.trim(), email: email.trim() }),
+        body: JSON.stringify({
+          orderNumber: orderNumber.trim(),
+          email: email.trim(),
+        }),
       });
 
       const data = await response.json();
@@ -45,7 +53,9 @@ export function OrderTrackingForm() {
   return (
     <section className="tpg-container py-10">
       <p className="section-eyebrow">Seguimiento</p>
-      <h1 className="mt-2 text-3xl font-black text-white">Consultá tu pedido</h1>
+      <h1 className="mt-2 text-3xl font-black text-white">
+        Consultá tu pedido
+      </h1>
       <p className="mt-3 max-w-2xl text-sm leading-6 text-[#A7ACB8]">
         Ingresá el número de pedido y el email que usaste al comprar para ver el
         estado de tu compra.
@@ -76,7 +86,11 @@ export function OrderTrackingForm() {
             />
           </label>
         </div>
-        <button type="submit" disabled={loading} className="btn btn-primary mt-5 w-full">
+        <button
+          type="submit"
+          disabled={loading}
+          className="btn btn-primary mt-5 w-full"
+        >
           {loading ? (
             "Buscando..."
           ) : (
@@ -94,12 +108,26 @@ export function OrderTrackingForm() {
         </div>
       ) : null}
 
-      {order ? <OrderDetail order={order} /> : null}
+      {order ? (
+        <OrderDetail
+          order={order}
+          email={email.trim()}
+          onOrderChange={setOrder}
+        />
+      ) : null}
     </section>
   );
 }
 
-function OrderDetail({ order }: { order: Order }) {
+function OrderDetail({
+  order,
+  email,
+  onOrderChange,
+}: {
+  order: Order;
+  email: string;
+  onOrderChange: (order: Order) => void;
+}) {
   const whatsappUrl = `https://wa.me/34699463647?text=${encodeURIComponent(
     `Hola, quiero consultar por mi pedido ${order.orderNumber}.`,
   )}`;
@@ -117,8 +145,14 @@ function OrderDetail({ order }: { order: Order }) {
       </div>
 
       <div className="mt-5 grid gap-3 sm:grid-cols-2">
-        <InfoCard label="Estado del pedido" value={STATUS_LABELS[order.status]} />
-        <InfoCard label="Estado del pago" value={PAYMENT_STATUS_LABELS[order.paymentStatus]} />
+        <InfoCard
+          label="Estado del pedido"
+          value={STATUS_LABELS[order.status]}
+        />
+        <InfoCard
+          label="Estado del pago"
+          value={PAYMENT_STATUS_LABELS[order.paymentStatus]}
+        />
         <InfoCard
           label="Método de pago"
           value={PAYMENT_METHOD_LABELS[order.paymentMethod ?? "mercadopago"]}
@@ -150,8 +184,35 @@ function OrderDetail({ order }: { order: Order }) {
         </div>
       ) : null}
 
+      {order.transferProofs?.length ? (
+        <div className="mt-4 rounded-xl border border-white/10 bg-white/[0.03] p-4 text-sm">
+          <p className="font-bold text-white">Comprobante enviado</p>
+          <p className="mt-1 text-[#A7ACB8]">
+            Estado:{" "}
+            {order.transferProofs[0]?.status === "approved"
+              ? "aprobado"
+              : order.transferProofs[0]?.status === "rejected"
+                ? "rechazado"
+                : "pendiente de revisión"}
+          </p>
+          {order.transferProofs[0]?.rejectionReason ? (
+            <p className="mt-1 text-[#FCA5A5]">
+              Motivo: {order.transferProofs[0].rejectionReason}
+            </p>
+          ) : null}
+        </div>
+      ) : null}
+
+      <TransferProofUpload
+        order={order}
+        email={email}
+        onUploaded={onOrderChange}
+      />
+
       <div className="mt-5">
-        <h3 className="text-sm font-black uppercase text-[#A7ACB8]">Productos</h3>
+        <h3 className="text-sm font-black uppercase text-[#A7ACB8]">
+          Productos
+        </h3>
         <div className="mt-2 space-y-2">
           {order.items.map((item) => (
             <div
@@ -164,7 +225,9 @@ function OrderDetail({ order }: { order: Order }) {
                   {item.variantLabel ?? ""} x {item.quantity}
                 </p>
               </div>
-              <p className="font-bold text-white">{formatARS(item.totalCents)}</p>
+              <p className="font-bold text-white">
+                {formatARS(item.totalCents)}
+              </p>
             </div>
           ))}
         </div>
@@ -201,8 +264,11 @@ function OrderDetail({ order }: { order: Order }) {
           <MessageCircle className="h-4 w-4" />
           Consultar por WhatsApp
         </a>
-        <Link href="/pedido/confirmacion" className="btn btn-secondary">
-          Ver comprobante
+        <Link
+          href={`/seguimiento/comprobante?orderNumber=${encodeURIComponent(order.orderNumber)}&email=${encodeURIComponent(email)}`}
+          className="btn btn-secondary"
+        >
+          Ver recibo
         </Link>
       </div>
     </div>

@@ -22,6 +22,11 @@
 
 - [x] Crear migración Supabase con tablas esperadas.
 - [x] Crear políticas RLS.
+- [x] Crear migración `0003_complete_order_management.sql`.
+- [x] Crear bucket privado `transfer-proofs` y políticas de Storage.
+- [x] Persistir pedidos con número público, email invitado y eventos.
+- [x] Vincular pedidos invitados a usuario por email verificado.
+- [x] Guardar y revisar comprobantes de transferencia.
 - [x] Crear seed local eliminable/reemplazable.
 - [x] Preparar Mercado Pago con modo desarrollo.
 - [x] Preparar email transaccional desacoplado.
@@ -39,8 +44,12 @@
 - [x] Checkout físico/digital/mixto.
 - [x] Resultado de pago.
 - [x] Cuenta, pedidos y favoritos.
+- [x] Perfil editable en `Mi cuenta`.
+- [x] Recuperación y actualización de contraseña.
+- [x] Recibos imprimibles para cuenta, invitado y admin.
 - [x] Páginas legales e informativas.
 - [x] Panel admin/operador.
+- [x] Panel admin de pedidos con filtros, historial y comprobantes.
 - [x] Panel de inventario.
 - [x] Capturas visuales before/after.
 
@@ -50,6 +59,7 @@
 - [x] Imágenes diferenciadas para Consolas, Controles y Juegos.
 - [x] Reemplazar 9 productos genéricos por 27 productos reales verificados.
 - [x] Descargar 72 imágenes oficiales WebP en `public/products`.
+- [x] Agregar derivados optimizados para tarjetas con fondo transparente.
 - [x] Documentar procedencia en `docs/PRODUCT_ASSETS_SOURCES.md`.
 - [x] Guía de reemplazo de imágenes documentada.
 - [x] Avisos de contenido legal pendiente conservados.
@@ -57,6 +67,7 @@
 ## Verificación
 
 - [x] Pruebas unitarias de dominio.
+- [x] Pruebas unitarias de comprobantes y sincronización de cuenta.
 - [x] Pruebas E2E mínimas escritas.
 - [x] `npm ci`.
 - [x] `npm run lint`.

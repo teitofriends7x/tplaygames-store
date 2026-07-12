@@ -21,6 +21,8 @@ Cada descarga está documentada en `docs/PRODUCT_ASSETS_SOURCES.md`.
   - `public/products/consoles/*.webp`
   - `public/products/controllers/*.webp`
   - `public/products/games/*.webp`
+- Derivados optimizados para UI:
+  - `public/products/optimized/*.webp`
 
 Cada producto seed tiene imagen principal y galería cuando existe material
 oficial razonable. Los datos viven en `src/lib/demo-data.ts` con `alt`,
@@ -33,6 +35,11 @@ Assets de marca: originales del proyecto.
 Assets de producto: oficiales de fabricante/publisher para catálogo local de
 desarrollo y preparación visual. Antes de producción se debe confirmar con el
 proveedor/distribuidor el permiso comercial definitivo para cada marca.
+
+Los archivos en `public/products/optimized` son derivados locales de assets
+oficiales ya documentados: recortes, alpha y encuadres 1:1 para evitar fondos
+blancos o layouts pobres. No son imágenes generadas ni sustituyen la procedencia
+oficial.
 
 ## Cómo reemplazar
 

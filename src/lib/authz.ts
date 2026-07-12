@@ -24,43 +24,86 @@ export function roleCanAccess(role: Role, allowed: Role[]): boolean {
   return allowed.includes(role);
 }
 
-export async function getRoleFromRequest(request: Request): Promise<Role> {
+export type RequestActor = {
+  role: Role;
+  userId?: string;
+  email?: string;
+  source: "demo" | "bearer" | "session" | "anonymous";
+};
+
+export async function getActorFromRequest(
+  request: Request,
+): Promise<RequestActor> {
   const demoRole = request.headers.get("x-demo-role");
   if (
     process.env.NODE_ENV !== "production" &&
     demoRole &&
     ROLES.includes(demoRole as Role)
   ) {
-    return demoRole as Role;
+    return { role: demoRole as Role, source: "demo" };
   }
 
   const authHeader = request.headers.get("authorization");
   const token = authHeader?.replace(/^Bearer\s+/i, "");
+  let userId: string | undefined;
+  let email: string | undefined;
 
-  if (!token) {
-    return "customer";
+  if (token) {
+    const { getSupabaseAdminClient } = await import("@/lib/supabase/admin");
+    const supabase = getSupabaseAdminClient();
+    if (!supabase) {
+      return { role: "customer", source: "anonymous" };
+    }
+
+    const { data: userResult } = await supabase.auth.getUser(token);
+    userId = userResult.user?.id;
+    email = userResult.user?.email;
+  } else {
+    const { getSupabaseServerClient } = await import("@/lib/supabase/server");
+    const supabase = await getSupabaseServerClient();
+    if (!supabase) {
+      return { role: "customer", source: "anonymous" };
+    }
+
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    userId = user?.id;
+    email = user?.email;
+  }
+
+  if (!userId) {
+    return { role: "customer", source: "anonymous" };
   }
 
   const { getSupabaseAdminClient } = await import("@/lib/supabase/admin");
-  const supabase = getSupabaseAdminClient();
-  if (!supabase) {
-    return "customer";
+  const admin = getSupabaseAdminClient();
+  if (!admin) {
+    return {
+      role: "customer",
+      userId,
+      email,
+      source: token ? "bearer" : "session",
+    };
   }
 
-  const { data: userResult } = await supabase.auth.getUser(token);
-  const userId = userResult.user?.id;
-  if (!userId) {
-    return "customer";
-  }
-
-  const { data } = await supabase
+  const { data } = await admin
     .from("profiles")
     .select("role")
     .eq("id", userId)
     .single();
 
   const role = data?.role as Role | undefined;
-  return role && ROLES.includes(role) ? role : "customer";
+  return {
+    role: role && ROLES.includes(role) ? role : "customer",
+    userId,
+    email,
+    source: token ? "bearer" : "session",
+  };
+}
+
+export async function getRoleFromRequest(request: Request): Promise<Role> {
+  return (await getActorFromRequest(request)).role;
 }
 
 export async function requireRole(
@@ -73,6 +116,18 @@ export async function requireRole(
   }
 
   return role;
+}
+
+export async function requireActorRole(
+  request: Request,
+  allowed: Role[],
+): Promise<RequestActor> {
+  const actor = await getActorFromRequest(request);
+  if (!roleCanAccess(actor.role, allowed)) {
+    throw new AuthorizationError();
+  }
+
+  return actor;
 }
 
 export async function getRoleFromServerSession(): Promise<Role | undefined> {

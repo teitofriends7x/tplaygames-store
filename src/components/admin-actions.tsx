@@ -1,6 +1,6 @@
 "use client";
 
-import { Send } from "lucide-react";
+import { Mail, Send, ShieldCheck, XCircle } from "lucide-react";
 import { useState } from "react";
 
 import { ORDER_STATUSES, STATUS_LABELS } from "@/lib/constants";
@@ -104,6 +104,100 @@ export function DigitalDeliveryForm({ orderId }: { orderId: string }) {
         <p className="mt-3 text-sm text-[#22C55E]">{message}</p>
       ) : null}
     </form>
+  );
+}
+
+export function TransferProofReviewActions({
+  orderId,
+  proofId,
+}: {
+  orderId: string;
+  proofId: string;
+}) {
+  const [message, setMessage] = useState("");
+
+  async function review(action: "approve" | "reject", formData?: FormData) {
+    const response = await fetch(
+      `/api/admin/orders/${orderId}/transfer-proof`,
+      {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          "x-demo-role": "operator",
+        },
+        body: JSON.stringify({
+          action,
+          proofId,
+          reason: formData?.get("reason") || undefined,
+        }),
+      },
+    );
+    setMessage(
+      response.ok
+        ? action === "approve"
+          ? "Comprobante aprobado."
+          : "Comprobante rechazado."
+        : "No se pudo revisar el comprobante.",
+    );
+  }
+
+  return (
+    <div className="mt-3 space-y-3">
+      <div className="flex flex-wrap gap-2">
+        <button
+          type="button"
+          onClick={() => review("approve")}
+          className="btn btn-primary"
+        >
+          <ShieldCheck className="h-4 w-4" />
+          Aprobar
+        </button>
+      </div>
+      <form
+        action={(formData) => review("reject", formData)}
+        className="grid gap-2"
+      >
+        <textarea
+          name="reason"
+          placeholder="Motivo para informar al cliente si se rechaza"
+          className="input min-h-20 py-3"
+        />
+        <button className="btn btn-secondary">
+          <XCircle className="h-4 w-4" />
+          Rechazar comprobante
+        </button>
+      </form>
+      {message ? <p className="text-sm text-[#A7ACB8]">{message}</p> : null}
+    </div>
+  );
+}
+
+export function ResendOrderEmailButton({ orderId }: { orderId: string }) {
+  const [message, setMessage] = useState("");
+
+  async function resend() {
+    const response = await fetch(`/api/admin/orders/${orderId}/resend-email`, {
+      method: "POST",
+      headers: { "x-demo-role": "operator" },
+    });
+    setMessage(
+      response.ok
+        ? "Email reenviado o registrado en modo desarrollo."
+        : "No se pudo reenviar.",
+    );
+  }
+
+  return (
+    <div className="tpg-card p-4">
+      <h2 className="font-black text-white">Comunicación</h2>
+      <button type="button" onClick={resend} className="btn btn-secondary mt-3">
+        <Mail className="h-4 w-4" />
+        Reenviar email
+      </button>
+      {message ? (
+        <p className="mt-3 text-sm text-[#A7ACB8]">{message}</p>
+      ) : null}
+    </div>
   );
 }
 

@@ -17,12 +17,17 @@ npm run build
 ## Supabase
 
 1. Crear proyecto.
-2. Ejecutar migracion `supabase/migrations/0001_initial_schema.sql`.
+2. Ejecutar migraciones en orden:
+   - `supabase/migrations/0001_initial_schema.sql`
+   - `supabase/migrations/0002_accounts_orders_persistence.sql`
+   - `supabase/migrations/0003_complete_order_management.sql`
 3. Configurar Auth redirect URLs:
    - `http://localhost:3000`
    - URL de Vercel
-4. Configurar storage privado para imágenes subidas desde admin.
-5. Definir política de tamaño, peso, MIME type y reemplazo de assets.
+   - `https://dominio/auth/callback`
+4. Confirmar bucket privado `transfer-proofs` para comprobantes.
+5. Configurar storage privado para imágenes subidas desde admin.
+6. Definir política de tamaño, peso, MIME type y reemplazo de assets.
 
 ## Mercado Pago
 
@@ -36,6 +41,21 @@ npm run build
 1. Verificar dominio/remitente.
 2. Completar `RESEND_API_KEY` y `EMAIL_FROM`.
 3. Probar correos transaccionales en entorno de staging.
+
+## Variables nuevas de cuentas/pedidos
+
+- `SUPABASE_TRANSFER_PROOFS_BUCKET`: por defecto `transfer-proofs`.
+- `NEXT_PUBLIC_SITE_URL`: requerido para links de recuperación de contraseña,
+  Mercado Pago y recibos.
+
+## Pruebas de lanzamiento operativas
+
+1. Registrar usuario, confirmar email y recuperar contraseña.
+2. Crear pedido autenticado y verificar `/mi-cuenta`.
+3. Crear pedido invitado y vincularlo desde una cuenta con el mismo email.
+4. Crear pedido por transferencia, subir comprobante y aprobar/rechazar desde
+   admin.
+5. Descargar/abrir recibo desde cuenta, seguimiento invitado y admin.
 
 ## Assets y performance
 

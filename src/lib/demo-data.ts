@@ -7,6 +7,9 @@ const blurDataUrl =
 // Catalogo seed con productos reales verificados en fuentes oficiales.
 // Precios, stock y SKUs son temporales para desarrollo/pruebas y no son precios oficiales.
 const assetDimensions: Record<string, readonly [number, number]> = {
+  "/products/optimized/ps5-slim-digital-front.webp": [900, 900],
+  "/products/optimized/ps5-slim-standard-front.webp": [900, 900],
+  "/products/optimized/nintendo-switch-lite-handheld.webp": [900, 900],
   "/products/consoles/ps5-slim-digital-front.webp": [900, 900],
   "/products/consoles/ps5-slim-digital-box.webp": [900, 900],
   "/products/consoles/ps5-slim-digital-console-dualsense.webp": [900, 900],
@@ -218,7 +221,7 @@ export const demoProducts: Product[] = [
     stock: 4,
     imageAlt: "PlayStation 5 Slim Digital Edition",
     imageUrls: [
-      "/products/consoles/ps5-slim-digital-front.webp",
+      "/products/optimized/ps5-slim-digital-front.webp",
       "/products/consoles/ps5-slim-digital-console-dualsense.webp",
       "/products/consoles/ps5-slim-digital-box.webp",
     ],
@@ -273,7 +276,7 @@ export const demoProducts: Product[] = [
     stock: 3,
     imageAlt: "PlayStation 5 Slim Standard Edition con lectora",
     imageUrls: [
-      "/products/consoles/ps5-slim-standard-front.webp",
+      "/products/optimized/ps5-slim-standard-front.webp",
       "/products/consoles/ps5-slim-standard-box.webp",
     ],
     imageLabels: ["vista frontal", "caja oficial"],
@@ -532,11 +535,11 @@ export const demoProducts: Product[] = [
     stock: 7,
     imageAlt: "Nintendo Switch Lite",
     imageUrls: [
+      "/products/optimized/nintendo-switch-lite-handheld.webp",
       "/products/consoles/nintendo-switch-lite-box.webp",
-      "/products/consoles/nintendo-switch-lite-handheld.webp",
       "/products/consoles/nintendo-switch-lite-gallery.webp",
     ],
-    imageLabels: ["caja oficial", "modo portátil", "imagen lifestyle"],
+    imageLabels: ["modo portátil", "caja oficial", "imagen lifestyle"],
     features: [
       "Diseño compacto y liviano",
       "Dedicada al juego portátil",

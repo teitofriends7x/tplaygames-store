@@ -1,8 +1,7 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
-import { findOrderByPublicNumber } from "@/lib/order-persistence";
-import { findOrder } from "@/lib/store";
+import { getOrderForCustomer } from "@/lib/order-persistence";
 import { checkRateLimit, getClientKey } from "@/lib/rate-limit";
 
 const trackSchema = z.object({
@@ -30,18 +29,12 @@ export async function POST(request: Request) {
 
   const { orderNumber, email } = parsed.data;
 
-  const supabaseResult = await findOrderByPublicNumber(orderNumber, email);
-  if (supabaseResult.order) {
-    return NextResponse.json({ order: supabaseResult.order });
-  }
-
-  const memoryOrder = findOrder(orderNumber);
-  if (
-    memoryOrder &&
-    memoryOrder.customer.email.toLowerCase().trim() ===
-      email.toLowerCase().trim()
-  ) {
-    return NextResponse.json({ order: memoryOrder });
+  const order = await getOrderForCustomer({
+    idOrNumber: orderNumber,
+    email,
+  });
+  if (order) {
+    return NextResponse.json({ order });
   }
 
   return NextResponse.json(

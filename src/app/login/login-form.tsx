@@ -49,7 +49,9 @@ export function LoginForm() {
           <div className="grid h-12 w-12 place-items-center rounded-xl bg-[#F59E0B]/13 text-[#F8D18A]">
             <LogIn className="h-6 w-6" />
           </div>
-          <h2 className="mt-5 text-2xl font-black text-white">Iniciar sesión</h2>
+          <h2 className="mt-5 text-2xl font-black text-white">
+            Iniciar sesión
+          </h2>
           <p className="mt-2 text-sm leading-6 text-[#A7ACB8]">
             El sistema de cuentas requiere configuración de Supabase.
             Contactanos por WhatsApp si necesitás ayuda con un pedido.
@@ -75,7 +77,10 @@ export function LoginForm() {
         </p>
         <div className="mt-8 grid gap-3 md:grid-cols-2">
           <Benefit title="Historial" body="Consultá pedidos y estados." />
-          <Benefit title="Favoritos" body="Guardá productos para volver después." />
+          <Benefit
+            title="Favoritos"
+            body="Guardá productos para volver después."
+          />
           <Benefit title="Soporte" body="WhatsApp contextual por pedido." />
           <Benefit title="Privacidad" body="Sin datos de pago almacenados." />
         </div>
@@ -109,9 +114,15 @@ export function LoginForm() {
             />
           </label>
           {error ? (
-            <p className="text-sm text-[#FCA5A5]" role="alert">{error}</p>
+            <p className="text-sm text-[#FCA5A5]" role="alert">
+              {error}
+            </p>
           ) : null}
-          <button type="submit" disabled={loading} className="btn btn-primary w-full">
+          <button
+            type="submit"
+            disabled={loading}
+            className="btn btn-primary w-full"
+          >
             {loading ? "Ingresando..." : "Iniciar sesión"}
           </button>
         </form>
@@ -125,7 +136,16 @@ export function LoginForm() {
             Registrate
           </Link>
         </p>
-        <Link href="/seguimiento" className="mt-3 block text-sm font-bold text-[#6EA2FF]">
+        <Link
+          href="/recuperar-password"
+          className="mt-3 block text-sm font-bold text-[#8FB7FF]"
+        >
+          ¿Olvidaste tu contraseña?
+        </Link>
+        <Link
+          href="/seguimiento"
+          className="mt-3 block text-sm font-bold text-[#6EA2FF]"
+        >
           Consultar pedido sin cuenta
         </Link>
       </div>

@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server";
 
-import { AuthorizationError, requireRole } from "@/lib/authz";
-import { findOrder, replaceOrder } from "@/lib/store";
-import { transitionOrderStatus } from "@/lib/orders";
+import { AuthorizationError, requireActorRole } from "@/lib/authz";
+import { sendOrderStatusEmail } from "@/lib/email";
+import { updateStoredOrderStatus } from "@/lib/order-persistence";
 import { orderStatusSchema } from "@/lib/validation";
 
 export async function PATCH(
@@ -10,31 +10,31 @@ export async function PATCH(
   context: { params: Promise<{ id: string }> },
 ) {
   try {
-    const role = await requireRole(request, ["admin", "operator"]);
+    const actor = await requireActorRole(request, ["admin", "operator"]);
     const { id } = await context.params;
-    const order = findOrder(id);
-    if (!order) {
-      return NextResponse.json(
-        { error: "Pedido no encontrado." },
-        { status: 404 },
-      );
-    }
-
     const payload = await request.json().catch(() => undefined);
     const parsed = orderStatusSchema.safeParse(payload);
     if (!parsed.success) {
       return NextResponse.json({ error: "Datos invalidos." }, { status: 400 });
     }
 
-    const updated = transitionOrderStatus(
-      order,
-      parsed.data.status,
-      { role },
-      parsed.data.internalComment,
-    );
-    replaceOrder(updated);
+    const result = await updateStoredOrderStatus({
+      orderId: id,
+      status: parsed.data.status,
+      internalComment: parsed.data.internalComment,
+      actorId: actor.userId,
+      actorRole: actor.role,
+    });
+    if (!result.order) {
+      return NextResponse.json(
+        { error: result.error ?? "Pedido no encontrado." },
+        { status: 404 },
+      );
+    }
 
-    return NextResponse.json({ order: updated });
+    sendOrderStatusEmail(result.order, parsed.data.status).catch(() => {});
+
+    return NextResponse.json({ order: result.order });
   } catch (error) {
     if (error instanceof AuthorizationError) {
       return NextResponse.json({ error: error.message }, { status: 403 });

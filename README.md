@@ -50,6 +50,7 @@ Completar en `.env.local` o Vercel:
 - `MERCADOPAGO_WEBHOOK_SECRET`
 - `RESEND_API_KEY`
 - `EMAIL_FROM`
+- `SUPABASE_TRANSFER_PROOFS_BUCKET`
 
 No escribir secretos en el cliente.
 
@@ -85,9 +86,27 @@ reemplazables desde administración antes de vender.
 
 1. Crear proyecto Supabase.
 2. Ejecutar `supabase/migrations/0001_initial_schema.sql`.
-3. Ejecutar opcionalmente `supabase/seed/demo_seed.sql`.
-4. Configurar Auth con el dominio de Vercel/local.
-5. Configurar Storage para imágenes de productos.
+3. Ejecutar `supabase/migrations/0002_accounts_orders_persistence.sql`.
+4. Ejecutar `supabase/migrations/0003_complete_order_management.sql`.
+5. Ejecutar opcionalmente `supabase/seed/demo_seed.sql`.
+6. Configurar Auth con el dominio de Vercel/local y callback
+   `/auth/callback`.
+7. Verificar el bucket privado `transfer-proofs` para comprobantes.
+8. Configurar Storage para imágenes de productos.
+
+## Cuentas y pedidos persistentes
+
+La fase actual completa la persistencia operativa:
+
+- checkout asociado a usuario autenticado cuando existe sesión;
+- historial de pedidos en `/mi-cuenta` y `/mis-pedidos`;
+- vinculación explícita de pedidos invitados por email verificado;
+- recuperación y actualización de contraseña vía Supabase Auth;
+- carga privada de comprobantes de transferencia JPG, PNG o PDF hasta 10 MB;
+- revisión de comprobantes desde admin con aprobación/rechazo y email;
+- recibos imprimibles para cliente, seguimiento invitado y admin;
+- emails transaccionales desacoplados, no bloqueantes si Resend falla;
+- sincronización de carrito/favoritos al iniciar sesión.
 
 ## Primer administrador
 
@@ -136,8 +155,9 @@ Para producción:
 - `docs/CONTENT_GUIDE.md`
 - `docs/IMAGE_ASSETS.md`
 - `docs/PRODUCT_ASSETS_SOURCES.md`
-- `docs/UI_AUDIT.md`
-- `docs/IMAGE_ASSETS.md`
+- `docs/AUTH_AND_ACCOUNTS.md`
+- `docs/ORDER_PERSISTENCE.md`
+- `docs/PAYMENT_FLOW.md`
 - `docs/UI_AUDIT.md`
 - `docs/LAUNCH_CHECKLIST.md`
 - `docs/TASKS.md`

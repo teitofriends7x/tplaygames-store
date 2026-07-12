@@ -11,11 +11,14 @@ import type {
   AuditLog,
   CartItemInput,
   CustomerSnapshot,
+  OrderEvent,
   Order,
   PaymentRecord,
   Product,
   Role,
   StoreSettings,
+  TransferProof,
+  TransferProofStatus,
 } from "@/lib/types";
 
 type StoreState = {
@@ -25,6 +28,8 @@ type StoreState = {
   processedPaymentEvents: Set<string>;
   settings: StoreSettings;
   auditLogs: AuditLog[];
+  orderEvents: OrderEvent[];
+  transferProofs: TransferProof[];
 };
 
 const LEGACY_DEMO_PRODUCT_IDS = new Set([
@@ -63,6 +68,8 @@ function createInitialState(): StoreState {
     processedPaymentEvents: new Set(),
     settings: structuredClone(defaultStoreSettings),
     auditLogs: [],
+    orderEvents: [],
+    transferProofs: [],
   };
 }
 
@@ -157,6 +164,18 @@ export function createOrder(input: {
   logAudit("customer", "order.create", "orders", order.id, {
     orderNumber: order.orderNumber,
   });
+  addOrderEvent({
+    orderId: order.id,
+    eventType: "order_created",
+    actorId: input.userId,
+    actorRole: input.userId ? "customer" : undefined,
+    payload: {
+      orderNumber: order.orderNumber,
+      paymentMethod: order.paymentMethod ?? "mercadopago",
+      totalCents: order.totals.totalCents,
+    },
+    internalNote: "Pedido creado desde checkout.",
+  });
 
   return order;
 }
@@ -182,6 +201,122 @@ export function replaceOrder(order: Order): Order {
   }
 
   return order;
+}
+
+export function findOrderForCustomer(
+  idOrNumber: string,
+  email?: string,
+  userId?: string,
+): Order | undefined {
+  return getStoreState().orders.find((order) => {
+    const matchesIdentifier =
+      order.id === idOrNumber || order.orderNumber === idOrNumber;
+    if (!matchesIdentifier) return false;
+    if (userId && order.userId === userId) return true;
+    if (email) {
+      return (
+        order.customer.email.toLowerCase().trim() === email.toLowerCase().trim()
+      );
+    }
+    return false;
+  });
+}
+
+export function listOrdersByCustomer(options: {
+  userId?: string;
+  email?: string;
+}): Order[] {
+  const normalizedEmail = options.email?.toLowerCase().trim();
+
+  return getStoreState().orders.filter((order) => {
+    if (options.userId && order.userId === options.userId) {
+      return true;
+    }
+
+    return normalizedEmail
+      ? order.customer.email.toLowerCase().trim() === normalizedEmail
+      : false;
+  });
+}
+
+export function addOrderEvent(
+  event: Omit<OrderEvent, "id" | "createdAt"> & { createdAt?: string },
+): OrderEvent {
+  const next: OrderEvent = {
+    id: randomUUID(),
+    createdAt: event.createdAt ?? new Date().toISOString(),
+    ...event,
+  };
+  getStoreState().orderEvents.unshift(next);
+
+  return next;
+}
+
+export function listOrderEvents(orderId: string): OrderEvent[] {
+  return getStoreState()
+    .orderEvents.filter((event) => event.orderId === orderId)
+    .sort(
+      (a, b) =>
+        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+    );
+}
+
+export function addTransferProof(
+  proof: Omit<TransferProof, "id" | "createdAt" | "updatedAt"> & {
+    id?: string;
+    createdAt?: string;
+    updatedAt?: string;
+  },
+): TransferProof {
+  const now = new Date().toISOString();
+  const next: TransferProof = {
+    ...proof,
+    id: proof.id ?? randomUUID(),
+    createdAt: proof.createdAt ?? now,
+    updatedAt: proof.updatedAt ?? now,
+  };
+  getStoreState().transferProofs.unshift(next);
+
+  return next;
+}
+
+export function listTransferProofs(orderId: string): TransferProof[] {
+  return getStoreState()
+    .transferProofs.filter((proof) => proof.orderId === orderId)
+    .sort(
+      (a, b) =>
+        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+    );
+}
+
+export function updateTransferProofStatus(
+  proofId: string,
+  status: TransferProofStatus,
+  options: {
+    reviewedBy?: string;
+    rejectionReason?: string;
+    internalNote?: string;
+  } = {},
+): TransferProof {
+  const state = getStoreState();
+  const index = state.transferProofs.findIndex((proof) => proof.id === proofId);
+  if (index < 0) {
+    throw new Error("Comprobante no encontrado.");
+  }
+
+  const now = new Date().toISOString();
+  const updated = {
+    ...state.transferProofs[index],
+    status,
+    reviewedBy: options.reviewedBy,
+    rejectionReason: options.rejectionReason,
+    internalNote: options.internalNote,
+    reviewedAt: now,
+    updatedAt: now,
+  };
+  state.transferProofs[index] = updated;
+
+  return updated;
 }
 
 export function attachPayment(orderId: string, payment: PaymentRecord): Order {

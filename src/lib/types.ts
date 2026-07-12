@@ -21,6 +21,7 @@ export type Role = (typeof ROLES)[number];
 export type OrderStatus = (typeof ORDER_STATUSES)[number];
 export type PaymentStatus = (typeof PAYMENT_STATUSES)[number];
 export type PaymentMethod = (typeof PAYMENT_METHODS)[number];
+export type TransferProofStatus = "pending" | "approved" | "rejected";
 
 export type ProductImage = {
   id: string;
@@ -191,6 +192,36 @@ export type OrderStatusEvent = {
   internalComment?: string;
 };
 
+export type OrderEvent = {
+  id: string;
+  orderId: string;
+  eventType: string;
+  actorId?: string;
+  actorRole?: Role;
+  payload?: Record<string, unknown>;
+  internalNote?: string;
+  createdAt: string;
+};
+
+export type TransferProof = {
+  id: string;
+  orderId: string;
+  uploadedBy?: string;
+  guestEmail?: string;
+  storagePath: string;
+  fileName: string;
+  fileSizeBytes: number;
+  mimeType: string;
+  status: TransferProofStatus;
+  rejectionReason?: string;
+  reviewedBy?: string;
+  reviewedAt?: string;
+  internalNote?: string;
+  signedUrl?: string;
+  createdAt: string;
+  updatedAt: string;
+};
+
 export type PaymentRecord = {
   id: string;
   provider: "mercadopago" | "development";
@@ -240,8 +271,23 @@ export type Order = {
   statusHistory: OrderStatusEvent[];
   shipment?: Shipment;
   digitalDelivery?: DigitalDelivery;
+  transferProofs?: TransferProof[];
+  events?: OrderEvent[];
   createdAt: string;
   updatedAt: string;
+};
+
+export type AccountProfile = {
+  id: string;
+  email: string;
+  firstName?: string;
+  lastName?: string;
+  phone?: string;
+  street?: string;
+  city?: string;
+  province?: string;
+  postalCode?: string;
+  addressNotes?: string;
 };
 
 export type Banner = {

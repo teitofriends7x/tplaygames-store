@@ -6,6 +6,7 @@ import { createOrder, getStoreState } from "@/lib/store";
 import { checkoutSchema } from "@/lib/validation";
 import { persistOrderToSupabase } from "@/lib/order-persistence";
 import { sendOrderConfirmationEmail } from "@/lib/email";
+import { getSupabaseServerClient } from "@/lib/supabase/server";
 
 export async function POST(request: Request) {
   const limit = checkRateLimit(`checkout:${getClientKey(request)}`, 12, 60_000);
@@ -26,9 +27,21 @@ export async function POST(request: Request) {
   }
 
   try {
-    const order = createOrder(parsed.data);
+    const supabase = await getSupabaseServerClient();
+    const {
+      data: { user },
+    } = supabase ? await supabase.auth.getUser() : { data: { user: null } };
+    const customer = {
+      ...parsed.data.customer,
+      userId: user?.id,
+    };
+    const order = createOrder({
+      ...parsed.data,
+      customer,
+      userId: user?.id,
+    });
 
-    const persistResult = await persistOrderToSupabase(order);
+    const persistResult = await persistOrderToSupabase(order, user?.id);
     const publicOrderNumber =
       persistResult.publicOrderNumber ?? order.orderNumber;
 

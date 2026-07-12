@@ -9,6 +9,13 @@ import {
   useState,
 } from "react";
 
+import { DEFAULT_SITE_URL } from "@/lib/constants";
+import {
+  readCart,
+  readFavorites,
+  writeCart,
+  writeFavorites,
+} from "@/lib/cart-client";
 import { getSupabaseBrowserClient } from "@/lib/supabase/client";
 
 type AuthUser = {
@@ -33,6 +40,7 @@ type AuthContextValue = AuthState & {
   ) => Promise<{ error?: string }>;
   signOut: () => Promise<void>;
   resetPassword: (email: string) => Promise<{ error?: string }>;
+  updatePassword: (password: string) => Promise<{ error?: string }>;
 };
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
@@ -40,6 +48,26 @@ const AuthContext = createContext<AuthContextValue | undefined>(undefined);
 function mapUser(u: { id: string; email?: string; email_confirmed_at?: string | null } | null): AuthUser | null {
   if (!u) return null;
   return { id: u.id, email: u.email ?? "", emailConfirmed: !!u.email_confirmed_at };
+}
+
+async function syncLocalAccountState() {
+  const response = await fetch("/api/account/sync", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      items: readCart(),
+      favoriteProductIds: readFavorites(),
+    }),
+  });
+
+  if (!response.ok) return;
+
+  const data = (await response.json()) as {
+    items?: ReturnType<typeof readCart>;
+    favoriteProductIds?: string[];
+  };
+  if (data.items) writeCart(data.items);
+  if (data.favoriteProductIds) writeFavorites(data.favoriteProductIds);
 }
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
@@ -62,9 +90,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
+    } = supabase.auth.onAuthStateChange((event, session) => {
       setUser(mapUser(session?.user ?? null));
       setLoading(false);
+      if (event === "SIGNED_IN" && session?.user) {
+        syncLocalAccountState().catch(() => {});
+      }
     });
 
     return () => {
@@ -103,15 +134,44 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const resetPassword = useCallback(
     async (email: string) => {
       if (!supabase) return { error: "Autenticación no configurada." };
-      const { error } = await supabase.auth.resetPasswordForEmail(email);
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${DEFAULT_SITE_URL}/auth/callback?next=/actualizar-password`,
+      });
+      return error ? { error: error.message } : {};
+    },
+    [supabase],
+  );
+
+  const updatePassword = useCallback(
+    async (password: string) => {
+      if (!supabase) return { error: "Autenticación no configurada." };
+      const { error } = await supabase.auth.updateUser({ password });
       return error ? { error: error.message } : {};
     },
     [supabase],
   );
 
   const value = useMemo(
-    () => ({ user, loading, configured, signIn, signUp, signOut, resetPassword }),
-    [user, loading, configured, signIn, signUp, signOut, resetPassword],
+    () => ({
+      user,
+      loading,
+      configured,
+      signIn,
+      signUp,
+      signOut,
+      resetPassword,
+      updatePassword,
+    }),
+    [
+      user,
+      loading,
+      configured,
+      signIn,
+      signUp,
+      signOut,
+      resetPassword,
+      updatePassword,
+    ],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

@@ -1,6 +1,7 @@
 import { describe, expect, it, beforeEach } from "vitest";
 
 import { canManageRole, roleCanAccess } from "@/lib/authz";
+import { mergeCartItems, mergeFavoriteIds } from "@/lib/account-sync";
 import { calculateCart } from "@/lib/cart";
 import {
   demoCoupons,
@@ -17,11 +18,19 @@ import {
   processVerifiedPaymentEvent,
 } from "@/lib/payments";
 import {
+  addTransferProof,
   attachPayment,
   createOrder,
   findOrder,
+  listTransferProofs,
   resetDemoStore,
+  updateTransferProofStatus,
 } from "@/lib/store";
+import {
+  buildTransferProofStoragePath,
+  TRANSFER_PROOF_MAX_BYTES,
+  validateTransferProofFile,
+} from "@/lib/transfer-proofs";
 
 const physicalItem = {
   productId: "prod-game-god-of-war-ragnarok",
@@ -163,6 +172,153 @@ describe("pedidos", () => {
     expect(delivered.digitalDelivery?.secureReference).toBe(
       "Referencia segura",
     );
+  });
+
+  it("registra comprobante de transferencia en el store local", () => {
+    resetDemoStore();
+    const order = createOrder({
+      items: [physicalItem],
+      customer,
+      address: {
+        street: "Av. Corrientes 1234",
+        city: "CABA",
+        province: "CABA",
+        postalCode: "1043",
+      },
+      paymentMethod: "transfer",
+      termsAccepted: true,
+    });
+
+    const proof = addTransferProof({
+      orderId: order.id,
+      storagePath: "development://proof.pdf",
+      fileName: "proof.pdf",
+      fileSizeBytes: 128,
+      mimeType: "application/pdf",
+      status: "pending",
+    });
+
+    expect(listTransferProofs(order.id)).toHaveLength(1);
+    expect(proof.status).toBe("pending");
+  });
+
+  it("actualiza revision de comprobante de transferencia", () => {
+    resetDemoStore();
+    const order = createOrder({
+      items: [physicalItem],
+      customer,
+      address: {
+        street: "Av. Corrientes 1234",
+        city: "CABA",
+        province: "CABA",
+        postalCode: "1043",
+      },
+      paymentMethod: "transfer",
+      termsAccepted: true,
+    });
+    const proof = addTransferProof({
+      orderId: order.id,
+      storagePath: "development://proof.pdf",
+      fileName: "proof.pdf",
+      fileSizeBytes: 128,
+      mimeType: "application/pdf",
+      status: "pending",
+    });
+
+    const updated = updateTransferProofStatus(proof.id, "rejected", {
+      reviewedBy: "operator",
+      rejectionReason: "Archivo ilegible",
+    });
+
+    expect(updated.status).toBe("rejected");
+    expect(updated.rejectionReason).toMatch(/ilegible/i);
+  });
+});
+
+describe("cuenta y sincronizacion", () => {
+  it("fusiona carrito local y remoto acumulando cantidades", () => {
+    const merged = mergeCartItems(
+      [{ productId: "p1", quantity: 2 }],
+      [
+        { productId: "p1", quantity: 3 },
+        { productId: "p2", variantId: "v1", quantity: 1 },
+      ],
+    );
+
+    expect(merged).toContainEqual({ productId: "p1", quantity: 5 });
+    expect(merged).toContainEqual({
+      productId: "p2",
+      variantId: "v1",
+      quantity: 1,
+    });
+  });
+
+  it("fusiona favoritos sin duplicados", () => {
+    expect(mergeFavoriteIds(["p1", "p2"], ["p2", "p3"])).toEqual([
+      "p2",
+      "p3",
+      "p1",
+    ]);
+  });
+});
+
+describe("comprobantes de transferencia", () => {
+  it("acepta JPG cuando extension, MIME y firma coinciden", () => {
+    const result = validateTransferProofFile({
+      fileName: "comprobante.jpg",
+      mimeType: "image/jpeg",
+      size: 4,
+      bytes: new Uint8Array([0xff, 0xd8, 0xff, 0xe0]),
+    });
+
+    expect(result.ok).toBe(true);
+    expect(result.mimeType).toBe("image/jpeg");
+  });
+
+  it("rechaza archivos con firma real distinta al MIME declarado", () => {
+    const result = validateTransferProofFile({
+      fileName: "comprobante.png",
+      mimeType: "image/png",
+      size: 4,
+      bytes: new Uint8Array([0x25, 0x50, 0x44, 0x46]),
+    });
+
+    expect(result.ok).toBe(false);
+    expect(result.error).toMatch(/coinciden/i);
+  });
+
+  it("rechaza comprobantes mayores a 10 MB", () => {
+    const result = validateTransferProofFile({
+      fileName: "comprobante.pdf",
+      mimeType: "application/pdf",
+      size: TRANSFER_PROOF_MAX_BYTES + 1,
+      bytes: new Uint8Array([0x25, 0x50, 0x44, 0x46]),
+    });
+
+    expect(result.ok).toBe(false);
+    expect(result.error).toMatch(/10 MB/i);
+  });
+
+  it("rechaza firmas desconocidas aunque la extension sea permitida", () => {
+    const result = validateTransferProofFile({
+      fileName: "comprobante.pdf",
+      mimeType: "application/pdf",
+      size: 4,
+      bytes: new Uint8Array([0x00, 0x11, 0x22, 0x33]),
+    });
+
+    expect(result.ok).toBe(false);
+    expect(result.error).toMatch(/tipo real/i);
+  });
+
+  it("genera rutas de storage sin caracteres peligrosos", () => {
+    const storagePath = buildTransferProofStoragePath({
+      orderId: "order/../../123",
+      fileName: "comprobante final julio.pdf",
+      extension: ".pdf",
+    });
+
+    expect(storagePath).toMatch(/^order123\/.+comprobante-final-julio\.pdf$/);
   });
 });
 

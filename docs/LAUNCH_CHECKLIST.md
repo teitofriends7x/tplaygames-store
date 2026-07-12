@@ -6,7 +6,13 @@
 - [ ] Reemplazar precios, stock y garantías de prueba por condiciones comerciales reales.
 - [ ] Cargar imágenes de categorías y hero definitivas si la marca cambia.
 - [ ] Configurar Supabase real.
+- [ ] Aplicar migraciones `0001`, `0002` y `0003` en orden.
 - [ ] Verificar RLS con usuario cliente, operador y administrador.
+- [ ] Verificar bucket privado `transfer-proofs`.
+- [ ] Probar registro, login, recuperación y actualización de contraseña.
+- [ ] Probar vinculación de pedidos invitados con email verificado.
+- [ ] Probar carga y revisión de comprobantes de transferencia.
+- [ ] Probar recibos imprimibles en cuenta, seguimiento y admin.
 - [ ] Crear primer administrador con `claim_first_admin()`.
 - [ ] Configurar Mercado Pago sandbox.
 - [ ] Probar pago aprobado, pendiente, rechazado y duplicado.
